@@ -24,6 +24,8 @@ Route::get('/', function () {
     return view('home');
 })->name('home')->middleware('sitemapped');
 
+// Route::view('/', 'coming-soon.horizontal');
+
 Route::get('/dashboard', function (UserDashboardManager $dashboardManager) {
     return redirect($dashboardManager->getUserDashboardUrl(Auth::user()));
 })->name('dashboard')->middleware('auth');

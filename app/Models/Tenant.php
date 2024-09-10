@@ -32,6 +32,19 @@ class Tenant extends Model
         return $this->hasMany(Subscription::class);
     }
 
+    /**
+     * Get the backups for this site.
+     */
+    public function servers()
+    {
+        return $this->hasMany(Server::class);
+    }
+
+    public function clients()
+    {
+        return $this->hasMany(Client::class);
+    }
+
     public function orders()
     {
         return $this->hasMany(Order::class);

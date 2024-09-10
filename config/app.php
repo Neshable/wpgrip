@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'SaaSykit'),
+    'name' => env('APP_NAME', 'WPGrip'),
 
     'description' => env('APP_DESCRIPTION', ''),
 
@@ -181,7 +181,9 @@ return [
     // this is the name of the logo file in the public directory
     'logo' => [
         'light' => 'images/logo-light.png',
-        'dark' => 'images/logo-dark.png',
+        // 'light' => 'images/logo-light.svg',
+        // 'dark' => 'images/logo-dark.png',
+        'dark' => 'images/logo-dark.svg',
     ],
 
     'roadmap_enabled' => true,

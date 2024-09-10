@@ -59,7 +59,7 @@
                     @endif
 
                     <x-button-link.primary class="inline-block !w-full my-2" elementType="button" type="submit">
-                        {{ __('Register') }}
+                        {{ __('Register now') }}
                     </x-button-link.primary>
 
                     <x-auth.social-login>
