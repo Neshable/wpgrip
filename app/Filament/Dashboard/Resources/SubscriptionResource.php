@@ -26,6 +26,8 @@ class SubscriptionResource extends Resource
 {
     protected static ?string $model = Subscription::class;
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationIcon = 'heroicon-o-fire';
 
     public static function form(Form $form): Form

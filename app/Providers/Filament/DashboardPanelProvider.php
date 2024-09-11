@@ -26,6 +26,10 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
 
+use App\Filament\Dashboard\Resources\OrderResource;
+use App\Filament\Dashboard\Resources\TransactionResource;
+use App\Filament\Dashboard\Resources\SubscriptionResource;
+
 class DashboardPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -36,6 +40,13 @@ class DashboardPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Teal,
             ])
+            ->spa()
+            ->spaUrlExceptions([
+                '*/admin/*',
+            ])
+            ->unsavedChangesAlerts()
+            ->maxContentWidth('screen-2xl')
+            ->sidebarFullyCollapsibleOnDesktop()
             ->userMenuItems([
                 MenuItem::make()
                     ->label(__('Admin Panel'))
@@ -44,6 +55,18 @@ class DashboardPanelProvider extends PanelProvider
                     )
                     ->url(fn () => route('filament.admin.pages.dashboard'))
                     ->icon('heroicon-s-cog-8-tooth'),
+                MenuItem::make()
+                    ->label('Orders')
+                    ->url(fn (): string => OrderResource::getUrl())
+                    ->icon('heroicon-o-rectangle-stack'),
+                MenuItem::make()
+                    ->label('Transactions')
+                    ->url(fn (): string => TransactionResource::getUrl())
+                    ->icon('heroicon-o-currency-dollar'),
+                MenuItem::make()
+                    ->label('Subscriptions')
+                    ->url(fn (): string => SubscriptionResource::getUrl())
+                    ->icon('heroicon-o-fire'),            
                 MenuItem::make()
                     ->label(__('Workspace Settings'))
                     ->visible(

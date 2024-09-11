@@ -20,7 +20,7 @@ use Filament\Facades\Filament;
 
 use App\Enums\HostingProvider;
 use App\Enums\ServerType;
-use App\Filament\App\Resources\SiteResource\RelationManagers\SitesRelationManager;
+use App\Filament\Dashboard\Resources\SiteResource\RelationManagers\SitesRelationManager;
 use App\Jobs\GetServerStats;
 
 use Filament\Tables\Actions\Action;

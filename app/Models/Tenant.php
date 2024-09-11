@@ -40,6 +40,16 @@ class Tenant extends Model
         return $this->hasMany(Server::class);
     }
 
+    public function repositories()
+    {
+        return $this->hasMany(Repository::class);
+    }
+
+    public function sites()
+    {
+        return $this->hasMany(Site::class);
+    }
+
     public function clients()
     {
         return $this->hasMany(Client::class);

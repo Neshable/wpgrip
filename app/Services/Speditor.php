@@ -1,0 +1,109 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Site;
+use App\Models\User;
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+
+class Speditor {
+
+    /**
+     * The site object
+     *
+     * @var Site
+     */
+    public $site;
+
+    /**
+     * The user object
+     *
+     * @var User
+     */
+    public $user;
+
+
+    /**
+     * Current timestamp by Carbon
+     */
+    public $timestamp;
+
+    /**
+     * Sanitized URL for folter/file name
+     *
+     * @var string
+     */
+    public $sanitizedUrl = 'sanitized_url';
+
+    /**
+     * The
+     *
+     * @param string $ip
+     * @param integer $port
+     */
+    public function __construct( Site $site, $timestamp = null )
+    {
+        $this->site = $site;
+        $this->user = User::find( $site->user_id );
+        $this->sanitizedUrl = preg_replace( '/[^a-z0-9_\-]/i', '_', parse_url( $site->url, PHP_URL_HOST ) );
+       
+    }
+
+
+    public function getLocalBackupPath()
+    {
+        return base_path('/temp_files' );
+    }
+    /**
+     * Gets the local path of where all the backups should be stored and deleted after.
+     *
+     * @return void
+     */
+    public function getLocalBackupSitePath( $include_base_path = false )
+    {
+        // Create a unique directory path for the backup.
+        if ( $include_base_path )
+        {
+            return 'site_' . $this->site->id . '_' . $this->sanitizedUrl;
+        }
+
+        return base_path('/temp_files/site_' . $this->site->id . '_' . $this->sanitizedUrl );
+    }
+
+
+    public function getS3BackupPath()
+    {
+        // Global path for all backups
+         $path = $this->user->getUserPath() . "/site-id-" . $this->site->id . "/backups";
+ 
+         return $path;
+    }
+
+    /**
+     * Get S3 path for storing screenshots
+     *
+     * @return void
+     */
+    public function getS3ScreenshotPath()
+    {
+        // Global path for all backups
+         $path = $this->user->getUserPath() . "/site-id-" . $this->site->id . "/screenshots";
+ 
+         return $path;
+    }
+
+    public function getS3FilesBackupPath()
+    {
+        // Global path for all file backups
+        return self::getS3BackupPath() . "/files";
+    }
+
+    public function getS3DatabaseBackupPath()
+    {
+        // Global path for all db backups
+        return self::getS3BackupPath() . "/db";
+    }
+
+    
+}
