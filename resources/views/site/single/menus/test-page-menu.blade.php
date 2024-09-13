@@ -6,17 +6,17 @@
         </button> --}}
 
         <x-filament::tabs.item
-            :href="route( 'filament.app.resources.sites.tests', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->slug] )" 
+            :href="route( 'filament.dashboard.resources.sites.tests', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )" 
             tag="a"
-            :active="request()->getRequestUri() === \URL::route('filament.app.resources.sites.tests', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->slug ], false)"
+            :active="request()->getRequestUri() === \URL::route('filament.dashboard.resources.sites.tests', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid ], false)"
         >
         Visual Tests
         </x-filament::tabs.item>
         
         <x-filament::tabs.item
-            :href="route( 'filament.app.resources.sites.performance', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->slug] )" 
+            :href="route( 'filament.dashboard.resources.sites.performance', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )" 
             tag="a"
-            :active="request()->getRequestUri() === \URL::route('filament.app.resources.sites.performance', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->slug ], false)"
+            :active="request()->getRequestUri() === \URL::route('filament.dashboard.resources.sites.performance', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid ], false)"
         >
         Performance
         </x-filament::tabs.item>

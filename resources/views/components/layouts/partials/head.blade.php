@@ -6,9 +6,9 @@
 
 <title>
     @isset($title)
-        {{ $title }} | {{ config('app.name', 'SaaSykit') }}
+        {{ $title }} | {{ config('app.name', 'WPGrip') }}
     @else
-        {{ config('app.name', 'SaaSykit') }}
+        {{ config('app.name', 'WPGrip') }}
     @endisset
 </title>
 

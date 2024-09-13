@@ -150,7 +150,7 @@ $tenant = Filament\Facades\Filament::getTenant();
                         
                         <x-filament::dropdown.list.item 
                         tag="a"
-                        :href="route( 'filament.app.resources.sites.edit', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->slug] )"
+                        :href="route( 'filament.dashboard.resources.sites.edit', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )"
                         >
                             Edit
                         </x-filament::dropdown.list.item>

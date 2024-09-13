@@ -1,29 +1,31 @@
 <x-layouts.app>
     <x-slot name="title">
-        {{ __('SaaSykit - Laravel SaaS Starter Kit') }}
+        {{ __('WPGRIP ') }}
     </x-slot>
 
     <x-section.hero class="w-full mb-8 md:mb-72">
 
         <div class="mx-auto text-center h-160 md:h-180 px-4">
-            <x-pill class="text-primary-500 bg-primary-50">{{ __('Launch your Business') }}</x-pill>
+            <x-pill class="text-primary-500 bg-primary-50">{{ __('ALL YOUR WORDPRESS SITES. ONE DASHBOARD.') }}</x-pill>
             <x-heading.h1 class="mt-4 text-primary-50 font-bold">
-                {{ __('Build your SaaS') }}
+                {{ __('Easily manage and control') }}
                 <br class="hidden sm:block">
-                {{ __('with SaaSykit') }}
+                {{ __('your WordPress sites') }}
 
             </x-heading.h1>
 
-            <p class="text-primary-50 m-3">{{ __('A Laravel-based boilerplate with everything you need to build an awesome SaaS.') }}</p>
+            <p class="text-primary-50 m-3">
+                Gain 100% control and streamline operations with SSH connections and WP-CLI with 2x faster experience.
+            </p>
 
             <div class="flex flex-wrap gap-4 justify-center flex-col md:flex-row mt-6">
                 <x-effect.glow></x-effect.glow>
 
                 <x-button-link.secondary href="#pricing" class="self-center !py-3" elementType="a">
-                    {{ __('Get SaaSykit') }}
+                    {{ __('Start Your Free Trial') }}
                 </x-button-link.secondary>
                 <x-button-link.primary-outline href="//demo.saasykit.com" class=" bg-transparent self-center !py-3 text-white border-white" rel=”nofollow” >
-                    {{ __('Check The Demo') }}
+                    {{ __('Check Pricing') }}
                 </x-button-link.primary-outline>
 
             </div>
@@ -51,19 +53,17 @@
         <x-section.column>
             <div x-intersect="$el.classList.add('slide-in-top')">
                 <x-heading.h6 class="text-primary-500">
-                    {{ __('a solid SaaS') }}
+                    {{ __('A solid foundation') }}
                 </x-heading.h6>
                 <x-heading.h2 class="text-primary-900">
-                    {{ __('Subscriptions & One-time purchases.') }}
+                    {{ __('Encrypted connection & maximum security.') }}
                 </x-heading.h2>
             </div>
 
             <p class="mt-4">
-                {{ __('Easily offer your customers subscription-based & one-time purchase products with SaaSykit. All the webhook handling, subscription management, and billing are already set up for you in a beautiful and easy-to-use admin panel.') }}
+                WPGrip uses secure SSH connections with encrypted keys to link to your websites. That allows you to execute local commands via WP-CLI, offering you a faster, more reliable, and more secure way to manage your WordPress sites—without putting a strain on your PHP process.
             </p>
-            <p class="mt-4">
-                {{ __('Collect payments with Stripe and Paddle, and manage your customers with ease.') }}
-            </p>
+       
             <p class="pt-4">
                 {{ __('Powered by:') }}
             </p>
@@ -134,6 +134,8 @@
         </x-section.column>
 
     </x-section.columns>
+
+    <x-plans.all calculate-saving-rates="true" preselected-interval="year"></x-plans.all>
 
     <x-section.columns class="max-w-none md:max-w-6xl mt-6 flex-wrap-reverse">
         <x-section.column >

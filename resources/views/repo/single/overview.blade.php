@@ -50,7 +50,7 @@
     
     @livewire('list-repo-sites', ['repo_model' => $this->getRecord() ] )
 
-    @livewire('list-commits', ['repository_id' => $this->getRecord()->id ])
+    {{-- @livewire('list-commits', ['repository_id' => $this->getRecord()->id ]) --}}
     
 @endsection
 

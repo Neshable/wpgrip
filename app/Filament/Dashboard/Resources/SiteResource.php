@@ -374,6 +374,43 @@ class SiteResource extends Resource
             'index' => Pages\ListSites::route('/'),
             'create' => Pages\CreateSite::route('/create'),
             'edit' => Pages\EditSite::route('/{record}/edit'),
+            'view' => Pages\ViewSite::route('/{record}'),
+
+          
+            'monitoring' => Pages\Monitoring::route('/{record}/monitoring'), 
+            'monitors' => Pages\Monitors::route('/{record}/monitoring/monitors'),
+
+            'blacklists' => Pages\Blacklists::route('/{record}/blacklists'), 
+            
+
+            'performance' => Pages\Performance::route('/{record}/performance'), 
+            'performance_history' => Pages\PerformanceHistory::route('/{record}/performance/history'), 
+
+            'access' => Pages\Access::route('/{record}/access'), 
+            'database' => Pages\Database::route('/{record}/database'), 
+
+            // 'backups' => Pages\ShowBackups::route('/{record}/backups'), 
+            // 'backups_settings' => Pages\ShowBackupsSettings::route('/{record}/backups/settings'), 
+
+            'core' => Pages\Core::route('/{record}/core'), 
+            'plugins' => Pages\Plugins::route('/{record}/plugins'), 
+            // Tests
+            'tests' => Pages\Tests::route('/{record}/tests'), 
+            // Eror monitoring
+            'errors' => Pages\Errors::route('/{record}/errors'),
+            
+            'performance' => Pages\Performance::route('/{record}/tests/performance'), 
+            
+            'tools' => Pages\Tools::route('/{record}/tools'), 
+            'security' => Pages\Security::route('/{record}/security'), 
+            // 'checksums' => Pages\SecurityGroup\Checksumss::route('/{record}/security/checksums'),
+            'repos' => Pages\Git::route('/{record}/repos'),
+            'staging' => Pages\Staging::route('/{record}/staging'), 
+            
+
+            // Git repos subpages
+            // 'repos.view' => Pages\Repos\ViewRepo::route('/{parent}/repository/{record}'),
+            // 'repos.view' => ViewRepository::route('/{parent}/repos/{record}'),
         ];
     }
 }

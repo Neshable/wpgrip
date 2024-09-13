@@ -6,15 +6,17 @@
         <div class="flex flex-wrap md:flex-nowrap gap-8 mx-4">
             <div class="md:basis-1/2">
                 <x-pill class="text-primary-500 bg-primary-50">{{ __('Launching soon 🚀') }}</x-pill>
-                <x-heading.h1 class="mt-4 text-primary-500 font-bold">
-                    {{ __('Build ') }} <span class="">{{ __('your SaaS') }}</span>
+                <x-heading.h1 class="mt-4">
+                    {{ __('Manage ') }} <span class="text-primary-500 font-bold">{{ __('your WordPress') }}</span>
                     <br class="hidden sm:block">
-                    {{ __('with SaaSykit') }}
+                    {{ __('infrastructure from a single dashboard') }}
                 </x-heading.h1>
 
 
                 <div class="mt-8">
-                    <p class="text-primary-900">{{ __('SaaSykit is built using the beautiful Laravel framework (using TALL) and offers an intuitive Filament admin panel that houses all the pre-built components like product, plans, discounts, payment providers, email providers, transactions, blog, user & role management, and much more.') }}</p>
+                    <p class="text-primary-900">
+                        WPGrip uses secure SSH connections with encrypted keys to link to your servers and websites. That offers a faster, more reliable, and more secure way to manage your WordPress sites — without putting an extra strain on your server process.
+                    </p>
                 </div>
             </div>
 

@@ -125,7 +125,7 @@ class GripNotifications {
                     ->actions([
                         Action::make('view')
                             ->button()
-                            ->url(route('filament.app.resources.sites.tests', [ 
+                            ->url(route('filament.dashboard.resources.sites.tests', [ 
                                 'record' => $site->id, 
                                 'tenant' => $site->team->slug ] ), shouldOpenInNewTab: false)
        

@@ -44,6 +44,7 @@ class DashboardPanelProvider extends PanelProvider
             ->spaUrlExceptions([
                 '*/admin/*',
             ])
+            ->darkMode(false)
             ->unsavedChangesAlerts()
             ->maxContentWidth('screen-2xl')
             ->sidebarFullyCollapsibleOnDesktop()
@@ -88,6 +89,9 @@ class DashboardPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
+            ->brandLogoHeight('3rem')
+            ->brandLogo(asset('images/logo-dark.svg'))
+            ->darkModeBrandLogo(asset('images/logo-light.svg'))
             ->viteTheme('resources/css/filament/dashboard/theme.css')
             ->discoverWidgets(in: app_path('Filament/Dashboard/Widgets'), for: 'App\\Filament\\Dashboard\\Widgets')
             ->widgets([
@@ -107,6 +111,12 @@ class DashboardPanelProvider extends PanelProvider
             ->renderHook('panels::head.start', function () {
                 return view('components.layouts.partials.analytics');
             })
+            ->renderHook('panels::user-menu.before', function () {
+                return view('filament/menus/top-right-menu');
+            })
+            // ->renderHook('panels::user-menu.before', function () {
+            //     return Illuminate\Support\Facades\Blade::render('@livewire(\'database-notifications\')');
+            // })
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label('Team')

@@ -60,59 +60,67 @@ class Site extends Model
         });
 
         // @todo enable
-        // static::created(function (Site $site) {
+        static::created(function (Site $site) {
 
-        //     $site_meta = SiteMeta::create([
-        //         'site_id' => $site->id,
-        //     ]);
+            $site_meta = SiteMeta::create([
+                'site_id' => $site->id,
+            ]);
 
-        //     // Create monitor model if this is enabled.
-        //     if ( $site->uptime_monitor ) {
+            // // Create monitor model if this is enabled.
+            // if ( $site->uptime_monitor ) {
                 
-        //         $monitor = UptimeMonitor::where('url', trim($site->url, '/'))->first();
+            //     $monitor = UptimeMonitor::where('url', trim($site->url, '/'))->first();
 
-        //         if ( !$monitor ) {
+            //     if ( !$monitor ) {
                     
-        //             $monitor = UptimeMonitor::create([
-        //                 'url' => trim($site->url, '/'),
-        //                 'look_for_string' => '',
-        //                 'uptime_check_method' => 'head',
-        //                 'certificate_check_enabled' => true,
-        //                 'site_id' =>  $site->id,
-        //                 'uptime_check_interval_in_minutes' => config('uptime-monitor.uptime_check.run_interval_in_minutes'),
-        //             ]);
+            //         $monitor = UptimeMonitor::create([
+            //             'url' => trim($site->url, '/'),
+            //             'look_for_string' => '',
+            //             'uptime_check_method' => 'head',
+            //             'certificate_check_enabled' => true,
+            //             'site_id' =>  $site->id,
+            //             'uptime_check_interval_in_minutes' => config('uptime-monitor.uptime_check.run_interval_in_minutes'),
+            //         ]);
 
-        //             if ( $monitor->id ) {
-        //                 // Save both models.
-        //                 $site->monitor_id =  $monitor->id;
-        //                 $site->save();
-        //                 // Later decide which to remove
-        //                 $monitor->site_id =  $site->id;
-        //                 $monitor->save();
-        //                 // Check the uptime
-        //                 Artisan::call('monitor:check-uptime');
+            //         if ( $monitor->id ) {
+            //             // Save both models.
+            //             $site->monitor_id =  $monitor->id;
+            //             $site->save();
+            //             // Later decide which to remove
+            //             $monitor->site_id =  $site->id;
+            //             $monitor->save();
+            //             // Check the uptime
+            //             Artisan::call('monitor:check-uptime');
 
-        //             }
-        //         }
+            //         }
+            //     }
 
-        //     }  else {
+            // }  else {
 
-        //         $monitor = UptimeMonitor::where('url', trim($site->url, '/'))->first();
-        //         if ( $monitor ) {
-        //             $monitor->delete();
-        //             $site->monitor_id = null;
-        //             $site->save();
-        //         }
+            //     $monitor = UptimeMonitor::where('url', trim($site->url, '/'))->first();
+            //     if ( $monitor ) {
+            //         $monitor->delete();
+            //         $site->monitor_id = null;
+            //         $site->save();
+            //     }
                 
 
-        //         if (! $monitor) {
-        //             // $this->error("Monitor {$url} is not configured");
-        //             // return;
-        //         }
+            //     if (! $monitor) {
+            //         // $this->error("Monitor {$url} is not configured");
+            //         // return;
+            //     }
 
-        //     }
+            // }
 
-        // });
+        });
+    }
+
+    /**
+     * Get the sitemeta.
+     */
+    public function sitemeta()
+    {
+        return $this->hasOne(SiteMeta::class);
     }
 
     /**
@@ -211,19 +219,19 @@ class Site extends Model
     /**
      * Get the plugins for this site.
      */
-    // public function plugins(): BelongsToMany
-    // {
-    //     return $this->belongsToMany(Plugin::class, 'plugin_site')
-    //         ->withPivot( ['version', 'update_version', 'status'] );
-    // }
+    public function plugins(): BelongsToMany
+    {
+        return $this->belongsToMany(Plugin::class, 'plugin_site')
+            ->withPivot( ['version', 'update_version', 'status'] );
+    }
 
     /**
      * Get the active plugins.
      */
-    // public function activePlugins()
-    // {
-    //     return $this->hasMany(Plugin::class)->where('status', 'active');
-    // }
+    public function activePlugins()
+    {
+        return $this->hasMany(Plugin::class)->where('status', 'active');
+    }
 
     /**
      * Modify the ssh connection status - either connected or not.

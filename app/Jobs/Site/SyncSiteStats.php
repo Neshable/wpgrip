@@ -72,7 +72,6 @@ class SyncSiteStats implements ShouldQueue
                 return false;
             }
 
-
             // Determine what we need to fetch from our connection.
             $this->fetchDirectorySize();
             $this->fetchPHPVersion();

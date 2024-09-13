@@ -45,11 +45,11 @@
                
                 @if(auth()->user()->can('update Repository'))
                 <x-filament::button
-                    :href="route( 'filament.app.resources.repositories.edit', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->slug] )" 
+                    :href="route( 'filament.dashboard.resources.repositories.edit', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )" 
                     tag="a"
                     color="gray"
                     icon="heroicon-m-cog-6-tooth"
-                    :active="request()->getRequestUri() === \URL::route('filament.app.resources.repositories.edit', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->slug ], false)"
+                    :active="request()->getRequestUri() === \URL::route('filament.dashboard.resources.repositories.edit', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid ], false)"
                 >
                 Settings
                 </x-filament::button>

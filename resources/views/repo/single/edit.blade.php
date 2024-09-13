@@ -28,7 +28,7 @@
 
           
         <x-filament::button
-            :href="route( 'filament.app.resources.repositories.view', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->slug] )" 
+            :href="route( 'filament.dashboard.resources.repositories.view', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )" 
             tag="a"
             color="gray"
             size="lg"

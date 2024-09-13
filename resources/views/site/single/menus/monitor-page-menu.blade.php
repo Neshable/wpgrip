@@ -5,17 +5,17 @@
             $tenant = Filament\Facades\Filament::getTenant(); 
         @endphp
         <x-filament::tabs.item
-            :href="route( 'filament.app.resources.sites.monitoring', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->slug] )" 
+            :href="route( 'filament.dashboard.resources.sites.monitoring', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )" 
             tag="a"
-            :active="request()->getRequestUri() === \URL::route('filament.app.resources.sites.monitoring', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->slug ], false)"
+            :active="request()->getRequestUri() === \URL::route('filament.dashboard.resources.sites.monitoring', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid ], false)"
         >
         Main monitor
         </x-filament::tabs.item>
         
         <x-filament::tabs.item
-            :href="route( 'filament.app.resources.sites.monitors', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->slug] )" 
+            :href="route( 'filament.dashboard.resources.sites.monitors', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )" 
             tag="a"
-            :active="request()->getRequestUri() === \URL::route('filament.app.resources.sites.monitors', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->slug ], false)"
+            :active="request()->getRequestUri() === \URL::route('filament.dashboard.resources.sites.monitors', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid ], false)"
         >
         Additional monitors
         </x-filament::tabs.item>

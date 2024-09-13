@@ -38,10 +38,10 @@ class Server extends Model
      /**
      * Get the websites for this client.
      */
-    // public function sites(): HasMany
-    // {
-    //     return $this->hasMany(Site::class);
-    // }
+    public function sites(): HasMany
+    {
+        return $this->hasMany(Site::class);
+    }
 
     /**
      * Get the owner of this server

@@ -96,10 +96,11 @@ class ServerResource extends Resource
                     ->icon('heroicon-m-clipboard-document'),
 
                 Tables\Columns\TextColumn::make('ssh_port'),
-                // Tables\Columns\TextColumn::make('sites_count')
-                //     ->badge()
-                //     ->counts('sites')
-                //     ->color('success'),
+                Tables\Columns\TextColumn::make('sites_count')
+                    ->badge()
+                    ->label('Sites')
+                    ->counts('sites')
+                    ->color('success'),
                    
                     // Tables\Columns\TextColumn::make('cpu_cores'),
                     // Tables\Columns\TextColumn::make('ip'),

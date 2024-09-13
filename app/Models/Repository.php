@@ -39,7 +39,6 @@ class Repository extends Model
         static::creating(function ($repository) {
             // Generate a unique webhook token
             $repository->webhook = 'webhook_' . Str::random(40);
-            $repository->is_active = false;
         });
     }
 

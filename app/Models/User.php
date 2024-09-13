@@ -19,6 +19,8 @@ use Illuminate\Support\Collection;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
+
+
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail, HasTenants
 {
     use HasApiTokens, HasFactory, HasRoles, Notifiable;
@@ -56,6 +58,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
 
     public function roadmapItems()
     {

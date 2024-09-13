@@ -49,8 +49,8 @@ return [
          * Default attributes for Seller::class
          */
         'attributes' => [
-            'name'          => 'SaaSykit Company Inc.',
-            'address'       => 'SaaSy Street 123',
+            'name'          => 'WPGrip',
+            'address'       => 'Wpgrip Street 123',
             'code'          => '',
             'vat'           => '',
             'phone'         => '',

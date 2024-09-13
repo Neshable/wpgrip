@@ -3,6 +3,9 @@
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
+use Illuminate\Console\Scheduling\Schedule;
+use App\Jobs\Site\SyncAllSitesStats;
+
 return Illuminate\Foundation\Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
@@ -21,6 +24,10 @@ return Illuminate\Foundation\Application::configure(basePath: dirname(__DIR__))
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
         ]);
+    })
+    ->withSchedule(function (Schedule $schedule) {
+        // Do a sync for all sites.
+        $schedule->job(new SyncAllSitesStats)->daily();
     })
     ->withExceptions(function (Exceptions $exceptions) {
 

@@ -17,8 +17,6 @@ return new class extends Migration
             $table->timestamps();
             $table->foreignId('site_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('name')->nullable();
-            $table->string('status')->nullable();
-            $table->boolean('is_active')->nullable();
             $table->string('provider')->nullable();
             $table->string('webhook')->nullable();
             $table->string('description')->nullable();
@@ -32,6 +30,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('site_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('repository_id')->nullable()->constrained()->onDelete('cascade');
+            $table->boolean('is_active')->nullable();
+            $table->string('status')->nullable();
             $table->string('path');
             $table->string('branch');
             $table->timestamp('last_pull')->nullable(); 

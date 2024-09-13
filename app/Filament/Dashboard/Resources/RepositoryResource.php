@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
+use Closure;
 
 use Filament\Tables\Columns\IconColumn;
 use Filament\Facades\Filament;
@@ -111,6 +112,9 @@ class RepositoryResource extends Resource
                     default =>'gray'
                 }),
             ])
+            ->recordUrl(
+                fn (Repository $record): string => Pages\ViewRepository::getUrl([$record->id]),
+            )
             ->filters([
                 //
             ])
@@ -118,9 +122,9 @@ class RepositoryResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 
@@ -131,12 +135,16 @@ class RepositoryResource extends Resource
         ];
     }
 
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListRepositories::route('/'),
             'create' => Pages\CreateRepository::route('/create'),
             'edit' => Pages\EditRepository::route('/{record}/edit'),
+            'view' => Pages\ViewRepository::route('/{record}'),
+             // 'commits' => Pages\Commits::route('/{record}/commits'),
         ];
+ 
     }
 }

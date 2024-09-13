@@ -74,10 +74,6 @@ class CreateUserSSHKeyPair implements ShouldQueue
 
         }
         
-        // dd($private->__toString() );
-
-        // $ciphertext = $private->getPublicKey()->encrypt($plaintext);
-        // echo $private->decrypt($ciphertext);
 
 
     }

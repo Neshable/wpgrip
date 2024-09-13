@@ -21,10 +21,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('home');
+    // return view('home');
+    return view('coming-soon.vertical');
+    
 })->name('home')->middleware('sitemapped');
 
-// Route::view('/', 'coming-soon.horizontal');
+
 
 Route::get('/dashboard', function (UserDashboardManager $dashboardManager) {
     return redirect($dashboardManager->getUserDashboardUrl(Auth::user()));

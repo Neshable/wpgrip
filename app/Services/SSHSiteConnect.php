@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Site;
-use App\Models\User;
+use App\Models\Tenant;
 
 use phpseclib3\Net\SSH2;
 use phpseclib3\Crypt\PublicKeyLoader;
@@ -54,6 +54,13 @@ class SSHSiteConnect {
     public $ssh_private;
 
     /**
+     * The password for the SSH connection
+     *
+     * @var string
+     */
+    private $password = '';
+
+    /**
      * The SSH2 connection
      *
      * @var SSH2
@@ -86,14 +93,15 @@ class SSHSiteConnect {
         }
         
         // Check site owner.
-        $user = User::find( $this->site->user_id );
+        $tenant = Tenant::find( $this->site->tenant_id );
         
-        if ( $user )
+        if ( $tenant )
         {
-            // Get the user SSH Private.
+            // Get the tenant SSH Private.
             try 
             {
-                $this->ssh_private = Crypt::decryptString($user->ssh_private);
+                $this->ssh_private = Crypt::decryptString( $tenant->ssh_private );
+                $this->password = $tenant->uuid;
             } catch (DecryptException $e) {
                 // THrow an error or notification.
                 return false;
@@ -106,9 +114,10 @@ class SSHSiteConnect {
     {
         // Get this from the server model.
         $this->ssh = new SSH2( $this->ip , $this->port );
+        
         // Get the key from DB, decrypt and load.
-        $key = PublicKeyLoader::load($this->ssh_private);
-  
+        $key = PublicKeyLoader::load( $this->ssh_private, $this->password );
+    
         // Make the connection.
         try 
         {
