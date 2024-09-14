@@ -227,6 +227,17 @@ class TenantManager
         ]);
     }
 
+    public function updateTenantData(Tenant $tenant, array $data ): bool
+    {
+        return $tenant->update([
+            'name' => $data['tenant_name'],
+            'enable_slack' => $data['enable_slack'],
+            'slack_webhook' => $data['slack_webhook'],
+            'enable_email' => $data['enable_email'],
+            'email' => $data['email'],
+        ]);
+    }
+
     private function doTenantSubscriptionsAllowAddingUser(Tenant $tenant): bool
     {
         $tenantSubscriptions = $tenant->subscriptions()->with('plan')->get();

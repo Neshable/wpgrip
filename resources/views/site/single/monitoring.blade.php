@@ -1,12 +1,6 @@
 
 @php
-    $this->getRecord();
-    $monitor = $this->getRecord()->monitor;   
-    // $monitors = $this->getRecord()->monitors;
-
-    // $test = \Illuminate\Support\Facades\Mail::to('neshosabakov@gmail.com')->send(new \App\Mail\SiteDown($this->getRecord()));
-    // dd($test);
-
+    $monitor = $this->getRecord()->get_main_monitor();   
 @endphp
 
 @extends('site/single/pagetemplate')

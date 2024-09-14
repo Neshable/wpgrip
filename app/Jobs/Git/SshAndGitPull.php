@@ -130,7 +130,7 @@ class SshAndGitPull implements ShouldQueue
 
             $success = $connection->getExitStatusBool();
    
-            $this->create_initial_commit_log();
+            // $this->create_initial_commit_log();
             $connection->close();
     
             $this->saveToDb($success);
@@ -161,7 +161,7 @@ class SshAndGitPull implements ShouldQueue
         
         $success = $connection->getExitStatusBool();
         
-        $this->create_commit_log($connection);
+        // $this->create_commit_log($connection);
         $connection->close();
     
         $this->saveToDb($success);
@@ -304,15 +304,16 @@ class SshAndGitPull implements ShouldQueue
     {
         if ( $error ) 
         {
-            $this->repository->is_active = false;
+            $this->pivot->is_active = false;
         }
         else 
         {
-            $this->repository->is_active = true;
+            $this->pivot->is_active = true;
             $this->repository->last_pull = Carbon::now();
         }
         
         $this->repository->save();
+        $this->pivot->save();
 
     }
 

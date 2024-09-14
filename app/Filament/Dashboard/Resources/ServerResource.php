@@ -85,7 +85,6 @@ class ServerResource extends Resource
                 Tables\Columns\TextColumn::make('ip')
                     ->copyable()
                     ->copyMessage('IP copied to clipboard')
-                    ->copyMessageDuration(1500)
                     ->label('Public IP')
                     ->icon('heroicon-m-clipboard-document'),
                 Tables\Columns\TextColumn::make('private_ip')

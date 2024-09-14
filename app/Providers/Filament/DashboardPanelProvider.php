@@ -16,6 +16,7 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -37,9 +38,6 @@ class DashboardPanelProvider extends PanelProvider
         return $panel
             ->id('dashboard')
             ->path('dashboard')
-            ->colors([
-                'primary' => Color::Teal,
-            ])
             ->spa()
             ->spaUrlExceptions([
                 '*/admin/*',
@@ -89,6 +87,14 @@ class DashboardPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
+            ->colors([
+                'primary' => Color::Blue,// '#1654D1',
+                'danger' => Color::Rose,
+                // 'gray' => Color::Slate, // Background
+                // 'info' => Color::Blue,
+                // 'success' => Color::Green,
+                // 'warning' => Color::Red,
+            ])
             ->brandLogoHeight('3rem')
             ->brandLogo(asset('images/logo-dark.svg'))
             ->darkModeBrandLogo(asset('images/logo-light.svg'))
@@ -120,8 +126,7 @@ class DashboardPanelProvider extends PanelProvider
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label('Team')
-                    ->icon('heroicon-s-users')
-                    ->collapsed(),
+                    ->icon('heroicon-s-users'),
             ])
             ->authMiddleware([
                 Authenticate::class,

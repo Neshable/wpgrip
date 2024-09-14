@@ -107,6 +107,7 @@ class ListRepoSites extends Component implements HasForms, HasTable
                                 ->maxLength(255),
                             
                     ])
+                    ->createAnother( false )
                     ->before(function (array $data) {
                        // dd($data);
                         // Runs before the form fields are saved to the database.

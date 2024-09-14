@@ -76,8 +76,24 @@ class ListPlugins extends Component implements HasForms, HasTable
                     ->weight(FontWeight::Medium)
                     ->label('Plugin Name')
                     ->description(fn (Plugin $record): string => $record->description),
+                TextColumn::make('version')
+                    ->badge()
+                    ->size(TextColumn\TextColumnSize::Medium)
+                    ->weight(FontWeight::Medium)
+                    ->label('Current Version')
+                    ->color(fn (string $state): string => 'gray'),
+                Tables\Columns\IconColumn::make('is_vulnerable')
+                        ->boolean()
+                        ->label('Clean')
+                        ->trueIcon('heroicon-o-check-badge')
+                        ->falseIcon('heroicon-o-x-mark'),                
+                TextColumn::make('update_version')
+                    ->badge()
+                    ->weight(FontWeight::Medium)
+                    ->label('New version'),
+                    
                 
-                ViewColumn::make('version')->view('filament.tables.columns.plugin-version'),
+                // ViewColumn::make('version')->view('filament.tables.columns.plugin-version'),
                 
                 // TextColumn::make('description')
                 //     ->wrap()

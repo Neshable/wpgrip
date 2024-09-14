@@ -22,41 +22,50 @@ class SlackNotifications {
 
     public static function sendUptimeRecovered( Monitor $monitor )
     {
-        if ( !$monitor )
-        {
-            return;
+        $site_id = $monitor->site_id;
+        if ( $site_id ) {
+            $site = Site::findOrFail( $site_id );
+            if ( $site ) {
+                // Find the tenant and send them notificaiton.
+                $tenant = $site->tenant;
+                if ( $tenant && $tenant->enable_slack && !empty( $tenant->slack_webhook )  ) {
+                    SlackAlert::to( $tenant->slack_webhook )->blocks([
+                        self::addBlock( 'header', ":large_green_circle: Website back online." ),
+                        self::addBlock( 'divider' ),
+                        self::addBlock( 'section', "Website " . $monitor->url . " is up again" ),   
+                        self::addBlock( 'divider' ),
+                    ]);
+                }
+            }
         }
 
-        // @todo webhook needs to be loaded from the current Team/Workspace related
-        SlackAlert::to('https://hooks.slack.com/services/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')->blocks([
-            self::addBlock( 'header', ":large_green_circle: Incident resolved." ),
-            self::addBlock( 'divider' ),
-            self::addBlock( 'section', "Website " . $monitor->url . " is up again." ),
-            self::addBlock( 'divider' ),
-            self::addBlock( 'section', "<https://example.com|View request>" ),
-        ]);
     }
 
     public static function sendGitPullSuccess( Repository $repository )
     {
-        SlackAlert::to('https://hooks.slack.com/services/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')->blocks([
-            self::addBlock( 'header', ":white_check_mark: Repository successfully fetched" ),
-            self::addBlock( 'section', "Repository successfully synced  " ),
-            self::addBlock( 'divider' ),
-            self::addBlock( 'section', "Repository - " . $repository->name ),
-           
-            [
-                "type" => "section",
-                "fields" => [
-                    [
-                        "type" => "mrkdwn",
-                        "text" => "*On branch:*\n" . $repository->branch
+        $tenant = $repository->tenant;
+        
+        if ( $tenant && $tenant->enable_slack && !empty( $tenant->slack_webhook )  ) {
+            SlackAlert::to( $tenant->slack_webhook )->blocks([
+                self::addBlock( 'header', ":white_check_mark: Repository successfully fetched" ),
+                self::addBlock( 'section', "Repository successfully synced  " ),
+                self::addBlock( 'divider' ),
+                self::addBlock( 'section', "Repository - " . $repository->name ),
+               
+                [
+                    "type" => "section",
+                    "fields" => [
+                        [
+                            "type" => "mrkdwn",
+                            "text" => "*On branch:*\n" . $repository->branch
+                        ]
                     ]
-                ]
-            ],  
-            self::addBlock( 'divider' ),
-            self::addBlock( 'section', "<https://example.com|View request>" ),
-        ]);
+                ],  
+                self::addBlock( 'divider' ),
+                self::addBlock( 'section', "|----|" ),
+            ]);
+        }
+        
     }
 
     public static function sendBackupSuccess( Backup $backup )
@@ -92,64 +101,56 @@ class SlackNotifications {
 
     public static function sendUptimeFailed( Monitor $monitor )
     {
-        // if ( !$monitor )
-        // {
-        //     return;
-        // }
-        // @todo webhook needs to be loaded from the current Team/Workspace related
-        SlackAlert::to('https://hooks.slack.com/services/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')->blocks([
-            self::addBlock( 'header', ":red_circle: Issue with a website!" ),
-            self::addBlock( 'section', $monitor->uptime_check_failure_reason ),
-            self::addBlock( 'divider' ),
-            self::addBlock( 'section', "Website " . $monitor->url . " is down." ),
-           
-            [
-                "type" => "section",
-                "fields" => [
-                    [
-                        "type" => "mrkdwn",
-                        "text" => "*Status:*\n Down"
-                    ],
-                    [
-                        "type" => "mrkdwn",
-                        "text" => "*Date:*\n" . $monitor->uptime_check_failed_event_fired_on_date
-                    ]
-                ]
-            ],  
-            self::addBlock( 'divider' ),
-            self::addBlock( 'section', "<https://example.com|View request>" ),
-        ]);
+    
+        $site_id = $monitor->site_id;
+        if ( $site_id ) {
+            $site = Site::findOrFail( $site_id );
+            if ( $site ) {
+                // Find the tenant and send them notificaiton.
+                $tenant = $site->tenant;
+                if ( $tenant && $tenant->enable_slack && !empty( $tenant->slack_webhook )  ) {
+                    SlackAlert::to( $tenant->slack_webhook )->blocks([
+                        self::addBlock( 'header', ":red_circle: Website is down!" ),
+                        self::addBlock( 'section', $monitor->uptime_check_failure_reason ),
+                        self::addBlock( 'divider' ),
+                        self::addBlock( 'section', "Website " . $monitor->url . " is down." ),   
+                        self::addBlock( 'divider' ),
+                    ]);
+                }
+            }
+        }
+    
     }
 
-    public static function sendPHPErrorsFound( Site $site, $count = 0, $type = 'fatal' )
-    {
-        if ( !$site ) {
-            return false;
-        }
+    // public static function sendPHPErrorsFound( Site $site, $count = 0, $type = 'fatal' )
+    // {
+    //     if ( !$site ) {
+    //         return false;
+    //     }
         
-        // @todo webhook needs to be loaded from the current Team/Workspace related
-        SlackAlert::to('https://hooks.slack.com/services/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')->blocks([
-            self::addBlock( 'header', ":red_circle: Some PHP errors has been found in the log for " . $site->name ),
-            self::addBlock( 'section', "During our last scan, we found " . $count . " errors of type - " . $type ),
-            self::addBlock( 'divider' ),
-            self::addBlock( 'section', "Check your dashboard for  " . $site->url . " for more information." ),
+    //     // @todo webhook needs to be loaded from the current Team/Workspace related
+    //     SlackAlert::to('https://hooks.slack.com/services/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')->blocks([
+    //         self::addBlock( 'header', ":red_circle: Some PHP errors has been found in the log for " . $site->name ),
+    //         self::addBlock( 'section', "During our last scan, we found " . $count . " errors of type - " . $type ),
+    //         self::addBlock( 'divider' ),
+    //         self::addBlock( 'section', "Check your dashboard for  " . $site->url . " for more information." ),
            
-            [
-                "type" => "section",
-                "fields" => [
-                    [
-                        "type" => "mrkdwn",
-                        "text" => "*Status:*\n Found some issues"
-                    ],
-                    [
-                        "type" => "mrkdwn",
-                        "text" => "*Errors:*\n" . $count . " " . $type . " errors found."
-                    ]
-                ]
-            ],  
-            self::addBlock( 'divider' ),
-        ]);
-    }
+    //         [
+    //             "type" => "section",
+    //             "fields" => [
+    //                 [
+    //                     "type" => "mrkdwn",
+    //                     "text" => "*Status:*\n Found some issues"
+    //                 ],
+    //                 [
+    //                     "type" => "mrkdwn",
+    //                     "text" => "*Errors:*\n" . $count . " " . $type . " errors found."
+    //                 ]
+    //             ]
+    //         ],  
+    //         self::addBlock( 'divider' ),
+    //     ]);
+    // }
 
 
     public static function addBlock( string $type = 'section', $text = 'not available' )

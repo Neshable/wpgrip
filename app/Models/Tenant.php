@@ -17,6 +17,10 @@ class Tenant extends Model
         'name',
         'uuid',
         'is_name_auto_generated',
+        'enable_slack',
+        'slack_webhook',
+        'enable_email',
+        'email',
         'created_by',
     ];
 

@@ -8,12 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Artisan;
 
 use App\Enums\SiteStatus;
 
 use Filament\Facades\Filament; 
-
-
 
 class Site extends Model
 {
@@ -66,52 +65,49 @@ class Site extends Model
                 'site_id' => $site->id,
             ]);
 
-            // // Create monitor model if this is enabled.
-            // if ( $site->uptime_monitor ) {
-                
-            //     $monitor = UptimeMonitor::where('url', trim($site->url, '/'))->first();
+            // Create monitor model if this is enabled.
+            if ( $site->uptime_monitor ) {
+                // Check to make sure we don't have monitors
+                $monitor = UptimeMonitor::where('site_id', $site->id)->first();
 
-            //     if ( !$monitor ) {
+                if ( !$monitor ) {
                     
-            //         $monitor = UptimeMonitor::create([
-            //             'url' => trim($site->url, '/'),
-            //             'look_for_string' => '',
-            //             'uptime_check_method' => 'head',
-            //             'certificate_check_enabled' => true,
-            //             'site_id' =>  $site->id,
-            //             'uptime_check_interval_in_minutes' => config('uptime-monitor.uptime_check.run_interval_in_minutes'),
-            //         ]);
+                    $monitor = UptimeMonitor::create([
+                        'url' => trim($site->url, '/'),
+                        'look_for_string' => '',
+                        'uptime_check_method' => 'head',
+                        'certificate_check_enabled' => true,
+                        'site_id' =>  $site->id,
+                        'uptime_check_interval_in_minutes' => config('uptime-monitor.uptime_check.run_interval_in_minutes'),
+                    ]);
 
-            //         if ( $monitor->id ) {
-            //             // Save both models.
-            //             $site->monitor_id =  $monitor->id;
-            //             $site->save();
-            //             // Later decide which to remove
-            //             $monitor->site_id =  $site->id;
-            //             $monitor->save();
-            //             // Check the uptime
-            //             Artisan::call('monitor:check-uptime');
+                    if ( $monitor->id ) {
+                        // Check the uptime
+                        Artisan::call('monitor:check-uptime');
+                        Artisan::call('monitor:check-certificate');
+                    }
+                }
 
-            //         }
-            //     }
+            }  
 
-            // }  else {
+        });
 
-            //     $monitor = UptimeMonitor::where('url', trim($site->url, '/'))->first();
-            //     if ( $monitor ) {
-            //         $monitor->delete();
-            //         $site->monitor_id = null;
-            //         $site->save();
-            //     }
-                
+         // Hook on save
+         static::saved(function ($site) {
 
-            //     if (! $monitor) {
-            //         // $this->error("Monitor {$url} is not configured");
-            //         // return;
-            //     }
-
+            //  // Get the request instance.
+            //  $request = request();
+            
+            
+            // // Fetch the related `site_meta` model.
+            // if( $request->board_type && $request->board_url ) { 
+            //     // Assign board properties.
+            //     $site->sitemeta->board_type = $request->board_type;
+            //     $site->sitemeta->board_url = $request->board_url;
+            //     // Save the `site_meta` model.
+            //     $site->sitemeta->save();
             // }
-
+           
         });
     }
 
@@ -156,19 +152,22 @@ class Site extends Model
      *
      * @return void
      */
-    // public function monitors()
-    // {
-    //     return $this->hasMany(UptimeMonitor::class);
-    // }
+    public function monitors()
+    {
+       
+        return $this->hasMany(UptimeMonitor::class);
+    }
 
 
-    // /**
-    //  * Get the monitor for this site.
-    //  */
-    // public function monitor(): BelongsTo
-    // {
-    //     return $this->BelongsTo(Monitor::class);
-    // }
+    /**
+     * Get the main monitor for this site.
+     */
+    public function get_main_monitor()
+    {
+        $monitor = UptimeMonitor::where('site_id', $this->id )->where('type', 'main' )->first();
+        
+        return $monitor;
+    }
 
 
 
