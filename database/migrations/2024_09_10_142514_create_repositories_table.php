@@ -31,6 +31,7 @@ return new class extends Migration
             $table->foreignId('site_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('repository_id')->nullable()->constrained()->onDelete('cascade');
             $table->boolean('is_active')->nullable();
+            $table->boolean('auto_deploy')->nullable();
             $table->string('status')->nullable();
             $table->string('path');
             $table->string('branch');

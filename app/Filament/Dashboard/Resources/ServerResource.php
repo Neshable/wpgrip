@@ -64,11 +64,11 @@ class ServerResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->groups([
-                'provider',
-                'type',
-            ])
-            ->defaultGroup('type')
+            // ->groups([
+            //     'provider',
+            //     'type',
+            // ])
+            // ->defaultGroup('type')
             ->deferLoading()
             ->columns([
                 // Tables\Columns\Layout\Stack::make([

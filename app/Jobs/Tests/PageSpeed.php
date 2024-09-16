@@ -65,7 +65,7 @@ class PageSpeed implements ShouldQueue
         $this->strategy = $strategy;
     }
 
-
+ 
     /**
      * Execute the job.
      */

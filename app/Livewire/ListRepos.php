@@ -54,39 +54,43 @@ class ListRepos extends Component implements HasForms, HasTable
             ->relationship( fn (): BelongsToMany => $this->site_model->repositories() )
             ->paginated(false)
             ->columns([
-                // Tables\Columns\TextColumn::make('status')
-                // ->badge()
-                // ->color(fn (string $state): string => match ($state) {
-                //     'draft' => 'gray',
-                //     'problems' => 'warning',
-                //     'active' => 'success',
-                //     'disconnected' => 'danger',
-                //     default =>'success'
-                // }),
+            Tables\Columns\TextColumn::make('name')
+                ->label('Name')
+                ->sortable(),
+            Tables\Columns\TextColumn::make('provider')
+                ->badge()
+                ->icon(fn (string $state): string => match ($state) {
+                    'bitbucket' => 'icon-bitbucket',
+                    'github' => 'icon-github'
+                }),
+            Tables\Columns\TextColumn::make('pivot.path')
+                ->label('Path'),
+        
+            Tables\Columns\IconColumn::make('pivot.is_active')
+                ->label('Active')
+                ->boolean(),
+            Tables\Columns\TextColumn::make('pivot.branch')
+                ->label('Branch'),
+            Tables\Columns\ToggleColumn::make('pivot.auto_deploy')
+                ->label('Auto Deploy')
+                // ->updateState(function ($state) {
+                //     dd($state);
+                // })
+                ->updateStateUsing(function ($record, $state) {
+                    // dd($record->id);
+                    // $record->auto_deploy = $state;
+                    // $record->save();
 
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Name')
-                    ->sortable(),
+                    $record->sites()->updateExistingPivot($this->site_model->id, [
+                        'auto_deploy' => $state,
+                    ]);
 
-                Tables\Columns\TextColumn::make('pivot.path')
-                    ->label('Server Path')
-                    ->sortable(),
-                
-                Tables\Columns\TextColumn::make('pivot.branch')
-                    ->label('Branch')
-                    ->sortable(),
-                    
-                Tables\Columns\TextColumn::make('provider')
-                    ->badge()
-                    ->icon(fn (string $state): string => match ($state) {
-                        'bitbucket' => 'icon-bitbucket',
-                        'github' => 'icon-github'
-                    }),
-
-                Tables\Columns\TextColumn::make('last_pull')
-                    ->dateTime()
-                    ->sortable()
-                    ->since(),        
+                }),
+            Tables\Columns\TextColumn::make('last_pull')
+                ->dateTime()
+                ->label('Last sync')
+                ->sortable()
+                ->since(),
          
             ])
             ->recordUrl(

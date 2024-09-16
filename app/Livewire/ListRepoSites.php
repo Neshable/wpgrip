@@ -53,15 +53,10 @@ class ListRepoSites extends Component implements HasForms, HasTable
             ->relationship( fn (): BelongsToMany => $this->repo_model->sites() )
             ->paginated(false)
             ->columns([
-            Tables\Columns\TextColumn::make('name')
-                ->label('Site Name'),
-
-                
-            
-            
-            Tables\Columns\TextColumn::make('url')
-                ->label('URL'),
-
+            Tables\Columns\ViewColumn::make('name')
+                ->view('filament.tables.columns.sitename'),
+            // Tables\Columns\TextColumn::make('url')
+            //     ->label('URL'),
             Tables\Columns\TextColumn::make('path')
                 ->label('Path'),
             Tables\Columns\IconColumn::make('is_active')
@@ -69,6 +64,21 @@ class ListRepoSites extends Component implements HasForms, HasTable
                 ->boolean(),
             Tables\Columns\TextColumn::make('branch')
                 ->label('Branch'),
+            Tables\Columns\ToggleColumn::make('auto_deploy')
+                ->label('Auto Deploy')
+                // ->updateState(function ($state) {
+                //     dd($state);
+                // })
+                ->updateStateUsing(function ($record, $state) {
+                    // dd($record->id);
+                    // $record->auto_deploy = $state;
+                    // $record->save();
+
+                    $this->repo_model->sites()->updateExistingPivot($record->id, [
+                        'auto_deploy' => $state,
+                    ]);
+
+                }),
             Tables\Columns\TextColumn::make('last_pull')
                             ->dateTime()
                             ->label('Last sync')
@@ -143,9 +153,9 @@ class ListRepoSites extends Component implements HasForms, HasTable
                 Tables\Actions\ActionGroup::make([  
                     // Tables\Actions\DeleteAction::make(),
                     Action::make('detach')
-                        ->label('Detach')
+                        ->label('Remove')
                         ->requiresConfirmation()
-                        ->modalHeading('Detach repository?')
+                        ->modalHeading('Remove repository?')
                         ->modalDescription('After this action the repository will remain on the server but will be deleted from here.')
                         ->modalSubmitActionLabel('Yes, detach')
                         ->action(function ( Site $site ) {

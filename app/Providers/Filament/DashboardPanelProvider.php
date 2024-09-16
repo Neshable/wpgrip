@@ -45,7 +45,7 @@ class DashboardPanelProvider extends PanelProvider
             ->darkMode(false)
             ->unsavedChangesAlerts()
             ->maxContentWidth('screen-2xl')
-            ->sidebarFullyCollapsibleOnDesktop()
+            // ->sidebarFullyCollapsibleOnDesktop()
             ->userMenuItems([
                 MenuItem::make()
                     ->label(__('Admin Panel'))
@@ -96,8 +96,9 @@ class DashboardPanelProvider extends PanelProvider
                 // 'warning' => Color::Red,
             ])
             ->brandLogoHeight('3rem')
-            ->brandLogo(asset('images/logo-dark.svg'))
-            ->darkModeBrandLogo(asset('images/logo-light.svg'))
+            // ->brandLogo(asset('images/logo-dark.svg'))
+            ->brandLogo(asset('images/logo-light.png'))
+            ->darkModeBrandLogo(asset('images/logo-light.png'))
             ->viteTheme('resources/css/filament/dashboard/theme.css')
             ->discoverWidgets(in: app_path('Filament/Dashboard/Widgets'), for: 'App\\Filament\\Dashboard\\Widgets')
             ->widgets([

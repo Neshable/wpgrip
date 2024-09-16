@@ -127,31 +127,6 @@
         </div>
     </div>
 
-    
-    <div class="w-full rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
-        <div class="px-6 py-4 border-b">
-            <h2 class="text-2xl">
-                Server/Hosting Stats
-            </h2>
-            <p class="text-sm text-gray-500">
-                Overview of the hosting environment.
-            </p>
-        </div>
-        <div>
-            @php
-            $fields = array( 
-                'Server Name' => $this->getRecord()->server->name,
-                'Server IP' => $this->getRecord()->server->ip,
-                'Server CPU Cores' => $this->getRecord()->server->cpu_cores,
-                'Server Hard Drive Capacity' => $this->getRecord()->cpu_cores,
-            );
-            @endphp 
-
-            {{-- @include('site.listing.simple', ['key' => 'Last synced', 'value' => $staging_site->last_synced ]) --}}
-
-            @each('site.listing.simple', $fields, 'field') 
-        </div>
-    </div>
 
     
 @endsection

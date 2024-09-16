@@ -202,7 +202,7 @@ class Site extends Model
     public function repositories()
     {
         return $this->belongsToMany(Repository::class, 'site_repositories')
-                    ->withPivot(['id', 'path', 'branch'])
+                    ->withPivot(['id', 'path', 'branch', 'auto_deploy', 'last_pull'])
                     ->withTimestamps();
     }
 
