@@ -43,7 +43,7 @@
           
            <div class="flex items-center gap-4 ml-auto">
                
-                @if(auth()->user()->can('update Repository'))
+                {{-- @if(auth()->user()->can('update Repository')) --}}
                 <x-filament::button
                     :href="route( 'filament.dashboard.resources.repositories.edit', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )" 
                     tag="a"
@@ -53,7 +53,7 @@
                 >
                 Settings
                 </x-filament::button>
-                @endif
+                {{-- @endif --}}
        
            </div>
         </div>

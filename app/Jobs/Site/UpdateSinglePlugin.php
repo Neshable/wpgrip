@@ -102,6 +102,7 @@ class UpdateSinglePlugin implements ShouldQueue
          {
              $this->site->plugins()->updateExistingPivot( $this->plugin->id, array(
                          'version' => $this->version,
+                         'is_vulnerable' => false,
                          'update_version' => null
                  ) );
          }

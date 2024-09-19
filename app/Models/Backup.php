@@ -37,6 +37,13 @@ class Backup extends Model
         return $this->belongsTo(Site::class);
     }
 
+    public function snapshots()
+    {
+        return $this->hasMany(Snapshot::class);
+    }
+
+    
+
       /**
      * Get the owner of this site
      */

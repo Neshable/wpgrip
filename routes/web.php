@@ -7,6 +7,8 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\WebhookController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,8 +23,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    // return view('home');
-    return view('coming-soon.vertical');
+   return view('home');
+    return view('pages.landing-page');
+    // return view('coming-soon.vertical');
     
 })->name('home')->middleware('sitemapped');
 
@@ -182,3 +185,6 @@ Route::get('/invoice/preview', [
     App\Http\Controllers\InvoiceController::class,
     'preview',
 ])->name('invoice.preview');
+
+// Repo webhook trigger
+Route::post('/webhook/git/{unique_token}', [ WebhookController::class, 'handleWebhook' ]);

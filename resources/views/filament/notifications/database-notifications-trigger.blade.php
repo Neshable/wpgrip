@@ -1,5 +1,11 @@
+{{-- @livewire('database-notifications') --}}
+
 <div class="mr-2">
-@if ( $unreadNotificationsCount == 0 )
+    {{-- @livewire('notifications') --}}
+
+    
+
+    {{-- @if ( $unreadNotificationsCount == 0 )
 <x-filament::icon-button
     alias="panels::topbar.open-database-notifications-button"
     icon="heroicon-o-bell"
@@ -19,5 +25,6 @@
         {{ $unreadNotificationsCount }}
     </x-slot>
 </x-filament::icon-button>
-@endif
+@endif --}}
+
 </div>

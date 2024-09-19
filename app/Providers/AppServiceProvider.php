@@ -10,6 +10,8 @@ use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\ServiceProvider;
 
+use Filament\Notifications\Livewire\DatabaseNotifications;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -42,5 +44,8 @@ class AppServiceProvider extends ServiceProvider
         FilamentAsset::register([
             Js::make('components-script', __DIR__.'/../../resources/js/components.js'),
         ]);
+
+        
+        // DatabaseNotifications::trigger('filament/notifications/database-notifications-trigger');
     }
 }

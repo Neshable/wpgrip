@@ -87,6 +87,7 @@ class DashboardPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
+            ->databaseNotifications()
             ->colors([
                 'primary' => Color::Blue,// '#1654D1',
                 'danger' => Color::Rose,
@@ -121,9 +122,9 @@ class DashboardPanelProvider extends PanelProvider
             ->renderHook('panels::user-menu.before', function () {
                 return view('filament/menus/top-right-menu');
             })
-            // ->renderHook('panels::user-menu.before', function () {
-            //     return Illuminate\Support\Facades\Blade::render('@livewire(\'database-notifications\')');
-            // })
+            ->renderHook('panels::user-menu.before', function () {
+                return view('filament/notifications/database-notifications-trigger');
+            })
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label('Team')

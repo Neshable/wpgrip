@@ -5,6 +5,7 @@ body.fi-panel-dashboard {
     
     .fi-sidebar {
         background: #f3f4f6;
+        max-width: 220px;
     }
     .fi-sidebar-header {
         background: #222937;

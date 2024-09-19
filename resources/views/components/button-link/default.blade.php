@@ -1,8 +1,9 @@
 @props(['elementType' => 'a'])
 
 @php
-    $class = 'inline-block drop-shadow-xl cursor-pointer leading-6 focus:ring-4 focus:outline-none focus:ring-secondary-300 rounded-full text-sm font-medium px-4 py-2 text-center transition hover:scale-103 ';
+    $class = 'inline-block drop-shadow-xl cursor-pointer justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md bg-primary-600 hover:bg-primary-700 md:py-4 md:text-lg md:px-10';
 @endphp
+
 
 @if($elementType === 'a')
 <a

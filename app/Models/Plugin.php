@@ -23,6 +23,6 @@ class Plugin extends Model
     public function sites(): BelongsToMany
     {
         return $this->belongsToMany(Site::class, 'plugin_site')
-            ->withPivot(['version', 'update_version', 'status']);
+            ->withPivot(['version', 'update_version', 'status', 'is_vulnerable', 'vuln_ids']);
     }
 }

@@ -15,6 +15,7 @@
         "cknow/laravel-money": "^8.0",
         "codeisawesomehq/filament-tinyeditor": "^1.4",
         "filament/filament": "^3.2",
+        "filament/notifications": "^3.2",
         "filament/spatie-laravel-media-library-plugin": "^3.2",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "^3.4",

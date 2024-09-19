@@ -149,6 +149,17 @@ class Tenant extends Model
         return $this->hasMany(Site::class);
     }
 
+    public function backups()
+    {
+        return $this->hasMany(Backup::class);
+    }
+
+    public function snapshots()
+    {
+        return $this->hasMany(Snapshot::class);
+    }
+
+
     public function clients()
     {
         return $this->hasMany(Client::class);

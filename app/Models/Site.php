@@ -190,10 +190,10 @@ class Site extends Model
     /**
      * Get the backups for this site.
      */
-    // public function backups(): HasMany
-    // {
-    //     return $this->hasMany(Backup::class);
-    // }
+    public function backups(): HasMany
+    {
+        return $this->hasMany(Backup::class);
+    }
 
 
     /**

@@ -75,22 +75,28 @@ class ListPlugins extends Component implements HasForms, HasTable
                     ->size(TextColumn\TextColumnSize::Medium)
                     ->weight(FontWeight::Medium)
                     ->label('Plugin Name')
-                    ->description(fn (Plugin $record): string => $record->description),
-                TextColumn::make('version')
+                    ->tooltip(fn (Plugin $record): string => $record->description),
+                    // ->description(fn (Plugin $record): string => $record->description),
+                TextColumn::make('status')
                     ->badge()
-                    ->size(TextColumn\TextColumnSize::Medium)
-                    ->weight(FontWeight::Medium)
-                    ->label('Current Version')
-                    ->color(fn (string $state): string => 'gray'),
-                Tables\Columns\IconColumn::make('is_vulnerable')
-                        ->boolean()
-                        ->label('Clean')
-                        ->trueIcon('heroicon-o-check-badge')
-                        ->falseIcon('heroicon-o-x-mark'),                
+                    ->color(fn (string $state): string => match ($state) {
+                        'inactive' => 'gray',
+                        'dropin' => 'warning',
+                        'active' => 'success',
+                    }),
+                ViewColumn::make('version')->view('filament.tables.columns.plugin-version'),
+                // TextColumn::make('version')
+                //     ->size(TextColumn\TextColumnSize::Medium)
+                //     ->weight(FontWeight::Medium)
+                //     ->label('Current Version')
+                //     ->color(fn (string $state): string => 'gray'),
                 TextColumn::make('update_version')
                     ->badge()
+                    ->color('success')
                     ->weight(FontWeight::Medium)
                     ->label('New version'),
+                 
+               
                     
                 
                 // ViewColumn::make('version')->view('filament.tables.columns.plugin-version'),

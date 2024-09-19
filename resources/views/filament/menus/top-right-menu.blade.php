@@ -42,6 +42,7 @@
 
 </x-filament::modal>
 
+@livewire('notifications')
 
 {{-- <div class="hidden sm:flex">
 

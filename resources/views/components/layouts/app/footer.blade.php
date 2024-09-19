@@ -1,4 +1,4 @@
-<footer class="bg-primary-500 text-white mt-12">
+<footer class=" bg-gradient-to-b from-white to-blue-100 text-gray-600 mt-12">
     <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
         <div class="md:flex md:justify-between">
             <div class="mb-6 md:mb-0">
@@ -6,21 +6,21 @@
                     <img src="{{asset(config('app.logo.light') )}}" class="h-10 me-3" alt="Logo" />
                 </a>
             </div>
-            <ul class="flex flex-wrap gap-6 text-primary-100 dark:text-gray-400 text-sm mt-2">
+            <ul class="flex flex-wrap gap-6 text-gray-600 dark:text-gray-400 text-sm mt-2">
                 <li class="mb-4">
-                    <a href="{{route('blog')}}" class="text-primary-100 hover:text-primary-50">{{ __('Blog') }}</a>
+                    <a href="{{route('blog')}}" class="text-gray-600 hover:text-primary-50">{{ __('Blog') }}</a>
                 </li>
                 <li class="mb-4">
-                    <a href="{{route('privacy-policy')}}" class="text-primary-100 hover:text-primary-50">{{ __('Privacy Policy') }}</a>
+                    <a href="{{route('privacy-policy')}}" class="text-gray-600 hover:text-primary-50">{{ __('Privacy Policy') }}</a>
                 </li>
                 <li>
-                    <a href="{{route('terms-of-service')}}" class="text-primary-100 hover:hover:text-primary-50">{{ __('Terms of Service') }}</a>
+                    <a href="{{route('terms-of-service')}}" class="text-gray-600 hover:hover:text-primary-50">{{ __('Terms of Service') }}</a>
                 </li>
             </ul>
         </div>
-        <hr class="my-6 border-primary-300 sm:mx-auto lg:my-8" />
+        <hr class="my-6 border-gray-300 sm:mx-auto lg:my-8" />
         <div class="sm:flex sm:items-center sm:justify-between">
-          <span class="text-xs text-primary-100 sm:text-center dark:text-gray-400">© {{ date('Y') }} <a href="/" class="hover:underline text-primary-100">{{ config('app.name') }}™</a>. {{ __('All rights reserved.') }}
+          <span class="text-xs text-gray-600 sm:text-center dark:text-gray-400">© {{ date('Y') }} <a href="/" class="hover:underline text-primary-100">{{ config('app.name') }}™</a>. {{ __('All rights reserved.') }}
           </span>
             <div class="flex gap-3 mt-4 sm:justify-center sm:mt-0">
                 @if (!empty(config('app.social_links.facebook')))

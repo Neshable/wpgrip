@@ -5,7 +5,8 @@
         <div class="text-md font-bold text-gray-500">
             {{ $getRecord()->version }} 
         </div>
-        @if ( $getRecord()->vulnerabilities )
+
+        @if ( $getRecord()->is_vulnerable )
         
         <x-filament::modal  width="4xl">
             <x-slot name="trigger">
@@ -25,87 +26,65 @@
             </x-slot>
         
             @php
-                $vulnerabilities = $getRecord()->vulnerabilities;
-                $vulnerabilities = json_decode( $vulnerabilities );
+                $vulnerabilities = $getRecord()->vuln_ids;
+                $vulnerabilities = json_decode($vulnerabilities, true);
+
+                $all_vulnerabilities = App\Models\Vulnerability::find($vulnerabilities);
             @endphp
         
-            @if ( $vulnerabilities && !empty( $vulnerabilities) )
-            @php
-                $formatted_vulnerabilities = $this->check_vulnerability_database($vulnerabilities, $getRecord()->version );
-            @endphp
-                @if ( $formatted_vulnerabilities )
-                <div>
-                    <h2>{{ count($formatted_vulnerabilities) }} vulnerabilities found</h2>
-        
-                
-                    @foreach ( $formatted_vulnerabilities as $vulnerabily )
-                    
-                    <div class="">
-                        <h3 class="fi-no-notification-title text-sm font-medium text-gray-950 dark:text-white">
-                            {{ $vulnerabily['name'] }}
-                        </h3>
-                    
-                        <p class="fi-no-notification-body text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            {{ $vulnerabily['description'] }}
-                        </p>
+            @if ( $all_vulnerabilities )
+  
+                <strong>{{ count($all_vulnerabilities) }} vulnerabilities found</strong>
+
+                @foreach ($all_vulnerabilities as $single)
+                    <div>
+                        <div class="mb-4 flex items-center p-5 leading-normal text-red-600 bg-red-100 rounded-lg" role="alert">
+                            {{ $single->name }}
+                        </div>
+            
+                        {{-- Decode the JSON impact field into a PHP array --}}
+                        @php
+                            $impact = json_decode($single->impact, true);
+                        @endphp
+            
+                        {{-- Check if impact is not an empty array --}}
+                        @if (!empty($impact))
+                            {{-- Check if CVSS information is available --}}
+                            @if (isset($impact['cvss']))
+                                <div class="mb-4">
+                                    <h4>CVSS Information:</h4>
+                                    <ul>
+                                        <li><strong>Version:</strong> {{ $impact['cvss']['version'] ?? 'N/A' }}</li>
+                                        <li><strong>Score:</strong> {{ $impact['cvss']['score'] ?? 'N/A' }}</li>
+                                        <li><strong>Severity:</strong> {{ $impact['cvss']['severity'] ?? 'N/A' }}</li>
+                                    </ul>
+                                </div>      
+                            @endif
+            
+                            {{-- Check if CWE information is available --}}
+                            @if (isset($impact['cwe']) && is_array($impact['cwe']))
+                                @foreach ($impact['cwe'] as $cwe)
+                                    <div class="mb-4">
+                                        <h4>CWE Information:</h4>
+                                        <p><strong>CWE ID:</strong> {{ $cwe['cwe'] ?? 'N/A' }}</p>
+                                        <p><strong>Name:</strong> {{ $cwe['name'] ?? 'N/A' }}</p>
+                                        <p><strong>Description:</strong> {{ $cwe['description'] ?? 'N/A' }}</p>
+                                    </div>
+                                @endforeach
+                            @endif
+                        @else
+                            <p>No detailed impact information available.</p>
+                        @endif
                     </div>
-        
-                    @endforeach
-                </div>
-                @endif
+                @endforeach
             @endif
+            {{-- <x-slot name="footer">
+                Source
+            </x-slot> --}}
         </x-filament::modal>
        
         @endif
         
     </div>
-    
-    <div class="flex items-center gap-2 text-sm mt-2">
-        @if ( $getRecord()->update_version )
-        <span class="inline-flex items-baseline">
 
-            <x-filament::modal  width="xl" icon="icon-plugins" :close-by-clicking-away="false">
-               
-                <x-slot name="trigger">
-                    <div class="px-1 py-1">
-                    
-                         New Version {{ $getRecord()->update_version }} 
-                
-                    </div>
-                   
-                </x-slot>
-            
-
-                <x-slot name="heading">
-                    Plugin update process
-                </x-slot>
-            
-                <x-slot name="description">
-                    Updating the plugin {{ $getRecord()->title }} to version {{ $getRecord()->update_version }} 
-                </x-slot>
-
-                <x-filament::button badge-color="success" size="lg" color="info" wire:click="mountTableAction('Update', '{{ $getRecord()->id }}')">
-                    Proceed with the update
-                    <x-slot name="badge">
-                        ver.{{ $getRecord()->update_version }} 
-                    </x-slot>
-
-                </x-filament::button>
-
-                {{ $getRecord()->vulnerabilities }}
-
-                <div wire:loading.delay.longer wire:target="mountTableAction('Update', '{{ $getRecord()->id }}')">
-                    Updating the plugin ... 
-                </div>
-            
-            {{-- <x-slot name="footer">
-                Backup is advised before making updares.
-            </x-slot> --}}
-                
-            </x-filament::modal>
-
-        </span>
-        
-        @endif
-    </div>
 </div>
