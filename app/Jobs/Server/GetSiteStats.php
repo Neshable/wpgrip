@@ -65,11 +65,11 @@ class GetSiteStats implements ShouldQueue
                 if ( !$ssh->login( $this->site->ssh_user, $key ) ) {
                     throw new \Exception('Login failed');
                 }
-            
+                $ssh->setKeepAlive(10);
                 // By default $ssh->exec() returns both stdout and stderr. To suppress stderr you can call QuiteMode
                 $ssh->enableQuietMode();
                 // $ssh->enablePTY();
-                $ssh->setTimeout(360);
+                $ssh->setTimeout(600);
                 // Brake down into tables. Here, we specify the maximum gzip compression level of 9:
                 $output = $ssh->exec('cd ' . $this->site->dir_path . ' && wp db export - | gzip -9');
 

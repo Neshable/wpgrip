@@ -2,9 +2,7 @@
 
 @section('content')
 
-    @include('site/single/headertemplate', [ 
-        'title' => 'Core',
-        'icon' => 'icon-wordpress' ])
+    @include('site.single.menus.updates-page-submenu')
 
     @livewire('get-wordpress-info', [ 'site' => $this->getRecord() ])
     

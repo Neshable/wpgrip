@@ -13,7 +13,10 @@ class ListRepositories extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+            ->outlined()
+            ->label('Add a repository'),
         ];
     }
+
 }

@@ -2,9 +2,7 @@
 
 @section('content')
 
-    @include('site/single/headertemplate', [ 
-        'title' => 'Tools',
-        'icon' => 'heroicon-m-wrench' ])
+    @include('site.single.menus.tools-page-submenu')
 
      <x-filament::section> 
         

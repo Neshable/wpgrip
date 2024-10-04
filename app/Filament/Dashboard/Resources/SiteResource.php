@@ -20,6 +20,8 @@ use App\Enums\HostingProvider;
 use App\Enums\ServerType;
 use App\Enums\BoardType;
 
+use Illuminate\Support\Facades\Auth;
+
 use App\Jobs\Site\SyncSiteStats;
 use Filament\Notifications\Notification;
 
@@ -27,6 +29,10 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Blade;
 use Filament\Infolists\Components\IconEntry;
 use Illuminate\Contracts\Support\Htmlable;
+
+use Filament\Support\Enums\FontWeight;
+
+use Filament\Notifications\Actions\Action;
 
 class SiteResource extends Resource
 {
@@ -187,8 +193,7 @@ class SiteResource extends Resource
                     Add new site
                 </x-filament::button>
             BLADE)))
-            ->columnSpan('full')  
-
+            ->columnSpan('full')
         ]);
     }
 
@@ -271,11 +276,12 @@ class SiteResource extends Resource
             ]),
            
             ])
-        ->heading('All available websites in this team')
+        // ->heading('All available websites in this team')
         // ->description('Manage all ')
-        // ->headerActions([
-        //     Action::make('create')
-        //     ])
+        ->headerActions([
+            //Tables\Actions\Action::make('create')
+                
+            ])
         ->emptyStateHeading('No sites found')
         ->emptyStateDescription('You haven\'t added any website yet.')
         ->bulkActions([
@@ -296,6 +302,16 @@ class SiteResource extends Resource
             //     ->extraImgAttributes(['loading' => 'lazy'])
             //     ->width(250)
             //     ->height(150),
+            Tables\Columns\ViewColumn::make('status')
+            ->label(false)
+            ->view('filament.tables.columns.siteinfo'),
+            // Tables\Columns\IconColumn::make('ssh_connection')
+            //     ->label(false)
+            //     ->boolean()
+            //     ->size(Tables\Columns\IconColumn\IconColumnSize::Small)
+            //     ->tooltip(fn (Site $record): string => $record->ssh_connection ? 'Connected' : 'Issue with SSH connection' )
+            //     ->trueIcon('heroicon-o-check-circle')
+            //     ->falseIcon('heroicon-o-exclamation-circle'),
             Tables\Columns\ImageColumn::make('')
                 ->circular()
                 ->size(20)
@@ -309,17 +325,29 @@ class SiteResource extends Resource
                 ->description(fn (Site $record): string => $record->server->ip )
                 ->copyable()
                 ->sortable(),
+            Tables\Columns\ViewColumn::make('stack')
+                ->label('Stack')
+                ->view('filament.tables.columns.stack'),
             Tables\Columns\ViewColumn::make('performance')->view('filament.tables.columns.sitespeed'),
-            Tables\Columns\ViewColumn::make('status')->view('filament.tables.columns.siteinfo'),
+            
    
 
             // Tables\Columns\TextColumn::make('server.provider')
             //     ->label('Hosted')
             //     ->badge(),
-            Tables\Columns\ViewColumn::make('stack')->view('filament.tables.columns.stackinfo'), 
-            Tables\Columns\ViewColumn::make('PHP')
-                ->label('PHP')
-                ->view('filament.tables.columns.phpversion'),  
+        
+            // Tables\Columns\TextColumn::make('wp_ver')
+            //     ->icon('icon-wordpress')
+            //     ->weight(FontWeight::Bold)
+            //     ->label('WP'),
+            // Tables\Columns\TextColumn::make('php_ver')
+            //     ->weight(FontWeight::Bold)
+            //     ->label('PHP'),
+            
+            // Tables\Columns\ViewColumn::make('stack')->view('filament.tables.columns.stackinfo'), 
+            // Tables\Columns\ViewColumn::make('PHP')
+            //     ->label('PHP')
+            //     ->view('filament.tables.columns.phpversion'),  
             // Tables\Columns\TextColumn::make('client.name')->label('Owner')->sortable(),
             // Tables\Columns\IconColumn::make('status')
             //     ->icon(fn (string $state): string => match ($state) {
@@ -344,11 +372,13 @@ class SiteResource extends Resource
                     return $record->getFormatedDBSize();
                 })
                 ->sortable(),
+                
             Tables\Columns\TextColumn::make('db_size')
                 ->label('DB Size')
                 ->getStateUsing(function (Site $record) {
                 return $record->getDBSize();
                 }),
+
             Tables\Columns\TextColumn::make('updated_at')
                 ->label('Last sync')
                 ->since()
@@ -366,6 +396,36 @@ class SiteResource extends Resource
         return [
             //
         ];
+    }
+
+    protected function beforeCreate(): void
+    {
+        $user = Auth::user();
+        $this->halt();
+        $tenant = Filament::getTenant(); 
+        
+        $siteCount = Site::where('tenant_id', $tenant->id)->count();
+            if ($siteCount >= 1) {
+                Notification::make()
+                ->warning()
+                ->title('You don\'t have an active subscription!')
+                ->body('Choose a plan to continue.')
+                ->persistent()
+                ->actions([
+                    Action::make('subscribe')
+                        ->button()
+                        ->url(route('subscribe'), shouldOpenInNewTab: true),
+                ])
+                ->send();
+        
+                $this->halt();
+            }
+        
+
+        // if (! auth()->user()->team->subscribed()) {
+           
+        // }
+
     }
 
     public static function getPages(): array
@@ -391,9 +451,11 @@ class SiteResource extends Resource
 
             // 'backups' => Pages\ShowBackups::route('/{record}/backups'), 
             // 'backups_settings' => Pages\ShowBackupsSettings::route('/{record}/backups/settings'), 
-
-            'core' => Pages\Core::route('/{record}/core'), 
+            // Updates tab
             'plugins' => Pages\Plugins::route('/{record}/plugins'), 
+            'themes' => Pages\Themes::route('/{record}/themes'), 
+            'core' => Pages\Core::route('/{record}/core'), 
+            
             // Tests
             'tests' => Pages\Tests::route('/{record}/tests'), 
             // Eror monitoring

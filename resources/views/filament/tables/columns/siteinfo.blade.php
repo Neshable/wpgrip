@@ -5,11 +5,11 @@
 
      <x-filament::icon
     x-tooltip="{
-        content: '{{ $getRecord()->getConnectionStatus() ? 'Connection is established.' : 'Issue with connection. Please check.' }}',
+        content: '{{ $getRecord()->getConnectionStatus() ? 'Connection is established.' : 'Issue with SSH connection.' }}',
         theme: $store.theme,
     }"
-    icon="heroicon-o-check-circle"
-    class="h-5 w-5 {{ $getRecord()->getConnectionStatus() ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400' }}"
+    icon="{{ $getRecord()->getConnectionStatus() ? 'heroicon-o-check-circle' : 'heroicon-o-exclamation-circle' }}"
+    class="h-5 w-5 {{ $getRecord()->getConnectionStatus() ? 'text-green-600 dark:text-green-400' : 'text-danger-600 dark:text-danger-400' }}"
     />
 
     
@@ -19,7 +19,7 @@
             theme: $store.theme,
         }"
         icon="heroicon-m-shield-check"
-        class="h-5 w-5 {{ $monitor ? ($monitor->certificate_status == 'valid' ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400') : 'text-gray-500 dark:text-gray-400'}}"
+        class="h-5 w-5 {{ $monitor ? ($monitor->certificate_status == 'valid' ? 'text-green-600 dark:text-green-400' : 'text-danger-600 dark:text-danger-400') : 'text-gray-500 dark:text-gray-400'}}"
     />
 
     <x-filament::icon
@@ -28,7 +28,7 @@
             theme: $store.theme,
         }"
         icon="heroicon-m-arrow-trending-up"
-        class="h-5 w-5 {{ $monitor ? ($monitor->uptime_status == 'up' ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400') : 'text-gray-500 dark:text-gray-400'}}"
+        class="h-5 w-5 {{ $monitor ? ($monitor->uptime_status == 'up' ? 'text-green-600 dark:text-green-400' : 'text-danger-600 dark:text-danger-400') : 'text-gray-500 dark:text-gray-400'}}"
     />
     {{--
     <x-filament::icon
@@ -37,7 +37,7 @@
             theme: $store.theme,
         }"
         icon="icon-backups"
-        class="h-5 w-5 {{ $getRecord()->backups() ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400'}}"
+        class="h-5 w-5 {{ $getRecord()->backups() ? 'text-green-600 dark:text-green-400' : 'text-danger-600 dark:text-danger-400'}}"
     /> --}}
 
     {{-- <x-filament::icon
@@ -46,7 +46,7 @@
             theme: $store.theme,
         }"
         icon="icon-git"
-        class="h-5 w-5 {{ $getRecord()->backups() ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400'}}"
+        class="h-5 w-5 {{ $getRecord()->backups() ? 'text-green-600 dark:text-green-400' : 'text-danger-600 dark:text-danger-400'}}"
     /> --}}
 
     

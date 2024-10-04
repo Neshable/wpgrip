@@ -5,6 +5,10 @@ use Illuminate\Foundation\Configuration\Middleware;
 
 use Illuminate\Console\Scheduling\Schedule;
 use App\Jobs\Site\SyncAllSitesStats;
+use App\Jobs\External\GetVulnerabilityDatabase;
+
+use App\Jobs\Global\CheckAllVulnerabilities;
+
 
 return Illuminate\Foundation\Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -28,6 +32,10 @@ return Illuminate\Foundation\Application::configure(basePath: dirname(__DIR__))
     ->withSchedule(function (Schedule $schedule) {
         // Do a sync for all sites.
         $schedule->job(new SyncAllSitesStats)->daily();
+        $schedule->job(new GetVulnerabilityDatabase)->dailyAt('13:00');
+        // $schedule->job(new CheckAllVulnerabilities)->dailyAt('14:00');
+
+        // Schedule::exec('node /home/forge/script.js')->daily();
     })
     ->withExceptions(function (Exceptions $exceptions) {
 

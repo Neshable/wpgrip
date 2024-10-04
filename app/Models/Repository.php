@@ -17,6 +17,7 @@ class Repository extends Model
     protected $fillable = [
         'name',
         'site_id',
+        'type',
         'path',
         'provider',
         'remote',

@@ -13,7 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 
 use Filament\Notifications\Notification;
 use Filament\Facades\Filament;
@@ -77,10 +77,11 @@ class ServerResource extends Resource
                 //     ->badge(),
                 //     Tables\Columns\ViewColumn::make('info')->view('filament.tables.columns.serverinfo'),              
                 // ]),
-                 Tables\Columns\TextColumn::make('name')
+                
+                Tables\Columns\TextColumn::make('name')
                     ->label('Friendly Name')
-                    ->sortable(),
-                 Tables\Columns\TextColumn::make('provider')
+                    ->sortable(), 
+                Tables\Columns\TextColumn::make('provider')
                     ->badge(),
                 Tables\Columns\TextColumn::make('ip')
                     ->copyable()
@@ -94,7 +95,8 @@ class ServerResource extends Resource
                     ->label('Private IP')
                     ->icon('heroicon-m-clipboard-document'),
 
-                Tables\Columns\TextColumn::make('ssh_port'),
+                Tables\Columns\TextColumn::make('ssh_port')
+                    ->label('SSH Port'),
                 Tables\Columns\TextColumn::make('sites_count')
                     ->badge()
                     ->label('Sites')

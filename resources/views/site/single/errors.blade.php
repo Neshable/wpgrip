@@ -6,12 +6,8 @@
     $tenant = Filament\Facades\Filament::getTenant(); 
 @endphp
 
-    @include('site/single/headertemplate', [ 
-        'title' => 'PHP Errors',
-        'icon' => 'heroicon-m-computer-desktop' ])
+    @include('site.single.menus.security-page-submenu')
 
-
-    {{-- @include('site.single.menus.test-page-menu') --}}
 
     <x-filament::section>
         <x-slot name="heading">

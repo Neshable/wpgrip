@@ -2,9 +2,7 @@
 
 @section('content')
 
-    @include('site/single/headertemplate', [ 
-        'title' => 'Plugins',
-        'icon' => 'icon-plugins' ])
+    @include('site.single.menus.updates-page-submenu')
 
     @if ( $this->getRecord()->is_staging )
 

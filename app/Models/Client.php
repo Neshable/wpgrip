@@ -31,10 +31,10 @@ class Client extends Model
      /**
      * Get the websites for this client.
      */
-    // public function sites()
-    // {
-    //     return $this->hasMany(Site::class);
-    // }
+    public function sites()
+    {
+        return $this->hasMany(Site::class);
+    }
 
     /**
      * Get the owner of this site

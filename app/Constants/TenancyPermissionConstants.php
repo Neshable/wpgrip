@@ -19,6 +19,18 @@ class TenancyPermissionConstants
     public const PERMISSION_INVITE_MEMBERS = 'tenancy: invite members';
     public const PERMISSION_MANAGE_TEAM = 'tenancy: manage team';
     public const PERMISSION_UPDATE_TENANT_SETTINGS = 'tenancy: update tenant settings';
+    // Sites
+    public const PERMISSION_CREATE_SITES = 'tenancy: create sites';
+    public const PERMISSION_UPDATE_SITES = 'tenancy: update sites';
+    public const PERMISSION_DELETE_SITES = 'tenancy: delete sites';
+    public const PERMISSION_VIEW_SITES = 'tenancy: view sites';
+    
+    // Client
+    public const PERMISSION_CREATE_CLIENTS = 'tenancy: create clients';
+    public const PERMISSION_UPDATE_CLIENTS = 'tenancy: update clients';
+    public const PERMISSION_DELETE_CLIENTS = 'tenancy: delete clients';
+    public const PERMISSION_VIEW_CLIENTS = 'tenancy: view clients';
+    
 
     public static function getRoles(): array
     {

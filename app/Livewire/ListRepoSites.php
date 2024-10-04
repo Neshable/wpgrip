@@ -98,6 +98,8 @@ class ListRepoSites extends Component implements HasForms, HasTable
                     ->form([
                             Forms\Components\TextInput::make('path')
                                 ->label('Absolute path to deploy')
+                                ->helperText('Make sure the directory doesn\'t exist. It will be created with the first deploy.')
+                                ->placeholder('/home/webapps/yourwebiste/')
                                 ->maxLength(255),
 
                             Forms\Components\Select::make('site_id')
@@ -114,15 +116,16 @@ class ListRepoSites extends Component implements HasForms, HasTable
                                 ),
                             Forms\Components\TextInput::make('branch')
                                 ->label('Branch to use')
+                                ->helperText('Usually master or main, but you can use any of the existing branches')
                                 ->maxLength(255),
                             
                     ])
+                    ->modalSubmitActionLabel('Connect Site')
                     ->createAnother( false )
                     ->before(function (array $data) {
                        // dd($data);
                         // Runs before the form fields are saved to the database.
                     })
-                    
                     ->action(function (array $data ): ?Repository  {
                         if ( $this->repo_model && $this->repo_model->id )
                         {   

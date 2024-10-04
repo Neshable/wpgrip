@@ -17,6 +17,7 @@ return new class extends Migration
             $table->timestamps();
             $table->foreignId('site_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('name')->nullable();
+            $table->string('type')->nullable();
             $table->string('provider')->nullable();
             $table->string('webhook')->nullable();
             $table->string('description')->nullable();

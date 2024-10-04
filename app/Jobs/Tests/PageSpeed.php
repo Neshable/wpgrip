@@ -3,7 +3,7 @@
 namespace App\Jobs\Tests;
 
 use App\Models\Site;
-use App\Models\PerformanceScore;
+use App\Models\PerformanceData;
 
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -77,21 +77,10 @@ class PageSpeed implements ShouldQueue
          
             if ( $insights && is_array( $insights ) )
             {
-                PerformanceScore::create([
+                PerformanceData::create([
                     'site_id' => $this->site->id,
-                    'team_id' => $this->site->team->id,
                     'strategy' => $this->strategy,
                     ...$insights
-                    // 'performance' => $insights['performance'],
-                    // 'fcp' => 6.0,
-                    // "performance" => 22.0,
-                    // "fcp" => 6.0
-                    // "total_blocking_time" => 0.6
-                    // "speed_index" => 13.2
-                    // "lcp" => 17.7
-                    // "time_interactive" => 1844425.0 //milliseconds
-                    // "fmp" => 598650.0
-                    // "server-response-time" => 43200
                 ]);
 
                 $this->site->sitemeta->lighthouse_last_sync = Carbon::now();

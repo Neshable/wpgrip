@@ -2,29 +2,24 @@
 
 @section('content')
 
-    @include('site/single/headertemplate', [ 
-        'title' => 'Overview',
-        'icon' => 'heroicon-m-home' ])
-
     @include('site/notifications/general')
 
     @php
 
-    $fields = array( 
-        'Name' => isset( $this->getRecord()->name ) ? $this->getRecord()->name : 'Website Overview',
-        'Last sync' => isset( $this->getRecord()->updated_at ) ? $this->getRecord()->updated_at : 'n/a',
-        'Site URL' => $this->getRecord()->url,
-        'Client name' => isset( $this->getRecord()->client ) ? $this->getRecord()->client->name : 'Client',
-        'PHP Version' => $this->getRecord()->php_ver,
-        'Directory Size' => $this->getRecord()->getFormatedDBSize() ?? 'n/a',
-        'Database Prefix' => $this->getRecord()->db_prefix ?? 'n/a',
-        'Database Size' => $this->getRecord()->getDBSize() ?? 'n/a',
-    );
+        $fields = [
+            'Name' => isset($this->getRecord()->name) ? $this->getRecord()->name : 'Website Overview',
+            'Last sync' => isset($this->getRecord()->updated_at) ? $this->getRecord()->updated_at : 'n/a',
+            'Site URL' => $this->getRecord()->url,
+            'Client name' => isset($this->getRecord()->client) ? $this->getRecord()->client->name : 'Client',
+            'PHP Version' => $this->getRecord()->php_ver,
+            'Directory Size' => $this->getRecord()->getFormatedDBSize() ?? 'n/a',
+            'Database Prefix' => $this->getRecord()->db_prefix ?? 'n/a',
+            'Database Size' => $this->getRecord()->getDBSize() ?? 'n/a',
+        ];
 
+    @endphp
 
-    @endphp 
-
-        {{-- <x-filament::modal x-init="setTimeout(() => { $dispatch('open-modal', { id: 'user_notification' }) }, 2000)"
+    {{-- <x-filament::modal x-init="setTimeout(() => { $dispatch('open-modal', { id: 'user_notification' }) }, 2000)"
             alignment="center"
             icon="heroicon-o-information-circle" id="user_notification">
 
@@ -40,11 +35,11 @@
                 Footer
             </x-slot>
         </x-filament::modal> --}}
-        
 
-    
+
+
     {{-- <div class="flex flex-col items-center bg-white border-gray-200 rounded-lg  md:flex-row">
-        @if ( $this->getRecord()->screenshot_path && Storage::disk('local')->exists($this->getRecord()->screenshot_path))
+        @if ($this->getRecord()->screenshot_path && Storage::disk('local')->exists($this->getRecord()->screenshot_path))
             <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-96 md:rounded-none md:rounded-l-lg" 
             src="{{ Storage::url($this->getRecord()->screenshot_path) }}" alt="">
         @endif 
@@ -113,21 +108,104 @@
 
     {{-- @include('components/stats/sharedborders') --}}
 
+    {{-- <div class="w-full rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+        <div class="px-6 py-4 border-b">
+            <h2 class="text-2xl">
+                Summary
+            </h2>
+            <p class="text-sm text-gray-500">
+                Overview of some important site metrics.
+            </p>
+        </div>
+        <div class="px-6 py-4">
+            <div class="flex justify-between mb-4">
+                <h6 class="font-medium">53 GB of 65 GB used</h6>
+                <h6 class="font-medium">82% used</h6>
+            </div>
+            <div class="flex space-x-1.5 h-5 mb-7 rounded-full overflow-hidden">
+                <div data-original-title="null" class=" has-tooltip"
+                    style="background-color: rgb(255, 117, 87); width: 60.07%;"></div>
+                <div data-original-title="null" class=" has-tooltip"
+                    style="background-color: rgb(128, 225, 217); width: 4.13%;"></div>
+                <div data-original-title="null" class=" has-tooltip"
+                    style="background-color: rgb(159, 225, 128); width: 4.92%;"></div>
+                <div data-original-title="null" class=" has-tooltip"
+                    style="background-color: rgb(248, 188, 59); width: 0%;"></div>
+                <div data-original-title="null" class=" has-tooltip"
+                    style="background-color: rgb(150, 189, 255); width: 12.33%;"></div>
+                <div data-original-title="null" class=" has-tooltip"
+                    style="background-color: rgb(236, 239, 244); width: 18.55%;"></div>
+            </div>
+            <ul class="grid md:grid-cols-2 gap-y-3 gap-x-8">
+                <li class="flex items-center">
+                    <div class="rounded-full mr-3 w-7 h-2" style="background-color: rgb(255, 117, 87);"></div><span>Web
+                        App</span><span class="ml-auto">39.0 GB (60.07%)</span>
+                </li>
+                <li class="flex items-center">
+                    <div class="rounded-full mr-3 w-7 h-2" style="background-color: rgb(128, 225, 217);"></div>
+                    <span>Database</span><span class="ml-auto">2.7 GB (4.13%)</span>
+                </li>
+                <li class="flex items-center">
+                    <div class="rounded-full mr-3 w-7 h-2" style="background-color: rgb(159, 225, 128);"></div>
+                    <span>Log</span><span class="ml-auto">3.2 GB (4.92%)</span>
+                </li>
+                <li class="flex items-center">
+                    <div class="rounded-full mr-3 w-7 h-2" style="background-color: rgb(248, 188, 59);"></div>
+                    <span>Tmp</span><span class="ml-auto">74.9 kB (0.00%)</span>
+                </li>
+                <li class="flex items-center">
+                    <div class="rounded-full mr-3 w-7 h-2" style="background-color: rgb(150, 189, 255);"></div>
+                    <span>Others</span><span class="ml-auto">8.0 GB (12.33%)</span>
+                </li>
+                <li class="flex items-center">
+                    <div class="rounded-full mr-3 w-7 h-2" style="background-color: rgb(236, 239, 244);"></div>
+                    <span>Free</span><span class="ml-auto">12 GB (18.55%)</span>
+                </li>
+            </ul>
+        </div>
+    </div> --}}
+
     <div class="w-full rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
         <div class="px-6 py-4 border-b">
             <h2 class="text-2xl">
                 Summary
             </h2>
             <p class="text-sm text-gray-500">
-                Overview of some important site metrics. 
+                Overview of some important site metrics.
             </p>
         </div>
         <div>
-            @each('site.listing.simple', $fields, 'field') 
+            @each('site.listing.simple', $fields, 'field')
+        </div>
+    </div>
+
+    <div class="w-full rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+        <div class="px-6 py-4 border-b">
+            <h2 class="text-2xl">
+                Database tables
+            </h2>
+            <p class="text-sm text-gray-500">
+                List of available tables in the current site's database.
+            </p>
+        </div>
+        <div>
+            @if ($this->getRecord()->sitemeta->db_tables)
+                @foreach (json_decode($this->getRecord()->sitemeta->db_tables) as $table)
+                    @include('site.listing.simple', [
+                        'key' => $table->Name,
+                        'field' => $table->Size == '0 MB' ? '< 1 MB' : $table->Size,
+                    ])
+                @endforeach
+            @else
+                <div class="px-6 py-4 border-b">
+                    <h3>No database tables synced.</h3>
+                </div>
+            @endif
+
         </div>
     </div>
 
 
-    
-@endsection
 
+
+@endsection

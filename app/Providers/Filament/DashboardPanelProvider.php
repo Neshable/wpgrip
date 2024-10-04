@@ -17,7 +17,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 
-use Filament\Widgets;
+// use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -26,6 +26,8 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
+
+use App\Filament\Dashboard\Widgets;
 
 use App\Filament\Dashboard\Resources\OrderResource;
 use App\Filament\Dashboard\Resources\TransactionResource;
@@ -58,42 +60,22 @@ class DashboardPanelProvider extends PanelProvider
                     ->label('Orders')
                     ->url(fn (): string => OrderResource::getUrl())
                     ->icon('heroicon-o-rectangle-stack'),
-                MenuItem::make()
-                    ->label('Transactions')
-                    ->url(fn (): string => TransactionResource::getUrl())
-                    ->icon('heroicon-o-currency-dollar'),
-                MenuItem::make()
-                    ->label('Subscriptions')
-                    ->url(fn (): string => SubscriptionResource::getUrl())
-                    ->icon('heroicon-o-fire'),            
-                MenuItem::make()
-                    ->label(__('Workspace Settings'))
-                    ->visible(
-                        function () {
-                            $tenantPermissionManager = app(TenantPermissionManager::class);
-
-                            return $tenantPermissionManager->tenantUserHasPermissionTo(
-                                Filament::getTenant(),
-                                auth()->user(),
-                                TenancyPermissionConstants::PERMISSION_UPDATE_TENANT_SETTINGS
-                            );
-                        }
-                    )
-                    ->icon('heroicon-s-cog-8-tooth')
-                    ->url(fn () => TenantSettings::getUrl()),
+                         
             ])
             ->discoverResources(in: app_path('Filament/Dashboard/Resources'), for: 'App\\Filament\\Dashboard\\Resources')
             ->discoverPages(in: app_path('Filament/Dashboard/Pages'), for: 'App\\Filament\\Dashboard\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                // Pages\Dashboard::class,
             ])
+            ->favicon(asset('images/favicon.png'))
+            ->breadcrumbs(false)
             ->databaseNotifications()
             ->colors([
                 'primary' => Color::Blue,// '#1654D1',
                 'danger' => Color::Rose,
                 // 'gray' => Color::Slate, // Background
                 // 'info' => Color::Blue,
-                // 'success' => Color::Green,
+                'success' => Color::Green,
                 // 'warning' => Color::Red,
             ])
             ->brandLogoHeight('3rem')
@@ -103,7 +85,12 @@ class DashboardPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/dashboard/theme.css')
             ->discoverWidgets(in: app_path('Filament/Dashboard/Widgets'), for: 'App\\Filament\\Dashboard\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
+                Widgets\SitesOverview::class,
+
+                Widgets\WPVersionChart::class,
+                Widgets\PHPVersionChart::class,
+                Widgets\PluginChart::class,
+                // Widgets\AccountWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -128,7 +115,30 @@ class DashboardPanelProvider extends PanelProvider
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label('Team')
+                    ->extraSidebarAttributes(['class' => 'featured-sidebar-group'])
                     ->icon('heroicon-s-users'),
+                NavigationGroup::make()
+                    ->label('Billing')
+                    ->extraSidebarAttributes(['class' => 'featured-sidebar-group'])
+                    ->collapsed()
+                    ->icon('heroicon-o-rectangle-stack'),
+            ])
+            ->navigationItems([
+                
+                
+                // Group billing
+
+                \Filament\Navigation\NavigationItem::make()
+                    ->label('Payment History')
+                    ->group('Billing')
+                    ->sort(1)
+                    ->url(fn (): string => TransactionResource::getUrl()),
+                \Filament\Navigation\NavigationItem::make()
+                    ->label('Subscription')
+                    ->group('Billing')
+                    ->sort(2)
+                    ->url(fn (): string => SubscriptionResource::getUrl()),
+               
             ])
             ->authMiddleware([
                 Authenticate::class,
@@ -143,6 +153,23 @@ class DashboardPanelProvider extends PanelProvider
                     ->myProfileComponents([
                         \App\Livewire\AddressForm::class,
                     ]),
+            ])
+            ->tenantMenuItems([
+                MenuItem::make('Space Settings')
+                    ->label('Workspace Settings')
+                    ->visible(
+                        function () {
+                            $tenantPermissionManager = app(TenantPermissionManager::class);
+
+                            return $tenantPermissionManager->tenantUserHasPermissionTo(
+                                Filament::getTenant(),
+                                auth()->user(),
+                                TenancyPermissionConstants::PERMISSION_UPDATE_TENANT_SETTINGS
+                            );
+                        }
+                    )
+                    ->url(fn () => TenantSettings::getUrl())
+                    ->sort(3)
             ])
             ->tenantMenu()
             ->tenant(Tenant::class, 'uuid');

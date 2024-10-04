@@ -2,7 +2,8 @@
     <x-slot name="left">
         <div class="flex flex-col py-2 md:p-10 gap-4 justify-center h-full items-center">
             <div class="card w-full md:max-w-xl bg-base-100 shadow-xl p-4 md:p-8">
-                <form method="POST" action="{{ route('register') }}">
+                <h2>Temporary disabled</h2>
+                {{-- <form method="POST" action="{{ route('register') }}">
                     @csrf
 
                     <p class="text-xs mt-2 text-end">{{__('Have an account?')}} <a class="text-primary-500 font-bold" href="{{ route('login') }}">{{__('Login')}}</a></p>
@@ -70,16 +71,20 @@
                         </x-slot>
                     </x-auth.social-login>
 
-                </form>
+                </form> --}}
             </div>
         </div>
     </x-slot>
 
 
     <x-slot name="right">
+        
         <div class="py-4 md:px-12 md:pt-36 h-full">
+            <x-heading.h1 class="!text-2xl md:!text-4xl !font-semibold">
+                {{ __('Used by professionals') }}
+            </x-heading.h1>
             <x-heading.h1 class="!text-3xl md:!text-4xl !font-semibold">
-                {{ __('Register.') }}
+                {{ __('just like you') }}
             </x-heading.h1>
             <p class="mt-4">
                 {{ __('Create an account to get started.') }}

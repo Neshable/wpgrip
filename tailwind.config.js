@@ -40,6 +40,7 @@ export default {
             colors: {
                 primary: common.colors.primary,
                 secondary: common.colors.secondary,
+                
             },
             lineHeight: {
                 'xxs': '1.1',

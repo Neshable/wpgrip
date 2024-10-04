@@ -87,7 +87,7 @@ class UpdatePlugin implements ShouldQueue
             // By default $ssh->exec() returns both stdout and stderr. To suppress stderr you can call QuiteMode
             // $ssh->enableQuietMode();
             // $ssh->enablePTY();
-            $ssh->setTimeout(360);
+            $ssh->setTimeout(550);
             $output = $ssh->exec('cd /home/brera/webapps/brera-in-humanitas && wp plugin update ' . $this->plugin . ' --format=json');
             $ssh->exec('exit');
 

@@ -1,4 +1,4 @@
-<nav class="relative text-black background-white dark:bg-gray-900">
+<nav class="relative text-black bg-gray-50 dark:bg-gray-900">
     <div class="navbar max-w-screen-xl items-center mx-auto">
         <div class="navbar-start">
             <div class="dropdown">
@@ -23,7 +23,7 @@
                 <x-layouts.app.user-menu></x-layouts.app.user-menu>
             @else
                 <x-link class="hidden md:block" href="{{route('login')}}">{{ __('Login') }}</x-link>
-                <x-button-link.secondary elementType="a" href="#plans">{{ __('Get started') }}</x-button-link.secondary>
+                <x-button-link.secondary elementType="a"  class="self-center !py-2" href="#plans">{{ __('Get started') }}</x-button-link.secondary>
             @endauth
         </div>
     </div>

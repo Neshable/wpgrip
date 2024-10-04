@@ -80,6 +80,21 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::findOrCreate('update settings');
 
         Permission::findOrCreate('view stats');
+        
+        // Admin
+         // Site specific permissions.
+         Permission::findOrCreate('create sites');
+         Permission::findOrCreate('update sites');
+         Permission::findOrCreate('delete sites');
+         Permission::findOrCreate('view sites');
+
+        // Site specific permissions.
+        Permission::findOrCreate('create clients');
+        Permission::findOrCreate('update clients');
+        Permission::findOrCreate('delete clients');
+        Permission::findOrCreate('view clients');
+
+     
 
         $role = Role::findOrCreate('admin');
 
@@ -106,6 +121,17 @@ class RolesAndPermissionsSeeder extends Seeder
             TenancyPermissionConstants::PERMISSION_INVITE_MEMBERS,
             TenancyPermissionConstants::PERMISSION_MANAGE_TEAM,
             TenancyPermissionConstants::PERMISSION_UPDATE_TENANT_SETTINGS,
+            // Sites
+            TenancyPermissionConstants::PERMISSION_CREATE_SITES,
+            TenancyPermissionConstants::PERMISSION_UPDATE_SITES,
+            TenancyPermissionConstants::PERMISSION_DELETE_SITES,
+            TenancyPermissionConstants::PERMISSION_VIEW_SITES,
+            // Clients
+            TenancyPermissionConstants::PERMISSION_CREATE_CLIENTS,
+            TenancyPermissionConstants::PERMISSION_UPDATE_CLIENTS,
+            TenancyPermissionConstants::PERMISSION_DELETE_CLIENTS,
+            TenancyPermissionConstants::PERMISSION_VIEW_CLIENTS,
+ 
         ];
 
         $tenancyPermissions = [];

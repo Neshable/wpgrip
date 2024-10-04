@@ -71,7 +71,7 @@ class InvitationResource extends Resource
                     ->default(TenancyPermissionConstants::ROLE_USER)
                     ->required()
                     ->helperText(__('Choose the role for this user.')),
-            ]);
+                ]);
     }
 
     public static function table(Table $table): Table

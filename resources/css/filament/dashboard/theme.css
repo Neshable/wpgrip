@@ -6,6 +6,11 @@ body.fi-panel-dashboard {
     .fi-sidebar {
         background: #f3f4f6;
         max-width: 220px;
+        .fi-sidebar-item-icon,
+        .fi-sidebar-group-icon  {
+            width: 1.2rem;
+            height: 1.2rem;
+        }
     }
     .fi-sidebar-header {
         background: #222937;

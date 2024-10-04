@@ -2,9 +2,7 @@
 
 @section('content')
 
-    @include('site/single/headertemplate', [ 
-                    'title' => 'Git & Repositories',
-                    'icon' => 'icon-git' ])
+    @include('site.single.menus.tools-page-submenu')
 
     {{-- <x-filament::section>
         <x-slot name="heading">

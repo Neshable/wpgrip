@@ -38,6 +38,7 @@ return new class extends Migration
             $table->boolean('uptime_monitor')->default(0);
             $table->foreignId('client_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('server_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('parent_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
            // $table->foreignIdFor( UptimeMonitor::class )->nullable()->constrained()->onDelete('set null');
             $table->date('deleted_at')->nullable(); // for soft-deletes

@@ -27,12 +27,31 @@ enum HostingProvider: string implements HasLabel,HasIcon
         return $this->name;
     }
 
+    public function getColor(): string | array | null
+    {
+        return match ($this) {
+            self::Azure => 'info',
+            self::Vultr => 'info',
+            self::AWS => 'warning',
+            self::Linode => 'info',
+            self::GoogleCloud => 'danger',
+            self::HetznerCloud => 'danger',
+            self::DigitalOcean => 'info',
+            default => 'gray'
+        };
+    }
+
     public function getIcon(): ?string
     {
         return match ($this) {
             self::Azure => 'azure',
+            self::Vultr => 'vultr',
+            self::AWS => 'lightsail',
+            self::Linode => 'akamai',
+            self::GoogleCloud => 'google',
+            self::HetznerCloud => 'hetzner',
             self::DigitalOcean => 'digitalocean',
-            default => 'azure'
+            default => 'ubuntu'
         };
     }
 }

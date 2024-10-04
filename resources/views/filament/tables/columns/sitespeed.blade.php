@@ -1,12 +1,11 @@
-{{-- @if ( !$getRecord()->is_staging ) --}}
-@if ( false )
+@if ( !$getRecord()->is_staging )
 @php
-    $desktop = \App\Models\PerformanceScore::where('site_id',$getRecord()->id )
+    $desktop = \App\Models\PerformanceData::where('site_id',$getRecord()->id )
     ->where('strategy', 'desktop')
     ->orderBy('created_at', 'desc')
     ->first();
 
-    $mobile = \App\Models\PerformanceScore::where('site_id', $getRecord()->id )
+    $mobile = \App\Models\PerformanceData::where('site_id', $getRecord()->id )
     ->where('strategy', 'mobile')
     ->orderBy('created_at', 'desc')
     ->first();

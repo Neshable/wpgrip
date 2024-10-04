@@ -17,6 +17,8 @@ class ClientResource extends Resource
 {
     protected static ?string $model = Client::class;
 
+    protected static ?int $navigationSort = 4;
+
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     
@@ -47,7 +49,7 @@ class ClientResource extends Resource
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('email'),
                 Tables\Columns\TextColumn::make('country'),
-                // Tables\Columns\TextColumn::make('sites_count')->counts('sites')->label('Sites'),
+                Tables\Columns\TextColumn::make('sites_count')->counts('sites')->badge()->label('Sites'),
 
             ])
             ->filters([

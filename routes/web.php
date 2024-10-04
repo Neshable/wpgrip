@@ -29,6 +29,10 @@ Route::get('/', function () {
     
 })->name('home')->middleware('sitemapped');
 
+Route::get('/pricing', function () {
+     return view('pages.pricing');   
+ })->name('home')->middleware('sitemapped');
+
 
 
 Route::get('/dashboard', function (UserDashboardManager $dashboardManager) {

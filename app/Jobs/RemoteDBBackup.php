@@ -57,7 +57,7 @@ class RemoteDBBackup implements ShouldQueue
      *
      * @var int
      */
-    public $team_id;
+    public $tenant_id;
 
     /**
      * The location object
@@ -79,6 +79,8 @@ class RemoteDBBackup implements ShouldQueue
      * @var int
      */
     public $backup_id;
+
+    private $encryption_key;
 
     /**
      * List of excluded tables
@@ -104,7 +106,7 @@ class RemoteDBBackup implements ShouldQueue
         $this->site = $site;
         $this->frequency = $frequency;
         $this->server = $this->site->server;
-        $this->team_id = $this->site->team->id;
+        $this->tenant_id = $this->site->tenant->id;
         $this->timestamp = $timestamp ?: Carbon::now()->format('YmdHi');
         // If that's set, the job will write within this model.
         $this->backup_id = $backup_id;
@@ -113,6 +115,8 @@ class RemoteDBBackup implements ShouldQueue
         $this->user = User::find( $this->site->user_id );
         // Generate path object.
         $this->path_locations = new BackupLocation( $site, $this->timestamp );
+        // Encryption key would be the tenant uuid
+        $this->encryption_key =  $this->site->tenant->uuid;
     }
 
     /**
@@ -150,9 +154,10 @@ class RemoteDBBackup implements ShouldQueue
 
             // Set target path
             $path = $this->path_locations->getS3DatabaseBackupPath() . '/' . $this->path_locations->db_name;
-
+            // Encrypt the output
+            $encrypted_output = $this->encryptData($output);
             // Upload it to s3
-            $status = Storage::disk('s3')->put( $path, $output );
+            $status = Storage::disk('s3')->put( $path, $encrypted_output );
             
             if ( $status )
             {
@@ -179,7 +184,7 @@ class RemoteDBBackup implements ShouldQueue
                 else {
                     $backup = Backup::create([
                         'site_id' => $this->site->id,
-                        'team_id' => $this->team_id,
+                        'tenant_id' => $this->tenant_id,
                         'provider' => 's3',
                         'file_path' => $path,
                         'type' => 'db',
@@ -219,6 +224,34 @@ class RemoteDBBackup implements ShouldQueue
 
         }
         
+    }
+
+    /**
+     * Encrypt the data
+     *
+     * @param  [type] $data
+     * @return void
+     */
+    private function encryptData($data)
+    {
+        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
+        $encrypted = openssl_encrypt($data, 'aes-256-cbc', $this->encryption_key, 0, $iv);
+        return base64_encode($iv . $encrypted);
+    }
+
+    /**
+     * Decrypt 
+     *
+     * @param  [type] $encryptedData
+     * @param  [type] $key
+     * @return void
+     */
+    public static function decryptData($encryptedData, $key)
+    {
+        $data = base64_decode($encryptedData);
+        $iv = substr($data, 0, openssl_cipher_iv_length('aes-256-cbc'));
+        $encrypted = substr($data, openssl_cipher_iv_length('aes-256-cbc'));
+        return openssl_decrypt($encrypted, 'aes-256-cbc', $key, 0, $iv);
     }
 
 

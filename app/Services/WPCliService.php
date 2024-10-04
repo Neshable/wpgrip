@@ -16,6 +16,16 @@ class WPCliService {
         return 'wp plugin list --fields=name,status,update,version,update_version,update_package,title,description --format=json';
     }
 
+    public static function getAllThemes()
+    {
+        return 'wp theme list --fields=name,status,update,version,update_version,update_package,title,description --format=json';
+    }
+
+    public static function getConfigConstants()
+    {
+        return 'wp config get --format=json';
+    }
+
     public static function deactivatePlugin( string $plugin )
     {
         return 'wp plugin deactivate ' . $plugin;

@@ -2,12 +2,7 @@
 
 @section('content')
 
-    @include('site/single/headertemplate', [ 
-        'title' => 'Security',
-        'icon' => 'heroicon-m-shield-check' ])
-
-   
-
+    @include('site.single.menus.security-page-submenu')
 
     <x-filament::section> 
             

@@ -6,22 +6,15 @@
     $tenant = Filament\Facades\Filament::getTenant(); 
 @endphp
 
-    <div>
-    @include('site/single/headertemplate', [ 
-            'title' => 'Performance',
-            'icon' => 'heroicon-m-presentation-chart-line' ])
-
-    @include('site.single.menus.performance-page-menu')
-    </div>
+@include('site.single.menus.performance-page-menu')
 
     
-    @livewire(\App\Filament\App\Resources\SiteResource\Widgets\SitePerformanceChart::class, [
-        'type' => 'lighthouse',
-        'record' => $this->getRecord()
-        ])
+    @livewire(\App\Filament\Dashboard\Resources\SiteResource\Widgets\SitePerformanceHistory::class, [ 'type' => 'desktop' ])
 
-     @livewire(\App\Filament\App\Resources\SiteResource\Widgets\ResponseTimeChart::class) 
+    @livewire(\App\Filament\Dashboard\Resources\SiteResource\Widgets\SitePerformanceHistory::class, [ 'type' => 'mobile' ])
 
-    @livewire(\App\Filament\App\Resources\SiteResource\Widgets\SiteMetricsChart::class) 
+    @livewire(\App\Filament\Dashboard\Resources\SiteResource\Widgets\DomSizeChart::class) 
+
+    {{-- @livewire(\App\Filament\App\Resources\SiteResource\Widgets\SiteMetricsChart::class)  --}}
  
 @endsection

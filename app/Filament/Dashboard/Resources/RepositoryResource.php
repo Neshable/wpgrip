@@ -19,6 +19,8 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Facades\Filament;
 use Filament\Tables\Columns\ImageColumn;
 
+use Filament\Forms\Components\Section;
+
 use Filament\Notifications\Notification;
 
 use App\Jobs\Git\SshAndGitPull;
@@ -34,14 +36,43 @@ class RepositoryResource extends Resource
 
     protected static ?string $navigationIcon = 'icon-git';
 
+    protected static ?int $navigationSort = 3;
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->maxLength(255)
-                    ->helperText(new HtmlString('Friendly name to find the repository faster.'))  
-                    ->required(),
+                Section::make('Repository info')
+                // ->description('Prevent abuse by limiting the number of requests per period')
+                ->schema([
+                    Forms\Components\Select::make('type')
+                        ->label('Type')
+                        ->helperText(new HtmlString('Type of repo'))  
+                        ->required()
+                        ->options([
+                            'plugin' => 'Plugin',
+                            'theme' => 'Theme',
+                            'other' => 'Other'
+                        ]),
+                    Forms\Components\TextInput::make('name')
+                        ->maxLength(255)
+                        ->helperText(new HtmlString('Friendly name to find the repository faster.'))  
+                        ->required(),
+                    Forms\Components\TextInput::make('remote')
+                        ->label('GIT Remote URL')
+                        ->helperText(new HtmlString('<strong>The remote SSH URL</strong> of the repo ( e.g. git@bitbucket.org... ).'))  
+                        ->required()
+                        ->maxLength(255),
+                    Forms\Components\Select::make('provider')
+                        ->label('Provider')
+                        ->helperText(new HtmlString('Repository provider'))  
+                        ->required()
+                        ->options([
+                            'bitbucket' => 'BitBucket',
+                            'github' => 'GitHub'
+                        ]),
+                ])
+                
                     // ->alpha(),
                 // Forms\Components\TextInput::make('notes')
                 //     ->helperText(new HtmlString('Additional notes about this repo.'))  
@@ -50,11 +81,7 @@ class RepositoryResource extends Resource
                 //     ->helperText(new HtmlString('<strong>Absolute server path.</strong> If the path doesn\'t exist, it will be created.'))  
                 //     ->required()
                 //     ->maxLength(255),
-                Forms\Components\TextInput::make('remote')
-                    ->label('GIT Remote URL')
-                    ->helperText(new HtmlString('<strong>The remote SSH URL</strong> of the repo ( e.g. git@bitbucket.org... ).'))  
-                    ->required()
-                    ->maxLength(255),
+                
               
                 // Forms\Components\Radio::make('provider')
                 //     ->label('Provider')
@@ -62,14 +89,7 @@ class RepositoryResource extends Resource
                 //         'bitbucket' => 'BitBucket',
                 //         'github' => 'GitHub'
                 //     ]),
-                Forms\Components\Select::make('provider')
-                    ->label('Provider')
-                    ->helperText(new HtmlString('Repository provider'))  
-                    ->required()
-                    ->options([
-                        'bitbucket' => 'BitBucket',
-                        'github' => 'GitHub'
-                    ]),
+                
             ]);
     }
 
@@ -79,6 +99,15 @@ class RepositoryResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
+                    // ->description(fn (Repository $record): string => $record->site->url ? 'Site: ' . $record->site->url : 'Not connected' )
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Type')
+                    ->icon(fn (string $state): string => match ($state) {
+                        'plugin' => 'icon-plugin',
+                        'theme' => 'icon-wordpress',
+                        'other' => 'icon-wordpress',
+                    })
                     // ->description(fn (Repository $record): string => $record->site->url ? 'Site: ' . $record->site->url : 'Not connected' )
                     ->sortable(),
 

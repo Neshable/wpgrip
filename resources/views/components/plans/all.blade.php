@@ -61,7 +61,7 @@
                                     / {{$plan->interval_count > 1 ? $plan->interval_count : '' }} {{ __($plan->interval->name) }}
                                 </x-slot>
                                 <x-slot name="description">
-                                    <ul class="flex flex-col items-center gap-4">
+                                    <ul class="flex flex-col items-start gap-4">
                                         @if($plan->product->features)
                                             @foreach($plan->product->features as $feature)
                                                 <x-features.li-item>{{$feature['feature']}}</x-features.li-item>

@@ -4,9 +4,9 @@
     <x-slot name="trigger">
         <x-filament::icon-button
             icon="heroicon-o-key"
+            color="gray"
             label="SSH Key"
             tooltip="Get API Key"
-            color="info"
             size="xl"
         />
     </x-slot>

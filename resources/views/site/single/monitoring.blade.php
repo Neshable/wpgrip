@@ -7,10 +7,6 @@
 
 @section('content')
     <div>
-    @include('site/single/headertemplate', [ 
-        'title' => 'Monitors',
-        'icon' => 'heroicon-m-arrow-trending-up' ])
-
     @include('site.single.menus.monitor-page-menu')
     </div>
         

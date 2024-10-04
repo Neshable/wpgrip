@@ -5,24 +5,19 @@
 @php
     $tenant = Filament\Facades\Filament::getTenant(); 
 
-    $desktop = \App\Models\PerformanceScore::where('site_id', $this->record->id )
+    $desktop = \App\Models\PerformanceData::where('site_id', $this->record->id )
     ->where('strategy', 'desktop')
     ->orderBy('created_at', 'desc')
     ->first();
 
-    $mobile = \App\Models\PerformanceScore::where('site_id', $this->record->id )
+    $mobile = \App\Models\PerformanceData::where('site_id', $this->record->id )
     ->where('strategy', 'mobile')
     ->orderBy('created_at', 'desc')
     ->first();
 
 @endphp
-    <div>
-    @include('site/single/headertemplate', [ 
-            'title' => 'Performance',
-            'icon' => 'heroicon-m-presentation-chart-line' ])
 
     @include('site.single.menus.performance-page-menu')
-    </div>
 
     <x-filament::section> 
         
@@ -85,28 +80,28 @@
                             <div class="w-3 h-3 bg-orange-100 bg-orange-400 rounded-full mr-2"></div>
                             <div>First Contentful Paint</div>
                         </div>
-                        <div class="text-red-600">{{ $desktop->fcp }} s</div>
+                        <div class="text-red-600">{{ $desktop->fcp !== null ? $desktop->fcp / 1000 : 'N/A' }}s</div>
                     </div>
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
                             <div class="w-3 h-3 bg-red-100 bg-red-600 rounded-full mr-2"></div>
                             <div>Speed Index</div>
                         </div>
-                        <div class="text-red-600">{{ $desktop->speed_index }} s</div>
+                        <div class="text-red-600">{{ $desktop->speed_index !== null ? $desktop->speed_index / 1000 : 'N/A' }}s</div>
                     </div>
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
                             <div class="w-3 h-3 bg-green-100  bg-green-500 rounded-full mr-2"></div>
                             <div>Total Blocking Time</div>
                         </div>
-                        <div class="text-green-500">{{ $desktop->total_blocking_time }}</div>
+                        <div class="text-green-500">{{ $desktop->total_blocking_time !== null ? $desktop->total_blocking_time / 1000 : 'N/A' }}</div>
                     </div>
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
                             <div class="w-3 h-3 bg-orange-400 rounded-full mr-2"></div>
                             <div>Largest Contentful Paint</div>
                         </div>
-                        <div class="text-red-600">{{ $desktop->lcp }} s</div>
+                        <div class="text-red-600">{{ $desktop->lcp !== null ? $desktop->lcp / 1000 : 'N/A' }} s</div>
                     </div>
      
                 </div>
@@ -186,28 +181,28 @@
                         <div class="w-3 h-3 bg-orange-100 bg-orange-400 rounded-full mr-2"></div>
                         <div>First Contentful Paint</div>
                     </div>
-                    <div class="text-red-600">{{ $mobile->fcp }} s</div>
+                    <div class="text-red-600">{{ $mobile->fcp !== null ? $mobile->fcp / 1000 : 'N/A' }}s</div>
                 </div>
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
                         <div class="w-3 h-3 bg-red-100 bg-red-600 rounded-full mr-2"></div>
                         <div>Speed Index</div>
                     </div>
-                    <div class="text-red-600">{{ $mobile->speed_index }} s</div>
+                    <div class="text-red-600">{{ $mobile->speed_index !== null ? $mobile->speed_index / 1000 : 'N/A' }} s</div>
                 </div>
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
                         <div class="w-3 h-3 bg-green-100  bg-green-500 rounded-full mr-2"></div>
                         <div>Total Blocking Time</div>
                     </div>
-                    <div class="text-green-500">{{ $mobile->total_blocking_time }}</div>
+                    <div class="text-green-500">{{ $mobile->total_blocking_time !== null ? $mobile->total_blocking_time / 1000 : 'N/A' }}</div>
                 </div>
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
                         <div class="w-3 h-3 bg-orange-400 rounded-full mr-2"></div>
                         <div>Largest Contentful Paint</div>
                     </div>
-                    <div class="text-red-600">{{ $mobile->lcp }} s</div>
+                    <div class="text-red-600">{{ $mobile->lcp !== null ? $mobile->lcp / 1000 : 'N/A' }}s</div>
                 </div>
  
             </div>
@@ -220,7 +215,7 @@
             </div>
     
             <div class="flex items-center justify-between">
-                <div>Using HeadlessChromium 119.0.0.645.123 with lr</div>
+                <div>Using Headless Chromium 119.0.0.645.123 with lr</div>
             </div>
         </div>
     </div>

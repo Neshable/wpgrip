@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string( 'version' )->nullable();
             $table->string( 'update_version' )->nullable();
             $table->boolean('is_vulnerable')->default(false);
+            $table->boolean('is_notified')->default(true);
             $table->json('vuln_ids')->nullable();
             $table->string( 'status' )->nullable();
         });

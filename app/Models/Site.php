@@ -225,6 +225,15 @@ class Site extends Model
     }
 
     /**
+     * Get the plugins for this site.
+     */
+    public function themes(): BelongsToMany
+    {
+        return $this->belongsToMany(Theme::class, 'theme_site')
+            ->withPivot( ['version', 'update_version', 'status'] );
+    }
+
+    /**
      * Get the active plugins.
      */
     public function activePlugins()
