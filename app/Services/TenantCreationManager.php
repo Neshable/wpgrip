@@ -87,7 +87,7 @@ class TenantCreationManager
 
         $name = $user->name.' '.TenantConstants::getAlias();
 
-        $name .= ' #'.$number;
+        // $name .= ' #'.$number;
 
         $tenant = Tenant::create([
             'name' => $name,

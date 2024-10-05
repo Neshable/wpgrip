@@ -17,6 +17,8 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 
+use App\Http\Middleware\FilamentCustomHooksComponents;
+
 // use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -102,6 +104,8 @@ class DashboardPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                 // Here we can hook all our custom hooks.
+                 FilamentCustomHooksComponents::class,
             ])
             ->renderHook('panels::head.start', function () {
                 return view('components.layouts.partials.analytics');
@@ -132,11 +136,41 @@ class DashboardPanelProvider extends PanelProvider
                     ->label('Payment History')
                     ->group('Billing')
                     ->sort(1)
+                    ->visible(
+                        function () {
+                            $tenantPermissionManager = app(TenantPermissionManager::class);
+
+                            $tenant = Filament::getTenant();
+                            $user = auth()->user();
+
+                            // Tenant was created by the current user.
+                            if ($tenant->created_by == $user->id && !$user->isSubscribed() ) {
+                                return false;
+                            }
+
+                            return $tenantPermissionManager->tenantUserHasPermissionTo(
+                                $tenant,
+                                $user,
+                                TenancyPermissionConstants::PERMISSION_UPDATE_SUBSCRIPTIONS
+                            );
+                        }
+                    )
                     ->url(fn (): string => TransactionResource::getUrl()),
                 \Filament\Navigation\NavigationItem::make()
                     ->label('Subscription')
                     ->group('Billing')
                     ->sort(2)
+                    ->visible(
+                        function () {
+                            $tenantPermissionManager = app(TenantPermissionManager::class);
+
+                            return $tenantPermissionManager->tenantUserHasPermissionTo(
+                                Filament::getTenant(),
+                                auth()->user(),
+                                TenancyPermissionConstants::PERMISSION_UPDATE_SUBSCRIPTIONS
+                            );
+                        }
+                    )
                     ->url(fn (): string => SubscriptionResource::getUrl()),
                
             ])

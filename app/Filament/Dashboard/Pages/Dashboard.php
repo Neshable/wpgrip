@@ -23,6 +23,6 @@ class Dashboard extends \Filament\Pages\Dashboard
 
     public function getTitle(): string | Htmlable
     {
-        return Filament::getTenant()->name . ' workspace';
+        return Filament::getTenant()->name;
     }
 }

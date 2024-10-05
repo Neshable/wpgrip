@@ -31,7 +31,7 @@ Route::get('/', function () {
 
 Route::get('/pricing', function () {
      return view('pages.pricing');   
- })->name('home')->middleware('sitemapped');
+ })->name('pricing')->middleware('sitemapped');
 
 
 

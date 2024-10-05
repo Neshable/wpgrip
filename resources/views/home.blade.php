@@ -6,32 +6,40 @@
     <x-section.hero class="w-full mb-8 md:mb-72 bg-gradient-to-b from-gray-50 to-white">
 
         <div class="mx-auto text-center h-160 md:h-180 px-4">
-            <x-pill class="text-black font-bold bg-primary-50">{{ __('ALL YOUR WORDPRESS SITES. ONE DASHBOARD.') }}</x-pill>
-            <x-heading.h1 class="mt-4 text-primary-900 font-bold">
-                {{ __('Easily manage and control') }}
+            <x-pill class="text-black font-bold bg-primary-50">
+                No Plugins. No Complications. Just Complete Control.
+            </x-pill>
+
+            <x-heading.h1 class="mt-4 font-bold">
+                All Your WordPress Sites.
                 <br class="hidden sm:block">
-                {{ __('your WordPress sites') }}
+                One Dashboard.
             </x-heading.h1>
 
             <p class="text-black m-3">
-                Gain 100% control and streamline operations with SSH connections and WP-CLI with 2x faster experience.
+                Gain complete control over your WordPress websites with a secure, streamlined experience. <br>
+                Manage plugins, optimize performance, and keep your sites secure — all from one powerful dashboard.
             </p>
 
             <div class="flex flex-wrap gap-4 justify-center flex-col md:flex-row mt-6">
- 
+
                 <x-button-link.secondary href="#pricing" class="self-center !py-3" elementType="a">
                     {{ __('Start Your Free Trial') }}
                 </x-button-link.secondary>
-                <x-button-link.primary-outline href="//demo.saasykit.com" class=" bg-transparent self-center !py-3 border-primary-500" >
+                <x-button-link.primary-outline href="//demo.saasykit.com"
+                    class=" bg-transparent self-center !py-3 border-primary-500">
                     {{ __('Check Pricing') }}
                 </x-button-link.primary-outline>
 
             </div>
 
-            <svg class="hidden lg:block absolute right-full transform translate-x-1/2 translate-y-12" width="404" height="784" fill="none" viewBox="0 0 404 784" aria-hidden="true">
+            <svg class="hidden lg:block absolute right-full transform translate-x-1/2 translate-y-12" width="404"
+                height="784" fill="none" viewBox="0 0 404 784" aria-hidden="true">
                 <defs>
-                    <pattern id="64e643ad-2176-4f86-b3d7-f2c5da3b6a6d" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                        <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor"></rect>
+                    <pattern id="64e643ad-2176-4f86-b3d7-f2c5da3b6a6d" x="0" y="0" width="20" height="20"
+                        patternUnits="userSpaceOnUse">
+                        <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor">
+                        </rect>
                     </pattern>
                 </defs>
                 <rect width="404" height="784" fill="url(#64e643ad-2176-4f86-b3d7-f2c5da3b6a6d)"></rect>
@@ -41,23 +49,138 @@
 
 
             <div class="mx-auto md:max-w-3xl lg:max-w-5xl">
-                <img class="drop-shadow-2xl mt-8 transition rounded-2xl" src="{{URL::asset('/images/features/hero-image.png')}}" />
+                <img class="drop-shadow-2xl mt-8 transition rounded-2xl"
+                    src="{{ URL::asset('/images/features/wphusk_dashboard.jpg') }}" />
             </div>
 
         </div>
     </x-section.hero>
 
+    <div class="py-16 bg-gray-50 overflow-hidden lg:py-24">
+        <div class="relative max-w-xl mx-auto px-4 sm:px-6 lg:px-8 lg:max-w-7xl">
+            <svg class="hidden lg:block absolute left-full transform -translate-x-1/2 -translate-y-1/4" width="404"
+                height="784" fill="none" viewBox="0 0 404 784" aria-hidden="true">
+                <defs>
+                    <pattern id="b1e6e422-73f8-40a6-b5d9-c8586e37e0e7" x="0" y="0" width="20" height="20"
+                        patternUnits="userSpaceOnUse">
+                        <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor">
+                        </rect>
+                    </pattern>
+                </defs>
+                <rect width="404" height="784" fill="url(#b1e6e422-73f8-40a6-b5d9-c8586e37e0e7)"></rect>
+            </svg>
+
+            <div class="relative">
+                <x-heading.h2 class="mt-2 text-3xl text-center font-extrabold">
+                    One Unified Dashboard for <br> All Your WordPress Sites
+                </x-heading.h2>
+
+                <p class="mt-4 max-w-3xl mx-auto text-center text-xl text-gray-500">
+                    WPGrip brings all your WordPress sites together in one unified dashboard, making complex site
+                    management easy and efficient. With secure SSH connections, WP-CLI command integration, and zero
+                    dependency on extra plugins, WPGrip redefines what's possible for WordPress professionals.
+                </p>
+            </div>
+
+
+            <x-section.columns class="max-w-none md:max-w-6xl pt-16 items-center" id="features">
+                <x-section.column>
+                    <div>
+                        <x-heading.h2>
+                            Performance Efficiency
+                        </x-heading.h2>
+                    </div>
+
+                    <p class="mt-4">
+                        Experience lightning-fast WordPress site management with WP-CLI executed over secure SSH
+                        connections. WPGrip provides 2x faster efficiency compared to traditional methods, ensuring your
+                        sites run seamlessly without adding any strain to your WordPress frontend.
+                    </p>
+
+
+                </x-section.column>
+
+                <x-section.column>
+                    <img src="{{ URL::asset('/images/features/performance.svg') }}" dir="right"></img>
+                </x-section.column>
+
+            </x-section.columns>
+
+            <x-section.columns class="max-w-none md:max-w-6xl  flex-wrap-reverse">
+                <x-section.column>
+                    <img src="{{ URL::asset('/images/features/security.svg') }}" />
+                </x-section.column>
+
+                <x-section.column>
+                    <div>
+                        <x-heading.h2>
+                            Maximum Security
+                        </x-heading.h2>
+                    </div>
+
+                    <p class="mt-4">
+                        Gain peace of mind with WPGrip’s robust security. Our secure SSH connections and encrypted keys
+                        eliminate plugin vulnerabilities, keeping your data and sites protected from potential threats.
+                        WPGrip also fetches and maintains an up-to-date database of vulnerabilities for WordPress core,
+                        plugins, and themes, ensuring that any potential risks are identified and addressed quickly.
+                    </p>
+                </x-section.column>
+
+            </x-section.columns>
+
+            <x-section.columns class="max-w-none md:max-w-6xl mt-6">
+                <x-section.column>
+                    <div x-intersect="$el.classList.add('slide-in-top')">
+                        <x-heading.h2>
+                            No Plugins Needed
+                        </x-heading.h2>
+                    </div>
+
+                    <p class="mt-4">
+                        Start managing your WordPress sites right away without the hassle of installing extra plugins.
+                        With WPGrip, you get a unique SSH key that you simply add to your hosting—giving you instant,
+                        secure control and reducing ongoing maintenance headaches. It's easy, fast, and puts you in
+                        control from day one.
+                    </p>
+                </x-section.column>
+
+                <x-section.column>
+                    {{-- <img src="{{ URL::asset('/images/features/plans.png') }}" class="rounded-2xl" /> --}}
+                </x-section.column>
+
+            </x-section.columns>
+
+            <svg class="hidden lg:block absolute right-full transform translate-x-1/2 translate-y-12" width="404"
+                height="784" fill="none" viewBox="0 0 404 784" aria-hidden="true">
+                <defs>
+                    <pattern id="64e643ad-2176-4f86-b3d7-f2c5da3b6a6d" x="0" y="0" width="20" height="20"
+                        patternUnits="userSpaceOnUse">
+                        <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor">
+                        </rect>
+                    </pattern>
+                </defs>
+                <rect width="404" height="784" fill="url(#64e643ad-2176-4f86-b3d7-f2c5da3b6a6d)"></rect>
+            </svg>
+
+
+        </div>
+
+    </div>
+
     <div class="bg-white">
-        <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:py-24 lg:px-8 lg:grid lg:grid-cols-3 lg:gap-x-32 align-center">
+        <div
+            class="max-w-7xl mx-auto items-center py-16 px-4 sm:px-6 lg:py-24 lg:px-8 lg:grid lg:grid-cols-3 lg:gap-x-32 align-center">
             <div>
                 <x-heading.h6 class="text-primary-500 tracking-wide uppercase">
-                    {{ __('A solid foundation') }}
+                    {{ __('Redefining') }}
                 </x-heading.h6>
-                <x-heading.h2 class="text-primary-900 mt-2 text-3xl font-extrabold">
-                    {{ __('Everything you need in one dashboard') }}
+                <x-heading.h2 class="mt-2 text-3xl font-extrabold">
+                    WordPress <br> Management
                 </x-heading.h2>
                 <p class="mt-4 text-lg text-gray-500">
-                    It takes care of everything important to keep your site secure and under control.
+                    WPGrip brings all your WordPress sites together in one unified dashboard, making complex site
+                    management easy and efficient. With secure SSH connections, WP-CLI command integration, and zero
+                    dependency on extra plugins, WPGrip redefines what's possible for WordPress professionals.
                 </p>
             </div>
 
@@ -71,7 +194,7 @@
                             </path>
                         </svg>
                         <span class="ml-3 text-base text-gray-500">
-                            Servers
+                            Uptime Monitoring
                         </span>
                     </li>
                     <li class="py-4 flex">
@@ -81,7 +204,7 @@
                             </path>
                         </svg>
                         <span class="ml-3 text-base text-gray-500">
-                            Databases
+                            SSL Monitoring
                         </span>
                     </li>
                     <li class="py-4 flex">
@@ -91,7 +214,7 @@
                             </path>
                         </svg>
                         <span class="ml-3 text-base text-gray-500">
-                            Scheduled jobs
+                            Easy Updates
                         </span>
                     </li>
                     <li class="py-4 flex">
@@ -101,7 +224,7 @@
                             </path>
                         </svg>
                         <span class="ml-3 text-base text-gray-500">
-                            Daemons
+                            Server & Hosting Management
                         </span>
                     </li>
                 </ul>
@@ -113,7 +236,7 @@
                             </path>
                         </svg>
                         <span class="ml-3 text-base text-gray-500">
-                            Firewall rules
+                            Git deployments
                         </span>
                     </li>
                     <li class="py-4 flex">
@@ -123,7 +246,7 @@
                             </path>
                         </svg>
                         <span class="ml-3 text-base text-gray-500">
-                            Sites
+                            Database size monitoring
                         </span>
                     </li>
                     <li class="py-4 flex">
@@ -133,7 +256,7 @@
                             </path>
                         </svg>
                         <span class="ml-3 text-base text-gray-500">
-                            Certificates
+                            Page Speed monitoring
                         </span>
                     </li>
                     <li class="py-4 flex">
@@ -143,7 +266,7 @@
                             </path>
                         </svg>
                         <span class="ml-3 text-base text-gray-500">
-                            Site workers
+                            More ...
                         </span>
                     </li>
                 </ul>
@@ -151,143 +274,202 @@
         </div>
     </div>
 
-    <div class="py-16 bg-gray-50 overflow-hidden lg:py-24">
+    {{-- CTA AI --}}
+    <div class="bg-gradient-to-br from-blue-700 to-blue-900 relative">
+        <x-section.columns class="max-w-none items-center md:max-w-6xl mt-6">
+            <x-section.column>
+                <div>
+                    <x-pill class="text-black font-bold mb-8 bg-primary-50">
+                        Smarter Site Management. Clear Suggestions.
+                    </x-pill>
+
+                    <x-heading.h2 class="text-white mt-6">
+                        WPGriP AI Assistant
+                    </x-heading.h2>
+                </div>
+
+                <p class="mt-4 text-white">
+                    WPGrip offers you an AI model specifically tuned for WordPress. Unsure if a plugin could cause
+                    problems? Ask our AI. Need a boost for your PageSpeed score? Let AI guide you. Get smart insights
+                    from your site data and make informed decisions quickly—your AI assistant is here 24/7 to support
+                    you.
+                </p>
+
+            </x-section.column>
+
+            <x-section.column>
+                <img src="{{ URL::asset('/images/features/ai-white.svg') }}" class="rounded-2xl" />
+            </x-section.column>
+
+        </x-section.columns>
+
+
+
+    </div>
+
+    {{-- Tabs --}}
+    <div class="py-16 bg-gray-50 overflow-hidden lg:py-32">
+
         <div class="relative max-w-xl mx-auto px-4 sm:px-6 lg:px-8 lg:max-w-7xl">
-            <svg class="hidden lg:block absolute left-full transform -translate-x-1/2 -translate-y-1/4" width="404" height="784" fill="none" viewBox="0 0 404 784" aria-hidden="true">
+            <svg class="hidden lg:block absolute left-full transform -translate-x-1/2 -translate-y-1/4" width="404"
+                height="784" fill="none" viewBox="0 0 404 784" aria-hidden="true">
                 <defs>
-                    <pattern id="b1e6e422-73f8-40a6-b5d9-c8586e37e0e7" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                        <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor"></rect>
+                    <pattern id="b1e6e422-73f8-40a6-b5d9-c8586e37e0e7" x="0" y="0" width="20" height="20"
+                        patternUnits="userSpaceOnUse">
+                        <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor">
+                        </rect>
                     </pattern>
                 </defs>
                 <rect width="404" height="784" fill="url(#b1e6e422-73f8-40a6-b5d9-c8586e37e0e7)"></rect>
             </svg>
-    
+
             <div class="relative">
-                <h2 class="text-center text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                    How to?
-                </h2>
-                <p class="mt-4 max-w-3xl mx-auto text-center text-xl text-gray-500">
-                    You can create an account for free to configure and preview your migration.
-                </p>
+                <x-heading.h2 class="mt-2 text-3xl text-center font-extrabold">
+                    Powerful Features
+                </x-heading.h2>
             </div>
-    
-            <div class="relative mt-12 lg:mt-24 lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
-                <div class="relative">
-                    <h3 class="text-2xl font-extrabold text-gray-900 tracking-tight sm:text-3xl">
-                        Select your servers
-                    </h3>
-                    <p class="mt-3 text-lg text-gray-500">
-                        All your servers get automatically detected. You decide which server to migrate and which not.
+
+            <x-tab-slider class="mt-6 md:max-w-6xl">
+                <x-slot name="tabNames">
+                    <x-tab-slider.tab-name controls="tab-1" active="true">Vulnerabilities</x-tab-slider.tab-name>
+                    <x-tab-slider.tab-name controls="tab-2">Team Collaboration</x-tab-slider.tab-name>
+                    <x-tab-slider.tab-name controls="tab-3">Performance</x-tab-slider.tab-name>
+                    <x-tab-slider.tab-name controls="tab-4">Backups</x-tab-slider.tab-name>
+                    <x-tab-slider.tab-name controls="tab-5">Deployments</x-tab-slider.tab-name>
+                    <x-tab-slider.tab-name controls="tab-6">Monitoring</x-tab-slider.tab-name>
+                </x-slot>
+
+                <x-tab-slider.tab-content class="text-center mt-8" id="tab-1">
+                    <x-heading.h3 class="mt-6">
+                        Vulnerability Detection
+                    </x-heading.h3>
+                    <p class="mt-2 text-gray-950">
+                        WPGrip has a continuously updated vulnerability database for plugins, themes, and WordPress
+                        core. Our
+                        system detects if any of your sites are running vulnerable versions, allowing you to act quickly
+                        to
+                        secure your WordPress ecosystem. This proactive approach helps to mitigate risks and keep your
+                        websites
+                        safe from potential exploits.
                     </p>
-                </div>
-    
-                <div class="mt-10 -mx-4 relative lg:mt-0" aria-hidden="true">
-                    <svg class="absolute left-1/2 transform -translate-x-1/2 translate-y-16 lg:hidden" width="784" height="404" fill="none" viewBox="0 0 784 404">
-                        <defs>
-                            <pattern id="ca9667ae-9f92-4be7-abcb-9e3d727f2941" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                                <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor"></rect>
-                            </pattern>
-                        </defs>
-                        <rect width="784" height="404" fill="url(#ca9667ae-9f92-4be7-abcb-9e3d727f2941)"></rect>
-                    </svg>
-                    <img class="relative mx-auto" width="490" src="img/server.png" alt="">
-                </div>
-            </div>
-    
-            <svg class="hidden lg:block absolute right-full transform translate-x-1/2 translate-y-12" width="404" height="784" fill="none" viewBox="0 0 404 784" aria-hidden="true">
-                <defs>
-                    <pattern id="64e643ad-2176-4f86-b3d7-f2c5da3b6a6d" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                        <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor"></rect>
-                    </pattern>
-                </defs>
-                <rect width="404" height="784" fill="url(#64e643ad-2176-4f86-b3d7-f2c5da3b6a6d)"></rect>
-            </svg>
-    
-            <div class="relative mt-12 sm:mt-16 lg:mt-24">
-                <div class="lg:grid lg:grid-flow-row-dense lg:grid-cols-2 lg:gap-8 lg:items-center">
-                    <div class="lg:col-start-2">
-                        <h3 class="text-2xl font-extrabold text-gray-900 tracking-tight sm:text-3xl">
-                            Sites
-                        </h3>
-                        <p class="mt-3 text-lg text-gray-500">
-                            Simply select all sites you want to migrate, select if the storage directory should get migrated
-                            and that's it.
-                        </p>
+                </x-tab-slider.tab-content>
+
+                <x-tab-slider.tab-content class="text-center mt-8" id="tab-2">
+                    <x-heading.h3 class="mt-6">
+                        Team Collaboration
+                    </x-heading.h3>
+                    <p class="mt-2 text-gray-950">Invite team members to your workspace and collaborate effortlessly.
+                        WPGrip also
+                        makes it
+                        possible to be invited to other workspaces, making it easy to manage multiple projects and
+                        teams. The
+                        platform allows you to organize servers and link them to specific websites, ensuring smooth
+                        operations
+                        and efficient teamwork. Whether you're a solo developer or part of a larger agency, WPGrip keeps
+                        everyone on the same page, making site management more streamlined.</p>
+                </x-tab-slider.tab-content>
+
+                <x-tab-slider.tab-content class="text-center mt-8" id="tab-3">
+                    <x-heading.h3 class="mt-6">
+                        Backups
+                    </x-heading.h3>
+                    <p class="mt-2 text-gray-950">WPGrip supports encrypted cloud backups that keep your databases
+                        secure. With
+                        easy
+                        scheduling options, you can automate the process and restore backups whenever needed, ensuring
+                        your data
+                        is always protected and easily recoverable.</p>
+                </x-tab-slider.tab-content>
+
+                <x-tab-slider.tab-content class="text-center mt-8" id="tab-4">
+                    <x-heading.h3 class="mt-6">
+                        Performance Monitoring
+                    </x-heading.h3>
+                    <p class="mt-2 text-gray-950">WPGrip monitors Google PageSpeed scores for both mobile and desktop,
+                        offering
+                        real-time
+                        insights into your site’s performance. Historical data is saved so you can track trends and make
+                        adjustments to enhance user experience over time. This feature ensures that your sites are
+                        always
+                        optimized and performing at their peak.</p>
+                </x-tab-slider.tab-content>
+
+                <x-tab-slider.tab-content id="tab-5">
+                    <x-heading.h3 class="mt-6">
+                        Direct Management & Deployments
+                    </x-heading.h3>
+                    <p class="mt-2 text-gray-950">WPGrip makes plugin, theme, and core management straightforward
+                        through WP-CLI
+                        commands.
+                        Whether you need to install, update, or deactivate, WPGrip’s direct command line access makes
+                        the
+                        process simple and efficient. For deployment, the platform allows seamless integration with
+                        GitHub or
+                        Bitbucket. You can automate your workflow with webhooks, set up automatic or manual deployments
+                        for
+                        individual components, and effortlessly roll back to previous versions if required. WPGrip gives
+                        you the
+                        freedom and control to update your sites in the way that works best for you.</p>
+
+                    <div class="flex gap-3 pt-1 flex-wrap">
+                        @svg('colored/github', 'h-12 w-12 py-2 px-2 border border-primary-50 rounded-lg')
+                        @svg('colored/gitlab', 'h-12 w-12 py-2 px-2 border border-primary-50 rounded-lg')
+                        @svg('colored/bitbucket', 'h-12 w-12 py-2 px-2 border border-primary-50 rounded-lg')
                     </div>
-    
-                    <div class="mt-10 -mx-4 relative lg:mt-0 lg:col-start-1">
-                        <svg class="absolute left-1/2 transform -translate-x-1/2 translate-y-16 lg:hidden" width="784" height="404" fill="none" viewBox="0 0 784 404" aria-hidden="true">
-                            <defs>
-                                <pattern id="e80155a9-dfde-425a-b5ea-1f6fadd20131" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                                    <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor"></rect>
-                                </pattern>
-                            </defs>
-                            <rect width="784" height="404" fill="url(#e80155a9-dfde-425a-b5ea-1f6fadd20131)"></rect>
-                        </svg>
-                        <img class="relative mx-auto" width="490" src="img/sites.png" alt="">
-                    </div>
-                </div>
-            </div>
+                </x-tab-slider.tab-content>
+
+                <x-tab-slider.tab-content class="text-center mt-8" id="tab-6">
+                    <x-heading.h3 class="mt-3">
+                        Monitoring & Alerts
+                    </x-heading.h3>
+                    <p class="mt-2">WPGrip’s monitoring tools provide instant insights into your website's health.
+                        With daily
+                        regression tests, WPGrip keeps a vigilant eye on any changes that could affect your sites'
+                        stability.
+                        The platform also provides uptime monitoring and tracks SSL certificate status to ensure your
+                        sites
+                        remain accessible and secure. When an issue is detected, you receive immediate notifications
+                        through
+                        email or Slack, so you can act fast. Additionally, WPGrip allows you to monitor up to 3 custom
+                        URLs per
+                        site, offering comprehensive oversight of every important aspect of your WordPress ecosystem.
+                    </p>
+                </x-tab-slider.tab-content>
+            </x-tab-slider>
+
+
+
         </div>
+
     </div>
 
-    <div class="bg-gradient-to-b from-gray-50 to-blue-100">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 px-4">
-        <div class="py-24 xl:flex xl:items-center xl:justify-between">
-                <div>
-                    <h1 class="text-4xl font-extrabold sm:text-5xl sm:tracking-tight">
-                        <span class="text-gray-900">Migrate everything for</span>
-                        <span class="text-blue-600 border-b-2 border-dotted border-blue-600">free</span>
-                    </h1>
-                    <p class="mt-5 text-xl text-gray-500">
-                        Includes everything you need.
-                    </p>
-                </div>
-                <a href="https://move.ploi.app/register" class="mt-8 w-full bg-blue-600 border border-transparent px-5 py-3 inline-flex items-center justify-center text-base font-medium rounded-md text-white hover:bg-blue-700 sm:mt-10 sm:w-auto xl:mt-0">
-                    Configure for free
-                </a>
-            </div>
-    </div></div>
 
-    <div class="bg-gradient-to-br from-blue-700 to-blue-900 relative">
+    <div class="relative">
         <div class="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8 z-10 relative">
-            <h2 class="text-3xl font-extrabold text-white">
-                Frequently asked questions
-            </h2>
-            <div class="mt-6 border-t border-blue-400 border-opacity-25 pt-10">
-                <dl class="space-y-10 md:space-y-0 md:grid md:grid-cols-2  md:gap-x-8 md:gap-y-12">
-                                        <div>
-                            <dt class="text-lg leading-6 font-medium text-white">What sort of data will get migrated trough the tool?</dt>
-                            <dd class="mt-2 text-base text-blue-200">Basically everything you need to get your site up and running: It creates database users on ploi, migrates all your databases to ploi, migrate your recipes/scripts, of course it migrates your servers including the scheduled jobs, daemons and all the firewall rules. It will migrate your sites, your environment file, the deployment script, all redirect rules, the site-repository, the queue workers and if wanted the storage directory.</dd>
-                        </div>
-                                        <div>
-                            <dt class="text-lg leading-6 font-medium text-white">So it will migrate 100% of my system?</dt>
-                            <dd class="mt-2 text-base text-blue-200">Yes and no. Something between. When you have a very basic system without any custom configuration on forge it's very likely that your system gets migrated completely. Otherwise we will just migrate the data from the question above and you have to complete the further configuration. But in both cases the migrator will do the hard part for you and will save you tons of time.</dd>
-                        </div>
-                                        <div>
-                            <dt class="text-lg leading-6 font-medium text-white">How does the system get access to my data?</dt>
-                            <dd class="mt-2 text-base text-blue-200">The tool will install SSH keys on your servers. For every server that gets migrated it will install the SSH key of the migration tool on the forge and ploi server, as well as the forge key on the new ploi server. That is needed to send all data between those servers. But of course, all of these keys will get removed when the migration finishes.</dd>
-                        </div>
-                                        <div>
-                            <dt class="text-lg leading-6 font-medium text-white">What happens when a error occurs?</dt>
-                            <dd class="mt-2 text-base text-blue-200">Nobody likes errors but sometimes they happen. In case of an error we will get in touch with you to clarify the further procedure.</dd>
-                        </div>
-                                        <div>
-                            <dt class="text-lg leading-6 font-medium text-white">I have another question, how can I contact you?</dt>
-                            <dd class="mt-2 text-base text-blue-200">If you have any open questions or problems feel free to contact us. Either via the live chat at on ploi.io or just send us a email on move@ploi.io</dd>
-                        </div>
-                                </dl>
+            <x-heading.h2 class="mt-2 text-3xl text-center font-extrabold">
+                FAQ
+            </x-heading.h2>
+   
+            <div class="mt-6 border-t border-blue-600 border-opacity-25 pt-10">
+                <x-accordion class="mt-4 p-8">
+                    <x-accordion.item active="true" name="refund">
+                        <x-slot name="title">Do you offer a refund?</x-slot>
+                
+                        Yes, we do offer a 30 days money back guarantee.
+                
+                    </x-accordion.item>
+                
+                    <x-accordion.item active="false" name="trial">
+                        <x-slot name="title">Do you offer a trial?</x-slot>
+                
+                        Yes, we do offer a 30 days free trial.
+                    </x-accordion.item>
+                </x-accordion>
             </div>
         </div>
-        <!--        <svg class="absolute shadow-lg inset-x-0 bottom-0 w-full text-blue-800 hidden md:block" fill="none"-->
-        <!--                   viewBox="0 0 1440 431" xmlns="http://www.w3.org/2000/svg">-->
-        <!--        <path-->
-        <!--            d="M481 405C283 428.5 368 390 0.5 395V430.5H1439.5L1439 0.5C1424.83 -0.333333 1384.1 3 1334.5 23C1272.5 48 1250.5 85.5 1246 98C1234.86 128.956 1206.5 167.5 1188.5 175.5C1170.5 183.5 1026 224.5 988 278.5C950 332.5 942.5 353 876.5 372C781.242 399.423 679 381.5 481 405Z"-->
-        <!--            fill="currentColor"/>-->
-        <!--    </svg>-->
     </div>
 
-    <div class="bg-blue-50">
+    {{-- <div class="bg-blue-50">
         <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-24 lg:px-8 lg:flex lg:items-center lg:justify-between">
             <h2 class="text-3xl font-extrabold tracking-tight text-blue-900 sm:text-4xl">
                 <span class="block">Have to migrate?</span>
@@ -301,568 +483,36 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
-    <x-section.columns class="max-w-none md:max-w-6xl pt-16" id="features">
-        <x-section.column>
-            <div x-intersect="$el.classList.add('slide-in-top')">
-                <x-heading.h6 class="text-primary-500">
-                    {{ __('A solid foundation') }}
+
+    <div class="bg-gradient-to-b py-16 lg:py-24 from-blue-100 to-white">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 px-4">
+            <div class="text-center">
+                <x-heading.h6>
+                    Take control today and start controlling your WordPress sites with WPGrip
                 </x-heading.h6>
-                <x-heading.h2 class="text-primary-900">
-                    {{ __('Encrypted connection & maximum security.') }}
+                <x-heading.h2>
+                    Ready to Harness AI Insights?
                 </x-heading.h2>
             </div>
 
-            <p class="mt-4">
-                WPGrip uses secure SSH connections with encrypted keys to link to your websites. That allows you to execute local commands via WP-CLI, offering you a faster, more reliable, and more secure way to manage your WordPress sites—without putting a strain on your PHP process.
-            </p>
-       
-            <p class="pt-4">
-                {{ __('Powered by:') }}
-            </p>
-            <div class="flex gap-3 pt-1">
-                <a href="https://stripe.com/" target="_blank">
-                    <img src="{{URL::asset('/images/payment-providers/stripe.png')}}" class="h-12 py-2 px-2 border border-primary-50 rounded-lg" />
-                </a>
-                <a href="https://www.paddle.com/" target="_blank">
-                    <img src="{{URL::asset('/images/payment-providers/paddle.png')}}" class="h-12 py-2 px-2 border border-primary-50 rounded-lg" />
-                </a>
+            <div class="max-w-none md:max-w-6xl mx-auto text-center">
+                <p class="mt-4">
+                    Optimize your WordPress experience with AI-powered insights. WPGrip analyzes performance, predicts
+                    plugin conflicts, identifies issues, and reviews logs—empowering you to make data-driven decisions.
+                    Our
+                    AI model, specifically trained on WordPress data, delivers deep, actionable insights tailored to
+                    your
+                    needs.
+                </p>
+                <x-button-link.primary href="/pricing" class=" mt-8">
+                    Start Now
+                </x-button-link.primary>
             </div>
-        </x-section.column>
-
-        <x-section.column>
-            <img src="{{URL::asset('/images/features/payments.png')}}" dir="right" ></img>
-        </x-section.column>
-
-    </x-section.columns>
-
-    <x-section.columns class="max-w-none md:max-w-6xl  flex-wrap-reverse">
-        <x-section.column >
-            <img src="{{URL::asset('/images/features/colors.png')}}" />
-        </x-section.column>
-
-        <x-section.column>
-            <div x-intersect="$el.classList.add('slide-in-top')">
-                <x-heading.h6 class="text-primary-500">
-                    {{ __('Your Brand, Your Colors') }}
-                </x-heading.h6>
-                <x-heading.h2 class="text-primary-900">
-                    {{ __('Customize Everything.') }}
-                </x-heading.h2>
-            </div>
-
-            <p class="mt-4">
-                {{ __('Customize the primary & secondary colors of your website, error pages, email templates, fonts, social sharing cards, favicons, and more.') }}
-            </p>
-
-            <p class="mt-4">
-                {{ __('Based on the popular TailwindCSS, you can easily customize the look and feel of your SaaS application.') }}
-            </p>
-        </x-section.column>
-
-    </x-section.columns>
-
-    <x-section.columns class="max-w-none md:max-w-6xl mt-6" >
-        <x-section.column>
-            <div x-intersect="$el.classList.add('slide-in-top')">
-                <x-heading.h6 class="text-primary-500">
-                    {{ __('At your fingertips') }}
-                </x-heading.h6>
-                <x-heading.h2 class="text-primary-900">
-                    {{ __('Products, Plans & Pricing.') }}
-                </x-heading.h2>
-            </div>
-
-            <p class="mt-4">
-                {{ __('Create and manage your products, plans, and pricing, set features for each plan, mark a plan as featured, and more.') }}
-            </p>
-
-            <p class="mt-4">
-                {{ __('Rewards your customers with discounts and manage all that from a beautiful admin panel.') }}
-            </p>
-        </x-section.column>
-
-        <x-section.column>
-            <img src="{{URL::asset('/images/features/plans.png')}}" class="rounded-2xl"/>
-        </x-section.column>
-
-    </x-section.columns>
-
-    <x-plans.all calculate-saving-rates="true" preselected-interval="year"></x-plans.all>
-
-    <x-section.columns class="max-w-none md:max-w-6xl mt-6 flex-wrap-reverse">
-        <x-section.column >
-            <img src="{{URL::asset('/images/features/checkout.png')}}" class="rounded-2xl" />
-        </x-section.column>
-
-        <x-section.column>
-            <div x-intersect="$el.classList.add('slide-in-top')">
-                <x-heading.h6 class="text-primary-500">
-                    {{ __('Buttery smooth') }}
-                </x-heading.h6>
-                <x-heading.h2 class="text-primary-900">
-                    {{ __('Beautiful checkout process.') }}
-                </x-heading.h2>
-            </div>
-
-            <p class="mt-4">
-                {{ __('In a few clicks, your customers can subscribe to your service using a beautiful checkout page that shows all the details of the plan they are subscribing to, allowing them to add a coupon code if they have one, and choose their payment method.') }}
-            </p>
-        </x-section.column>
-
-    </x-section.columns>
-
-    <div class="text-center mt-16 mx-4" id="tech-stack">
-        <x-heading.h6 class="text-primary-500">
-            {{ __('The best of the best') }}
-        </x-heading.h6>
-        <x-heading.h2 class="text-primary-900">
-            {{ __('A solid tech stack') }}
-        </x-heading.h2>
-    </div>
-
-
-    <div class="text-center p-4 mx-auto">
-        <p >{{ __('Laravel, TailwindCSS, Livewire, AlpineJS & FilamentPhp') }}</p>
-
-        <div class="flex flex-wrap items-center justify-center gap-12 mt-8">
-            <img src="{{URL::asset('/images/tech-stack/laravel.svg')}}" class="h-10 hover:cursor-pointer hover:scale-103 hover:opacity-100 transition grayscale hover:grayscale-0 opacity-50" />
-            <img src="{{URL::asset('/images/tech-stack/filament.avif')}}" class="h-10 hover:cursor-pointer hover:scale-103 hover:opacity-100 transition grayscale hover:grayscale-0 opacity-50" />
-            <img src="{{URL::asset('/images/tech-stack/tailwindcss.svg')}}" class="h-12 hover:cursor-pointer hover:scale-103 hover:opacity-100 transition grayscale hover:grayscale-0 opacity-50" />
-            <img src="{{URL::asset('/images/tech-stack/livewire.png')}}" class="h-20 hover:cursor-pointer hover:scale-103 hover:opacity-100 transition grayscale hover:grayscale-0 opacity-50" />
-            <img src="{{URL::asset('/images/tech-stack/alpinejs.svg')}}" class="h-16 hover:cursor-pointer hover:scale-103 hover:opacity-100 transition grayscale hover:grayscale-0 opacity-50" />
-        </div>
-
-    </div>
-
-    {{--    ////////////--}}
-    {{--    Slider      --}}
-    {{--    ////////////--}}
-
-    <div class="text-center mt-16 p-4">
-        <x-heading.h6 class="text-primary-500">
-            {{ __('All Inclusive') }}
-        </x-heading.h6>
-        <x-heading.h2 class="text-primary-900">
-            {{ __('Huge list of ready-to-use components.') }}
-        </x-heading.h2>
-    </div>
-
-
-    <div class="mx-4">
-        <x-tab-slider class="mt-6 md:max-w-6xl border-2 border-neutral-100 py-8 rounded-2xl">
-            <x-slot name="tabNames">
-                <x-tab-slider.tab-name controls="tab-1" active="true">{{ __('Testimonials') }}</x-tab-slider.tab-name>
-                <x-tab-slider.tab-name controls="tab-2">{{ __('Plans & Pricing') }}</x-tab-slider.tab-name>
-                <x-tab-slider.tab-name controls="tab-3">{{ __('Hero section') }}</x-tab-slider.tab-name>
-                <x-tab-slider.tab-name controls="tab-4">{{ __('FAQ') }}</x-tab-slider.tab-name>
-                <x-tab-slider.tab-name controls="tab-5">{{ __('Call to action') }}</x-tab-slider.tab-name>
-                <x-tab-slider.tab-name controls="tab-6">{{ __('Tab slider') }}</x-tab-slider.tab-name>
-                <x-tab-slider.tab-name controls="tab-7">{{ __('and more') }}</x-tab-slider.tab-name>
-            </x-slot>
-
-            <x-tab-slider.tab-content id="tab-1">
-                <div class="text-center mt-8">
-                    <x-heading.h4 class="text-primary-900 !font-semibold">
-                        {{ __('Testimonials') }}
-                    </x-heading.h4>
-
-                    <div class="mx-auto max-w-2xl">
-                        <p class="mt-4">
-                            {{ __('Display testimonials from your customers on your website and build trust with your potential customers.') }}
-                        </p>
-                    </div>
-                </div>
-
-                <div class="m-10 mx-auto max-w-4xl mt-12">
-                    <img src="{{URL::asset('/images/features/testimonials.png')}}" class="drop-shadow-xl rounded-2xl" />
-                </div>
-
-            </x-tab-slider.tab-content>
-
-            <x-tab-slider.tab-content id="tab-2">
-                <div class="text-center mt-8">
-                    <x-heading.h4 class="text-primary-900 !font-semibold">
-                        {{ __('Plans & Pricing Component') }}
-                    </x-heading.h4>
-
-                    <div class="mx-auto max-w-2xl">
-                        <p class="mt-4">
-                            {{ __('This component is magical in that it will read the plans you defined in your admin panel, group them, calculate potential discount amount if user chooses a longer plan, and display all that in a beautiful way for your users. ') }}
-                        </p>
-                    </div>
-                </div>
-
-                <div class="m-10 mx-auto max-w-4xl mt-12">
-                    <img src="{{URL::asset('/images/features/plans-component.png')}}" class="drop-shadow-xl rounded-2xl" />
-                </div>
-
-            </x-tab-slider.tab-content>
-
-            <x-tab-slider.tab-content id="tab-3">
-                <div class="text-center mt-8">
-                    <x-heading.h4 class="text-primary-900 !font-semibold">
-                        {{ __('Hero section Component') }}
-                    </x-heading.h4>
-
-                    <div class="mx-auto max-w-2xl">
-                        <p class="mt-4">
-                            {{ __('A ready-to-use hero section component to display your hero image, title, and call to action button.') }}
-                        </p>
-                    </div>
-                </div>
-
-                <div class="m-10 mx-auto max-w-4xl mt-12">
-                    <img src="{{URL::asset('/images/features/hero-component.png')}}" class="drop-shadow-xl rounded-2xl" />
-                </div>
-
-            </x-tab-slider.tab-content>
-
-            <x-tab-slider.tab-content id="tab-4">
-                <div class="text-center mt-8">
-                    <x-heading.h4 class="text-primary-900 !font-semibold">
-                        {{ __('FAQ Component') }}
-                    </x-heading.h4>
-
-                    <div class="mx-auto max-w-2xl">
-                        <p class="mt-4">
-                            {{ __('An accordion component that you can use to display your FAQ in an intuitive way.') }}
-                        </p>
-                    </div>
-                </div>
-
-                <div class="m-10 mx-auto max-w-4xl mt-12">
-                    <img src="{{URL::asset('/images/features/faqs-component.png')}}" class="drop-shadow-xl rounded-2xl" />
-                </div>
-
-            </x-tab-slider.tab-content>
-
-            <x-tab-slider.tab-content id="tab-5">
-                <div class="text-center mt-8">
-                    <x-heading.h4 class="text-primary-900 !font-semibold">
-                        {{ __('Call to action component') }}
-                    </x-heading.h4>
-
-                    <div class="mx-auto max-w-2xl">
-                        <p class="mt-4">
-                            {{ __('A focused component the brings attention to your call to action.') }}
-                        </p>
-                    </div>
-                </div>
-
-                <div class="m-10 mx-auto max-w-4xl mt-12">
-                    <img src="{{URL::asset('/images/features/call-to-action-component.png')}}" class="drop-shadow-xl rounded-2xl">
-                </div>
-
-            </x-tab-slider.tab-content>
-
-            <x-tab-slider.tab-content id="tab-6">
-                <div class="text-center mt-8">
-                    <x-heading.h4 class="text-primary-900 !font-semibold">
-                        {{ __('Tab Slider Component') }}
-                    </x-heading.h4>
-
-                    <div class="mx-auto max-w-2xl">
-                        <p class="mt-4">
-                            {{ __('Tab slider component displays your content in a beautiful and organized way into separate tabs.') }}
-                        </p>
-                    </div>
-                </div>
-
-                <div class="m-10 mx-auto max-w-4xl mt-12">
-                    <img src="{{URL::asset('/images/features/tab-slider-component.png')}}" class="drop-shadow-xl rounded-2xl">
-                </div>
-
-            </x-tab-slider.tab-content>
-
-            <x-tab-slider.tab-content id="tab-7">
-
-                <div class="m-10 mx-auto max-w-4xl mt-6">
-                    <x-section.columns class="max-w-none md:max-w-6xl mt-6">
-                        <x-section.column class="flex flex-col items-center justify-center text-center">
-                            <x-icon.fancy name="nav" class="w-2/5 mx-auto" type="secondary" />
-                            <x-heading.h3 class="mx-auto pt-2">
-                                {{ __('Header & Footer') }}
-                            </x-heading.h3>
-                            <p class="mt-2">{{ __('Easily customize your header and footer.') }}</p>
-                        </x-section.column>
-
-                        <x-section.column class="flex flex-col items-center justify-center text-center">
-                            <x-icon.fancy name="button-ok" class="w-2/5 mx-auto" type="secondary" />
-                            <x-heading.h3 class="mx-auto pt-2">
-                                {{ __('Buttons') }}
-                            </x-heading.h3>
-                            <p class="mt-2">{{ __('Beautiful buttons to use in your application.') }}</p>
-                        </x-section.column>
-
-                        <x-section.column class="flex flex-col items-center justify-center text-center">
-                            <x-icon.fancy name="pill" class="w-2/5 mx-auto" type="secondary" />
-                            <x-heading.h3 class="mx-auto pt-2">
-                                {{ __('Pill') }}
-                            </x-heading.h3>
-                            <p class="mt-2">{{ __('Pills to highlight your content where you need to.') }}</p>
-                        </x-section.column>
-
-                    </x-section.columns>
-
-                    <p class="text-center mt-4">
-                        {{ __('and much more...') }}
-                    </p>
-                </div>
-
-            </x-tab-slider.tab-content>
-
-
-
-        </x-tab-slider>
-    </div>
-
-
-
-    <x-section.columns class="max-w-none md:max-w-6xl mt-12" >
-        <x-section.column>
-            <div x-intersect="$el.classList.add('slide-in-top')">
-                <x-heading.h6 class="text-primary-500">
-                    {{ __('Know your numbers') }}
-                </x-heading.h6>
-                <x-heading.h2 class="text-primary-900">
-                    {{ __('SaaS Stats.') }}
-                </x-heading.h2>
-            </div>
-
-            <p class="mt-4">
-                {{ __('View your MRR (monthly recurring revenue), Churn rates, ARPU (average revenue per user), and other SaaS metrics right inside your admin panel.') }}
-            </p>
-        </x-section.column>
-
-        <x-section.column>
-            <img src="{{URL::asset('/images/features/stats.png')}}" >
-        </x-section.column>
-
-    </x-section.columns>
-
-    <x-section.columns class="max-w-none md:max-w-6xl mt-16 flex-wrap-reverse">
-        <x-section.column >
-            <img src="{{URL::asset('/images/features/email.png')}}"  />
-        </x-section.column>
-
-        <x-section.column>
-            <div x-intersect="$el.classList.add('slide-in-top')">
-                <x-heading.h6 class="text-primary-500">
-                    {{ __('Connect with customers') }}
-                </x-heading.h6>
-                <x-heading.h2 class="text-primary-900">
-                    {{ __('Send & Customize Emails.') }}
-                </x-heading.h2>
-            </div>
-
-            <p class="mt-4">
-                {{ __('Choose your preferred email service from options like Mailgun, Postmark, and Amazon SES to communicate with your customers.') }}
-            </p>
-            <p class="mt-4">
-                {{ __('SaaSykit comes with a beautiful email template out of the box that takes your brand colors into consideration, along with the typical emails for customer registration, verification, resetting password, etc set up for you.') }}
-            </p>
-
-            <p class="pt-4">
-                {{ __('Supported email providers:') }}
-            </p>
-            <div class="flex gap-3 pt-1">
-                <a href="https://postmarkapp.com/" target="_blank">
-                    @svg('colored/postmark', 'h-12 w-12 py-2 px-2 border border-primary-50 rounded-lg')
-                </a>
-
-                <a href="https://www.mailgun.com/" target="_blank">
-                    @svg('colored/mailgun', 'h-12 w-12 py-2 px-2 border border-primary-50 rounded-lg')
-                </a>
-
-                <a href="https://aws.amazon.com/ses/" target="_blank">
-                    @svg('colored/ses', 'h-12 w-12 py-2 px-2 border border-primary-50 rounded-lg')
-                </a>
-            </div>
-        </x-section.column>
-
-    </x-section.columns>
-
-    <x-section.columns class="max-w-none md:max-w-6xl" >
-        <x-section.column>
-            <div x-intersect="$el.classList.add('slide-in-top')">
-                <x-heading.h6 class="text-primary-500">
-                    {{ __('Content is king') }}
-                </x-heading.h6>
-                <x-heading.h2 class="text-primary-900">
-                    {{ __('A ready Blog.') }}
-                </x-heading.h2>
-            </div>
-
-            <p class="mt-4">
-                {{ __('When it comes to reaching customer, nothing beats SEO.') }}
-            </p>
-            <p class="mt-4">
-                {{ __('SaaSykit comes with a ready blog system that you can use to publish articles and tutorials for your customers about your SaaS, which will help you with your SEO.') }}
-            </p>
-        </x-section.column>
-
-        <x-section.column>
-            <img src="{{URL::asset('/images/features/blog.png')}}" />
-        </x-section.column>
-
-    </x-section.columns>
-
-    <x-section.columns class="max-w-none md:max-w-6xl mt-16 flex-wrap-reverse">
-        <x-section.column >
-            <img src="{{URL::asset('/images/features/login.png')}}" />
-        </x-section.column>
-
-        <x-section.column>
-            <div x-intersect="$el.classList.add('slide-in-top')">
-                <x-heading.h6 class="text-primary-500">
-                    {{ __('Modern Authentication') }}
-                </x-heading.h6>
-                <x-heading.h2 class="text-primary-900">
-                    {{ __('Login, Registration & Social login.') }}
-                </x-heading.h2>
-            </div>
-
-            <p class="mt-4">
-                {{ __('SaaSykit includes built-in user authentication, supporting both traditional email/password authentication and social login options such as Google, Facebook, Twitter, Github, LinkedIn, and more.') }}
-            </p>
-
-            <p class="pt-4">
-                {{ __('Supported login providers:') }}
-            </p>
-            <div class="flex gap-3 pt-1 flex-wrap">
-                @svg('colored/google', 'h-12 w-12 py-2 px-2 border border-primary-50 rounded-lg')
-                @svg('colored/facebook', 'h-12 w-12 py-2 px-2 border border-primary-50 rounded-lg')
-                @svg('colored/twitter-oauth-2', 'h-12 w-12 py-2 px-2 border border-primary-50 rounded-lg')
-                @svg('colored/linkedin', 'h-12 w-12 py-2 px-2 border border-primary-50 rounded-lg')
-                @svg('colored/github', 'h-12 w-12 py-2 px-2 border border-primary-50 rounded-lg')
-                @svg('colored/gitlab', 'h-12 w-12 py-2 px-2 border border-primary-50 rounded-lg')
-                @svg('colored/bitbucket', 'h-12 w-12 py-2 px-2 border border-primary-50 rounded-lg')
-            </div>
-        </x-section.column>
-
-    </x-section.columns>
-
-
-    <div class="text-center mt-16" x-intersect="$el.classList.add('slide-in-top')">
-        <x-heading.h6 class="text-primary-500">
-            {{ __('Can\'t get more beautiful') }}
-        </x-heading.h6>
-        <x-heading.h2 class="text-primary-900">
-            {{ __('A stunning Admin Panel.') }}
-        </x-heading.h2>
-    </div>
-
-    <p class="text-center py-4">{{ __('Manage your SaaS application from a beautiful admin panel powered by Filament') }}</p>
-
-    <div class="text-center pt-6 mx-auto max-w-5xl ">
-        <img src="{{URL::asset('/images/features/admin-panel.png')}}" >
-    </div>
-
-
-    <div class="text-center mt-16" x-intersect="$el.classList.add('slide-in-top')">
-        <x-heading.h6 class="text-primary-500">
-            {{ __('Oh, we\'re not done yet') }}
-        </x-heading.h6>
-        <x-heading.h2 class="text-primary-900">
-            {{ __('And a whole lot more') }}
-        </x-heading.h2>
-    </div>
-
-    <x-section.columns class="max-w-none md:max-w-6xl mt-6">
-        <x-section.column class="flex flex-col items-center justify-center text-center">
-            <x-icon.fancy name="users" class="w-2/5 mx-auto" />
-            <x-heading.h3 class="mx-auto pt-2">
-                {{ __('Users & Roles') }}
-            </x-heading.h3>
-            <p class="mt-2">{{ __('Manage your users, create roles and assign permissions to your users.') }}</p>
-        </x-section.column>
-
-        <x-section.column class="flex flex-col items-center justify-center text-center">
-            <x-icon.fancy name="translatable" class="w-2/5 mx-auto" />
-            <x-heading.h3 class="mx-auto pt-2">
-                {{ __('Fully translatable') }}
-            </x-heading.h3>
-            <p class="mt-2">{{ __('Translate your application to any language you want.') }}</p>
-        </x-section.column>
-
-        <x-section.column class="flex flex-col items-center justify-center text-center">
-            <x-icon.fancy name="seo" class="w-2/5 mx-auto" />
-            <x-heading.h3 class="mx-auto pt-2">
-                {{ __('Sitemap & SEO') }}
-            </x-heading.h3>
-            <p class="mt-2">{{ __('Auto-generated sitemap and SEO optimization out of the box.') }}</p>
-        </x-section.column>
-
-    </x-section.columns>
-
-    <x-section.columns class="max-w-none md:max-w-6xl mt-6">
-        <x-section.column class="flex flex-col items-center justify-center text-center">
-            <x-icon.fancy name="user-dashboard" class="w-2/5 mx-auto" />
-            <x-heading.h3 class="mx-auto pt-2">
-                {{ __('User Dashboard') }}
-            </x-heading.h3>
-            <p class="mt-2">{{ __('Users can manage their subscriptions, change payment method, upgrade plan, cancel subscription alone.') }}</p>
-        </x-section.column>
-
-        <x-section.column class="flex flex-col items-center justify-center text-center">
-            <x-icon.fancy name="tool" class="w-2/5 mx-auto" />
-            <x-heading.h3 class="mx-auto pt-2">
-                {{ __('Highly customizable') }}
-            </x-heading.h3>
-            <p class="mt-2">{{ __('Manage your SaaS settings from within the admin panel. No need to redeploy app for simple changes anymore.') }}</p>
-        </x-section.column>
-
-        <x-section.column class="flex flex-col items-center justify-center text-center">
-            <x-icon.fancy name="development" class="w-2/5 mx-auto" />
-            <x-heading.h3 class="mx-auto pt-2">
-                {{ __('Developer-friendly') }}
-            </x-heading.h3>
-            <p class="mt-2">{{ __('Built with developers in mind, uses best coding practices. Offers handlers & events and automated tests covering critical components of the application.') }}</p>
-        </x-section.column>
-
-    </x-section.columns>
-
-    <div class="text-center mt-24 mx-4">
-        <x-heading.h6 class="text-primary-500">
-            {{ __('Start to end') }}
-        </x-heading.h6>
-        <x-heading.h2 class="text-primary-900">
-            {{ __('1-command deployment & Server provisioning') }}
-        </x-heading.h2>
-    </div>
-
-    <p class="text-center p-4">{{ __('Deploy your SaaS application to your server with a single command, powered by') }} <a href="https://deployer.org/" target="_blank" class="text-primary-500 hover:underline">{{ __('PHP Deployer') }}</a>. </p>
-
-    <div class="max-w-fit mx-auto mt-6">
-        <span class="border border-neutral-300 bg-neutral-100 p-6 rounded-2xl mt-4">
-            $ ./vendor/bin/dep deploy
-        </span>
-        <span class="text-4xl ms-3 -mt-2"> 🚀</span>
-    </div>
-
-
-    <div class="text-center mt-24" x-intersect="$el.classList.add('slide-in-top')">
-        <x-heading.h6 class="text-primary-500">
-            {{ __('Extensive Documentation') }}
-        </x-heading.h6>
-        <x-heading.h2 class="text-primary-900">
-            {{ __('Everything you need to know to get started.') }}
-        </x-heading.h2>
-    </div>
-
-    <div class="mx-4">
-        <div class="max-w-none md:max-w-6xl mx-auto text-center">
-            <p class="mt-4">
-                {{ __('SaaSykit\'s documentation is extensive and covers everything you need to know to get started with building your SaaS.') }}
-            </p>
-            <x-button-link.primary href="https://saasykit.com/docs" class=" mt-8">
-                {{ __('Check Documentation') }}
-            </x-button-link.primary>
         </div>
     </div>
 
- 
+
 
 </x-layouts.app>

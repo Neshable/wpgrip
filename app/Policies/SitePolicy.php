@@ -6,6 +6,7 @@ use App\Constants\TenancyPermissionConstants;
 use App\Models\Site;
 use App\Models\User;
 use App\Services\TenantPermissionManager;
+use App\Services\SubscriptionManager;
 use Filament\Facades\Filament;
 
 class SitePolicy
@@ -21,11 +22,27 @@ class SitePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('view sites') || $this->tenantPermissionManager->tenantUserHasPermissionTo(
-            Filament::getTenant(),
+        $tenant = Filament::getTenant();
+
+        // Tenant was created by the current user.
+        if ($tenant->created_by == $user->id) {
+            // No active plan?
+            return $user->isSubscribed();
+        }
+
+        // If that's external workspace, then grant access.
+        if ( $this->tenantPermissionManager->tenantUserHasPermissionTo(
+            $tenant,
             $user,
             TenancyPermissionConstants::PERMISSION_VIEW_SITES,
-        );
+        ) ) {
+            return true;
+        }
+        
+        
+       
+        return $user->hasPermissionTo('view sites');
+
     }
 
     /**
@@ -33,11 +50,20 @@ class SitePolicy
      */
     public function view(User $user, Site $site): bool
     {
-        return $user->hasPermissionTo('view sites') || $this->tenantPermissionManager->tenantUserHasPermissionTo(
+        // If that's external workspace, then grant access.
+        if ( $this->tenantPermissionManager->tenantUserHasPermissionTo(
             $site->tenant,
             $user,
             TenancyPermissionConstants::PERMISSION_VIEW_SITES,
-        );
+        ) ) {
+            return true;
+        }
+        // No active plan?
+        if (  !$user->isSubscribed() ) {
+            return false;
+        }
+       
+        return $user->hasPermissionTo('view sites');
     }
 
     /**
@@ -45,11 +71,28 @@ class SitePolicy
      */
     public function create(User $user ): bool
     {
-        return $user->hasPermissionTo('create sites') || $this->tenantPermissionManager->tenantUserHasPermissionTo(
+        $tenant = Filament::getTenant();
+
+        if ($tenant->created_by == $user->id) {
+            // Tenant was created by the current user.
+            // No active plan?
+            return $user->isSubscribed();
+        }
+
+        if ( $this->tenantPermissionManager->tenantUserHasPermissionTo(
             Filament::getTenant(),
             $user,
             TenancyPermissionConstants::PERMISSION_CREATE_SITES,
-        );
+        ) ) {
+            return true;
+        }
+        
+        // No active plan?
+        if ( !$user->isSubscribed() ) {
+            return false;
+        }
+
+        return $user->hasPermissionTo('create sites');
     }
 
     /**

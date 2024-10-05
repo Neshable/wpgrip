@@ -1,9 +1,9 @@
 <div>
     <div class="max-w-none md:max-w-4xl mx-auto">
 
-        <div class="text-end mx-4 my-6">
+        {{-- <div class="text-end mx-4 my-6">
             <x-button-link.primary-outline href="{{route('roadmap.suggest')}}">{{ __('+ Suggest a feature') }}</x-button-link.primary-outline>
-        </div>
+        </div> --}}
 
         <div role="tablist" class="tabs tabs-bordered tabs-lg max-w-fit text-center mx-auto">
             <a href="{{route('roadmap')}}" role="tab" class="tab {{ request()->get('done', false) ? '' : 'tab-active' }}" aria-selected="{{ request()->get('done', false) ? 'false' : 'true' }}">{{ __('Active') }}</a>
