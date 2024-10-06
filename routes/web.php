@@ -29,15 +29,22 @@ Route::get('/', function () {
     
 })->name('home')->middleware('sitemapped');
 
+
+
 Route::get('/pricing', function () {
      return view('pages.pricing');   
  })->name('pricing')->middleware('sitemapped');
 
 
-
+// Normal dashboard
 Route::get('/dashboard', function (UserDashboardManager $dashboardManager) {
     return redirect($dashboardManager->getUserDashboardUrl(Auth::user()));
 })->name('dashboard')->middleware('auth');
+// Alternative dasboard if plan is selected
+Route::get('/get-started', function () {
+    return view('pages.get-started');
+})->name('get-started')->middleware('auth');
+
 
 Auth::routes();
 

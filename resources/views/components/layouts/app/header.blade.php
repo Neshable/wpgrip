@@ -10,7 +10,6 @@
                 </ul>
             </div>
             <a href="/" class="flex justify-center items-center">
-                xa
                 <img src="{{asset(config('app.logo.light') )}}" class="h-10" alt="Logo" />
             </a>
         </div>

@@ -1,7 +1,7 @@
 @if (count($groupedPlans) == 0)
     <x-section.columns class="max-w-none md:max-w-6xl mt-6 justify-center">
     @foreach($plans as $plan)
-        <x-section.column class="md:!basis-1/3 !px-4">
+        <x-section.column class="md:!basis-1/3 ">
             <x-plans.one :popular="$plan->product->is_popular" link="{{route('checkout.subscription', $plan->slug)}}">
                 <x-slot name="name">{{ $plan->product->name }}</x-slot>
                 <x-slot name="price">@money($plan->prices[0]->price, $plan->prices[0]->currency->code)</x-slot>

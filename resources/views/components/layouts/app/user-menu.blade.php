@@ -25,14 +25,14 @@
                                 </div>
                             </x-link>
                         @endif
-                        @if (auth()->user()->tenants()->count() > 0)
+                        {{-- @if (auth()->user()->tenants()->count() > 0) --}}
                             <x-link href="{{ route('dashboard') }}" class="!px-2">
                                 <div class="flex flex-row gap-1">
                                     @svg('dashboard', 'h-4 text-primary-500 m-1 stroke-primary-500')
                                     {{ __('Dashboard') }}
                                 </div>
                             </x-link>
-                        @endif
+                        {{-- @endif --}}
                         <x-link href="{{ route('invitations') }}" class="!px-2">
                             <div class="flex flex-row gap-1">
                                 @svg('invitation', 'h-4 text-primary-500 m-1 stroke-primary-500')
