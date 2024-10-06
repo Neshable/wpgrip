@@ -1,41 +1,42 @@
-<x-layouts.focus>
-    <x-slot name="left">
-        <div class="flex flex-col py-2 px-4 md:p-0 gap-4 justify-center h-full items-center">
-            <div class="card w-full md:max-w-xl bg-base-100 shadow-xl p-4 md:p-8">
 
-                <div class="flex flex-row gap-3">
 
-                    <div>
-                        @svg('success', 'h-8 w-8')
-                    </div>
+<x-layouts.focus-center class="md:!max-w-6xl mx-auto overflow-x-hidden relative" :backButton="false">
 
-                    <x-heading.h2 class="!text-2xl md:!text-3xl !font-semibold mb-4">
-                        {{ __('Thank you!') }}
-                    </x-heading.h2>
-                </div>
+    <x-effect.gradient class="!-start-1/3 -top-50 !w-2/4"/>
+    <x-effect.gradient class="!-end-1/3 -top-72 !w-2/4"/>
 
+    <div class="mx-auto md:max-w-6xl text-center mt-8">
+        <div class="mx-4">
+            
+            
+
+            <x-heading.h2 class="!text-2xl md:!text-3xl !font-semibold mb-4">
+                Done, you're all set!
+            </x-heading.h2>
+
+          
+            <p class="mt-4">
+                {{__('New to WPGrip?')}} <a class="text-primary-500 font-bold" href="{{ route('register') }}">{{__('Create an account')}}</a>
+            </p>
+
+            <div class="card text-center mx-auto md:max-w-xl mt-8 bg-base-100 shadow-xl p-4 md:p-8">
                 <p>
-                    {{ __('Your account is successfully registered. Head to the home page to get started.') }}
+                    
+                    Your account is now ready to go. Dive in and start exploring WPGrip's powerful features. We're thrilled to have you with us.
 
                     <x-button-link.primary class="inline-block !w-full mt-6" href="{{ route('home') }}">
                         {{ __('Continue') }}
                     </x-button-link.primary>
                 </p>
-
             </div>
-        </div>
-    </x-slot>
 
-
-    <x-slot name="right">
-        <div class="py-4 px-4 md:px-12 md:pt-36 h-full">
-            <x-heading.h1 class="!text-3xl md:!text-4xl !font-semibold">
-                {{ __('Registration Complete.') }}
-            </x-heading.h1>
-            <p class="mt-4">
-                {{ __('We are excited to have you on board. :)') }}
+            <p class=" text-xs mt-4">
+                Need help getting started? Visit our support page or check out our quick-start guide!
             </p>
-        </div>
-    </x-slot>
 
-</x-layouts.focus>
+        </div>
+    </div>
+
+</x-layouts.focus-center>
+
+
