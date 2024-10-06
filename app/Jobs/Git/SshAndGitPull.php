@@ -3,7 +3,7 @@
 namespace App\Jobs\Git;
 
 use App\Models\Repository;
-use App\Models\RepoCommit;
+use App\Models\Deployment;
 use App\Models\Site;
 
 use App\Services\SSHSiteConnect;
@@ -12,7 +12,7 @@ use App\Services\GripNotifications;
 use App\Events\Git\GitPullSuccess;
 
 use Carbon\Carbon;
-
+use Deployer\Deployer;
 use Illuminate\Bus\Queueable;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -71,7 +71,7 @@ class SshAndGitPull implements ShouldQueue
     }
 
 
-    public function get_lastest_git_commits()
+    public function get_latest_git_commit()
     {
         return 'git log -n 1 --pretty=format:\'{%n  "commit": "%H",%n  "abbreviated_commit": "%h",%n  "tree": "%T",%n  "abbreviated_tree": "%t",%n  "parent": "%P",%n  "abbreviated_parent": "%p",%n  "refs": "%D",%n  "encoding": "%e",%n  "subject": "%s",%n  "sanitized_subject_line": "%f",%n  "body": "%b",%n  "commit_notes": "%N",%n  "verification_flag": "%G?",%n  "signer": "%GS",%n  "signer_key": "%GK",%n  "author": {%n    "name": "%aN",%n    "email": "%aE",%n    "date": "%aD"%n  },%n  "commiter": {%n    "name": "%cN",%n    "email": "%cE",%n    "date": "%cD"%n  }%n},\' | sed "$ s/,$//" | sed \':a;N;$!ba;s/\r\n\([^{]\)/\\n\1/g\'| awk \'BEGIN { print("[") } { print($0) } END { print("]") }\'';
     }
@@ -115,6 +115,7 @@ class SshAndGitPull implements ShouldQueue
    
         // Init a new connection to websites's production server.
         $connection = new SSHSiteConnect($this->site);
+        
         if (!$connection->active) 
         {
             GripNotifications::getUnauthorizedNotificaiton();
@@ -122,18 +123,31 @@ class SshAndGitPull implements ShouldQueue
             $connection->close();
             return false;
         }
-   
-        if (!$this->isDirectoryAndGitValid($connection)) 
+
+        // Check if directory exist, if not then clone new repo.
+        if ( !$this->isDirectoryAndGitValid($connection) ) 
         {
+            // Disable quite mode in order to pick up errors.
+            $connection->ssh->disableQuietMode();
+            // Check for public key access
+            if ( !$this->checkGitPublicKey( $connection ) ) 
+            {
+                GripNotifications::gitNoPublicKey();
+                $connection->close();
+                return false;
+            }
+
             // Now we have the option to clone the new repo.
             $output = $this->gitCloneNewRepo( $connection );
 
             $success = $connection->getExitStatusBool();
-   
-            // $this->create_initial_commit_log();
+
+            // Get the comit hash and store it.
+            $this->create_commit_log($connection);
+
             $connection->close();
     
-            $this->saveToDb($success);
+            $this->saveToDb( !$success );
     
             $success 
                 ? GripNotifications::getGitPulledSuccess()
@@ -141,6 +155,7 @@ class SshAndGitPull implements ShouldQueue
 
             return true;
         }
+
         // @todo @doesNotPerformAssertions
         // Sometime the pull actions and all actions will fail due to missmatch in the known host fingerprint
         // currently you need to manually login and clear the lines in known host
@@ -160,8 +175,10 @@ class SshAndGitPull implements ShouldQueue
         $output = $this->executeGitCommand($connection);
         
         $success = $connection->getExitStatusBool();
-        
-        // $this->create_commit_log($connection);
+
+        // Get the comit hash and store it.
+        $this->create_commit_log($connection);
+
         $connection->close();
     
         $this->saveToDb($success);
@@ -234,8 +251,9 @@ class SshAndGitPull implements ShouldQueue
      * @param [type] $connection
      * @return void
      */
-    public function gitCloneNewRepo($connection)
+    public function gitCloneNewRepo( $connection )
     {
+        
         $directoryCreated = $connection->exec('mkdir ' . $this->pivot->path);
     
         // Navigate to the repository directory and clone the remote repository.
@@ -243,9 +261,33 @@ class SshAndGitPull implements ShouldQueue
         $cloneRepositoryCommand = $changeDirectoryCommand . ' && git clone --depth 1 --no-single-branch ' . $this->repository->remote . ' .';
         // Execute the command and store the result.
 
-        $connection->ssh->disableQuietMode();
+       
         return $connection->exec($cloneRepositoryCommand);
         
+    }
+
+    /**
+     * Check if the public key is added
+     *
+     * @param  [type] $connection
+     * @return void
+     */
+    public function checkGitPublicKey( $connection )
+    {
+        // Parse the remote to extract git@github.com or similar.
+        $url = str_replace(":", "/", $this->repository->remote ); // convert ':' to '/'
+        $parts = parse_url("ssh://" . $url); 
+
+        // Full part.
+        $output = $connection->exec('cd ' . dirname( $this->pivot->path ) . ' && ssh -T ' . $parts['user'] . "@" . $parts['host'] );
+   
+        if ( preg_match('/Permission denied/', $output) || !$connection->getExitStatusBool() ) 
+        {
+            return false;
+        }
+
+        return true;
+
     }
     
     /**
@@ -326,62 +368,27 @@ class SshAndGitPull implements ShouldQueue
     public function create_commit_log( SSHSiteConnect $connection )
     {
        
-        $last_commits = 'cd ' . $this->pivot->path . ' && ' . $this->get_lastest_git_commits();
+        $last_commits = 'cd ' . $this->pivot->path . ' && ' . $this->get_latest_git_commit();
         
         $commit_response = json_decode( $connection->exec( $last_commits ) );
 
         if ( $commit_response && is_array(  $commit_response  ) )
         {
-            // Check if we have the same commit.
-            $repoCommit = RepoCommit::where('commit', $commit_response[0]->commit)
-            ->where('pivot_id', $this->pivot->id)
-            ->first();
-
-            // If not create it.
-            if ($repoCommit === null) {
-                // Create a new record
-                $repoCommit = RepoCommit::create([
-                    'commit' => $commit_response[0]->commit,
+            $repoCommit = Deployment::firstOrCreate(
+                ['commit' => $commit_response[0]->commit, 'pivot_id' => $this->pivot->id],
+                [
                     'committer' => $commit_response[0]->author->name,
                     'branch' => $this->pivot->branch,
                     'message' => $commit_response[0]->subject,
-                    'pivot_id' => $this->pivot->id,
+                    'site_id' => $this->pivot->site_id,
                     'repository_id' => $this->repository->id,
                     'success' => 1
-                ]);
-            }
+                ]
+            );
            
         }
-        
-     
     
     }
 
-    /**
-     * Create the initial commit when newly repo is cloned
-     *
-     * @return void
-     */
-    public function create_initial_commit_log()
-    {
-        $commit_msg = 'Initial clone';
-
-        $repoCommit = RepoCommit::where('commit', $commit_msg)
-            ->where('pivot_id', $this->pivot->id)
-            ->first();
-        
-        if ($repoCommit === null) {
-            // Create a new record
-            $repoCommit = RepoCommit::create([
-                'commit' => $commit_msg,
-                'committer' => '',
-                'branch' => $this->pivot->branch,
-                'message' => $commit_msg,
-                'pivot_id' => $this->pivot->id,
-                'repository_id' => $this->repository->id,
-                'success' => 1
-            ]);
-        }
-
-    }
+    
 }

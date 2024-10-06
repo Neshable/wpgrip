@@ -323,6 +323,16 @@ class GripNotifications {
             ->send();
     }
 
+    public static function gitNoPublicKey()
+    {
+        return Notification::make()
+            ->title('Permission Denied')
+            ->title('Please check the permissions. The server public key should be added to your repository access keys.')
+            ->danger()
+            ->duration(5000)
+            ->send();
+    }
+
     public static function getVRTSuccessNotification()
     {
         return Notification::make()

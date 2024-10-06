@@ -81,7 +81,7 @@ class ListRepoSites extends Component implements HasForms, HasTable
                 }),
             Tables\Columns\TextColumn::make('last_pull')
                             ->dateTime()
-                            ->label('Last sync')
+                            ->label('Last deploy')
                             ->sortable()
                             ->since(),
             ])
