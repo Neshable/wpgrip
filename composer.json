@@ -19,6 +19,7 @@
         "filament/spatie-laravel-media-library-plugin": "^3.2",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "^3.4",
+        "io-developer/php-whois": "^4.1",
         "jeffgreco13/filament-breezy": "v2.4",
         "laravel/framework": "^11.0",
         "laravel/horizon": "^5.21",

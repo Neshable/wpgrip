@@ -9,12 +9,20 @@
         $fields = [
             'Name' => isset($this->getRecord()->name) ? $this->getRecord()->name : 'Website Overview',
             'Last sync' => isset($this->getRecord()->updated_at) ? $this->getRecord()->updated_at : 'n/a',
-            'Site URL' => $this->getRecord()->url,
-            'Client name' => isset($this->getRecord()->client) ? $this->getRecord()->client->name : 'Client',
+            'WordPress Version' => $this->getRecord()->wp_ver,
             'PHP Version' => $this->getRecord()->php_ver,
             'Directory Size' => $this->getRecord()->getFormatedDBSize() ?? 'n/a',
             'Database Prefix' => $this->getRecord()->db_prefix ?? 'n/a',
             'Database Size' => $this->getRecord()->getDBSize() ?? 'n/a',
+        ];
+
+        $additional_fields = [
+            'Domain Expire Date' => isset($this->getRecord()->sitemeta->domain_expiry_date) 
+                    ? \Carbon\Carbon::parse($this->getRecord()->sitemeta->domain_expiry_date)->format('d F Y') 
+                    : 'n/a',
+            'Site URL' => $this->getRecord()->url,
+            'Client name' => isset($this->getRecord()->client) ? $this->getRecord()->client->name : 'Client',
+            'Server IP' => $this->getRecord()->server->ip,
         ];
 
     @endphp
@@ -176,6 +184,20 @@
         </div>
         <div>
             @each('site.listing.simple', $fields, 'field')
+        </div>
+    </div>
+
+    <div class="w-full rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+        <div class="px-6 py-4 border-b">
+            <h2 class="text-2xl">
+                Additional Info
+            </h2>
+            <p class="text-sm text-gray-500">
+                Other available information for this site.
+            </p>
+        </div>
+        <div>
+            @each('site.listing.simple', $additional_fields, 'field')
         </div>
     </div>
 

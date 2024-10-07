@@ -7,6 +7,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use App\Jobs\Site\SyncAllSitesStats;
 use App\Jobs\External\GetVulnerabilityDatabase;
 
+use App\Jobs\Domain\BulkDomainExpiry;
 use App\Jobs\Global\CheckAllVulnerabilities;
 
 
@@ -33,7 +34,14 @@ return Illuminate\Foundation\Application::configure(basePath: dirname(__DIR__))
         // Do a sync for all sites.
         $schedule->job(new SyncAllSitesStats)->daily();
         $schedule->job(new GetVulnerabilityDatabase)->dailyAt('13:00');
+
         // $schedule->job(new CheckAllVulnerabilities)->dailyAt('14:00');
+
+        // Domain specific - expiry date, blacklists...
+        $schedule->job(new BulkDomainExpiry)->weekly();
+
+        
+        
 
         // Schedule::exec('node /home/forge/script.js')->daily();
     })
