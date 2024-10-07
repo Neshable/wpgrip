@@ -87,6 +87,33 @@
                 <x-section.column>
                     <div>
                         <x-heading.h2>
+                            GIT Deployments
+                        </x-heading.h2>
+                    </div>
+
+                    <p class="mt-4">
+                        Add and manage multiple plugin or theme reposoitories and share them across your sites.
+                        Manually deploy at any time of day or night with confidence, or use automated webhooks
+                        to trigger the deployments on new commit.
+                    </p>
+
+
+                </x-section.column>
+
+                <x-section.column>
+                    <img src="{{ URL::asset('/images/features/git.svg') }}" dir="right"></img>
+                </x-section.column>
+
+            </x-section.columns>
+
+            <x-section.columns class="max-w-none md:max-w-6xl  flex-wrap-reverse">
+                <x-section.column>
+                    <img src="{{ URL::asset('/images/features/performance.svg') }}"></img>
+                </x-section.column>
+
+                <x-section.column>
+                    <div>
+                        <x-heading.h2>
                             Performance Efficiency
                         </x-heading.h2>
                     </div>
@@ -95,34 +122,6 @@
                         Experience lightning-fast WordPress site management with WP-CLI executed over secure SSH
                         connections. WPGrip provides 2x faster efficiency compared to traditional methods, ensuring your
                         sites run seamlessly without adding any strain to your WordPress frontend.
-                    </p>
-
-
-                </x-section.column>
-
-                <x-section.column>
-                    <img src="{{ URL::asset('/images/features/performance.svg') }}" dir="right"></img>
-                </x-section.column>
-
-            </x-section.columns>
-
-            <x-section.columns class="max-w-none md:max-w-6xl  flex-wrap-reverse">
-                <x-section.column>
-                    <img src="{{ URL::asset('/images/features/security.svg') }}" />
-                </x-section.column>
-
-                <x-section.column>
-                    <div>
-                        <x-heading.h2>
-                            Maximum Security
-                        </x-heading.h2>
-                    </div>
-
-                    <p class="mt-4">
-                        Gain peace of mind with WPGrip’s robust security. Our secure SSH connections and encrypted keys
-                        eliminate plugin vulnerabilities, keeping your data and sites protected from potential threats.
-                        WPGrip also fetches and maintains an up-to-date database of vulnerabilities for WordPress core,
-                        plugins, and themes, ensuring that any potential risks are identified and addressed quickly.
                     </p>
                 </x-section.column>
 
@@ -145,7 +144,7 @@
                 </x-section.column>
 
                 <x-section.column>
-                    {{-- <img src="{{ URL::asset('/images/features/plans.png') }}" class="rounded-2xl" /> --}}
+                    <img src="{{ URL::asset('/images/features/security.svg') }}" />
                 </x-section.column>
 
             </x-section.columns>
@@ -449,19 +448,19 @@
             <x-heading.h2 class="mt-2 text-3xl text-center font-extrabold">
                 FAQ
             </x-heading.h2>
-   
+
             <div class="mt-6 border-t border-blue-600 border-opacity-25 pt-10">
                 <x-accordion class="mt-4 p-8">
                     <x-accordion.item active="true" name="refund">
                         <x-slot name="title">Do you offer a refund?</x-slot>
-                
+
                         Yes, we do offer a 30 days money back guarantee.
-                
+
                     </x-accordion.item>
-                
+
                     <x-accordion.item active="false" name="trial">
                         <x-slot name="title">Do you offer a trial?</x-slot>
-                
+
                         Yes, we do offer a 30 days free trial.
                     </x-accordion.item>
                 </x-accordion>

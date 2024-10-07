@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" data-name="Layer 1" width="400" height="250" viewBox="0 0 900 387.02513">
+    <path d="M981.29873,366.93967H731.40591a5.00573,5.00573,0,0,1-5-5V314.83958h2v47.10009a3.00328,3.00328,0,0,0,3,3H981.29873a3.00328,3.00328,0,0,0,3-3V314.51048h2v47.42919A5.00573,5.00573,0,0,1,981.29873,366.93967Z" transform="translate(-113.2693 -156.48744)" fill="#3f3d56"/>
+    <rect x="371.39686" y="157.35214" width="587.21997" height="2" fill="#3f3d56"/>
+    <circle id="a67a4451-c7cc-402c-b29d-5a705f3c9418" data-name="Ellipse 264" cx="371.4394" cy="158.196" r="17.202" fill="#344ddc"/>
+    <circle id="abdb3fbf-f68e-433e-a33f-153626b38c76" data-name="Ellipse 266" cx="546.24439" cy="158.196" r="17.202" fill="#344ddc"/>
+    <circle id="ac293633-0933-4e21-a8aa-bc27ca4fbccc" data-name="Ellipse 268" cx="664.87641" cy="208.75701" r="17.202" fill="#c07444"/>
+    <circle id="a0cd768d-b738-4d4b-9ab3-78ab535c7573" data-name="Ellipse 269" cx="755.06336" cy="208.75701" r="17.202" fill="#ccc"/>
+    <circle id="b9eb3d2e-31e0-4fe2-be5c-79abb86bc227" data-name="Ellipse 270" cx="711.36035" cy="158.196" r="17.202" fill="#344ddc"/>
+    <circle id="aa04baac-fce0-420a-b86a-4a97f3079928" data-name="Ellipse 271" cx="956.2594" cy="158.196" r="17.202" fill="#6c63ff"/>
+    <circle id="e92cf92c-058e-415c-ba96-766a57ee18d9" data-name="Ellipse 272" cx="872.02936" cy="158.196" r="17.202" fill="#344ddc"/>
+    <path d="M538.05142,315.83958a1.00005,1.00005,0,0,1-1-1V265.47727a5.00573,5.00573,0,0,1,5-5h48.6748a1,1,0,0,1,0,2h-48.6748a3.00328,3.00328,0,0,0-3,3v49.36231A1.00006,1.00006,0,0,1,538.05142,315.83958Z" transform="translate(-113.2693 -156.48744)" fill="#3f3d56"/>
+    <circle id="b0a7c1c1-8f27-441f-a84a-e44462cc473e" data-name="Ellipse 265" cx="479.74439" cy="104.61599" r="17.202" fill="#e6e6e6"/>
+    <path d="M923.05142,314.83958h-2V265.47727a5.00573,5.00573,0,0,1,5-5h48.6748v2h-48.6748a3.00328,3.00328,0,0,0-3,3Z" transform="translate(-113.2693 -156.48744)" fill="#3f3d56"/>
+    <circle id="b3140cf1-cdb8-48ff-81af-ce41ed4f5739" data-name="Ellipse 265" cx="863.74439" cy="104.61599" r="17.202" fill="#c07444"/>
+</svg>

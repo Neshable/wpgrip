@@ -8,9 +8,6 @@
             </div>
             <ul class="flex flex-wrap gap-6 text-gray-600 dark:text-gray-400 text-sm mt-2">
                 <li class="mb-4">
-                    <a href="{{route('blog')}}" class="text-gray-600 hover:text-primary-950">{{ __('Blog') }}</a>
-                </li>
-                <li class="mb-4">
                     <a href="{{route('privacy-policy')}}" class="text-gray-600 hover:text-primary-950">{{ __('Privacy Policy') }}</a>
                 </li>
                 <li>
