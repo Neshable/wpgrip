@@ -231,10 +231,10 @@ class TenantManager
     {
         return $tenant->update([
             'name' => $data['tenant_name'],
-            'enable_slack' => $data['enable_slack'],
-            'slack_webhook' => $data['slack_webhook'],
-            'enable_email' => $data['enable_email'],
-            'email' => $data['email'],
+            'enable_slack' => $data['enable_slack'] ? $data['enable_slack'] : false,
+            'slack_webhook' => $data['slack_webhook'] ? $data['slack_webhook'] : '',
+            'enable_email' => $data['enable_email'] ? $data['enable_email'] : false,
+            'email' => $data['email'] ? $data['email'] : '',
         ]);
     }
 
