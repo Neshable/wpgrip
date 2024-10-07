@@ -5,7 +5,7 @@
             <div class="card-body">
                 @svg('party', 'w-24 h-24 mx-auto text-primary-500 stroke-primary-500')
                 <x-heading.h3 class="text-primary-900">
-                    {{ __('Thank you for your purchase!') }}
+                    {{ __('You are all set!') }}
                 </x-heading.h3>
                 <p>
                     {{ __('Your order is being processed and you will receive an email with your order details shortly.') }}

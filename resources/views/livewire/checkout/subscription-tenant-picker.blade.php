@@ -9,7 +9,7 @@
                 @foreach ($userTenants as $tenant)
                     <option value="{{ $tenant->uuid }}">{{ $tenant->name }}</option>
                 @endforeach
-                <option value="">{{ __('Create a new workspace') }}</option>
+                {{-- <option value="">{{ __('Create a new workspace') }}</option> --}}
             </select>
 
             <div class="absolute top-0 right-0 p-2">
