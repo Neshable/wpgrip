@@ -54,7 +54,7 @@
         {{ $description }}
     </div>
 
-    <x-button-link.primary class="mt-8 {{ $popular ?? 'bg-orange-500'}}" href="{{ Auth::check() ? $link : '/register'}}">
+    <x-button-link.primary class="mt-8 {{ $popular ? '!bg-black' : ''}}" href="{{ Auth::check() ? $link : '/register'}}">
         Start a free trial
     </x-button-link.primary>
 </div>

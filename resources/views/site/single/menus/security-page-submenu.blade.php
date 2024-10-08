@@ -16,25 +16,31 @@
         </x-filament::tabs.item>
 
         <x-filament::tabs.item
-            :href="route( 'filament.dashboard.resources.sites.blacklists', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )" 
-            tag="a"
-            :wire:navigate
+            {{-- :href="route( 'filament.dashboard.resources.sites.blacklists', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )"  --}}
+            {{-- tag="a" --}}
+            {{-- :wire:navigate --}}
             {{-- icon="heroicon-m-arrow-trending-up" --}}
-            :active="request()->getRequestUri() === \URL::route('filament.dashboard.resources.sites.blacklists', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid ], false)"
+            {{-- :active="request()->getRequestUri() === \URL::route('filament.dashboard.resources.sites.blacklists', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid ], false)" --}}
         >
         Blacklist Monitor
+        <x-slot name="badge">
+            <span class="text-xs">soon</span>
+        </x-slot>
         </x-filament::tabs.item>
 
         <x-filament::tabs.item
-            :href="route( 'filament.dashboard.resources.sites.errors', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )" 
+            {{-- :href="route( 'filament.dashboard.resources.sites.errors', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )"  --}}
             tag="a"
-            :wire:navigate
+            {{-- :wire:navigate --}}
             {{-- icon="{{ $this->getRecord()->phpLogs()->count() > 0 ? 'heroicon-m-exclamation-circle' : '' }}" --}}
             icon-position="after"
             {{-- icon="heroicon-m-shield-check" --}}
-            :active="request()->getRequestUri() === \URL::route('filament.dashboard.resources.sites.errors', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid ], false)"
+            {{-- :active="request()->getRequestUri() === \URL::route('filament.dashboard.resources.sites.errors', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid ], false)" --}}
             >
         PHP Errors
+        <x-slot name="badge">
+            <span class="text-xs">soon</span>
+        </x-slot>
             
         </x-filament::tabs.item>
 

@@ -171,103 +171,69 @@
             class="max-w-7xl mx-auto items-center py-16 px-4 sm:px-6 lg:py-24 lg:px-8 lg:grid lg:grid-cols-3 lg:gap-x-32 align-center">
             <div>
                 <x-heading.h6 class="text-primary-500 tracking-wide uppercase">
-                    {{ __('Redefining') }}
+                    Introducing
                 </x-heading.h6>
                 <x-heading.h2 class="mt-2 text-3xl font-extrabold">
-                    WordPress <br> Management
+                    Our core features
                 </x-heading.h2>
                 <p class="mt-4 text-lg text-gray-500">
-                    WPGrip brings all your WordPress sites together in one unified dashboard, making complex site
-                    management easy and efficient. With secure SSH connections, WP-CLI command integration, and zero
-                    dependency on extra plugins, WPGrip redefines what's possible for WordPress professionals.
+                    Every plan has access to all our core features.
                 </p>
             </div>
 
 
             <div class="mt-4 sm:mt-8 md:mt-10 md:grid md:grid-cols-2 md:gap-x-8 xl:mt-0 lg:col-span-2">
                 <ul class="divide-y divide-gray-200 -mt-4">
-                    <li class="py-4 flex">
-                        <svg aria-hidden="true" class="flex-shrink-0 h-6 w-6 text-green-500" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                            </path>
-                        </svg>
-                        <span class="ml-3 text-base text-gray-500">
-                            Uptime Monitoring
-                        </span>
-                    </li>
-                    <li class="py-4 flex">
-                        <svg aria-hidden="true" class="flex-shrink-0 h-6 w-6 text-green-500" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                            </path>
-                        </svg>
-                        <span class="ml-3 text-base text-gray-500">
-                            SSL Monitoring
-                        </span>
-                    </li>
-                    <li class="py-4 flex">
-                        <svg aria-hidden="true" class="flex-shrink-0 h-6 w-6 text-green-500" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                            </path>
-                        </svg>
-                        <span class="ml-3 text-base text-gray-500">
-                            Easy Updates
-                        </span>
-                    </li>
-                    <li class="py-4 flex">
-                        <svg aria-hidden="true" class="flex-shrink-0 h-6 w-6 text-green-500" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                            </path>
-                        </svg>
-                        <span class="ml-3 text-base text-gray-500">
-                            Server & Hosting Management
-                        </span>
-                    </li>
+                    @php
+                        $items = [
+                            'Uptime Monitoring',
+                            'SSL Monitoring',
+                            'Domain Monitoring',
+                            'Vulnerabilities Monitoring',
+                            'Performance Monitoring',
+                            'History Stats'
+                        ];
+
+                    @endphp
+
+                    @foreach ($items as $item)
+                        <li class="py-4 flex">
+                            <svg aria-hidden="true" class="flex-shrink-0 h-6 w-6 text-green-500" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"></path>
+                            </svg>
+                            <span class="ml-3 text-base text-gray-500">
+                                {{ $item }}
+                            </span>
+                        </li>
+                    @endforeach
                 </ul>
                 <ul class="border-t border-gray-200 divide-y divide-gray-200 md:border-t-0 md:-mt-4">
-                    <li class="py-4 flex">
-                        <svg aria-hidden="true" class="flex-shrink-0 h-6 w-6 text-green-500" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                            </path>
-                        </svg>
-                        <span class="ml-3 text-base text-gray-500">
-                            Git deployments
-                        </span>
-                    </li>
-                    <li class="py-4 flex">
-                        <svg aria-hidden="true" class="flex-shrink-0 h-6 w-6 text-green-500" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                            </path>
-                        </svg>
-                        <span class="ml-3 text-base text-gray-500">
-                            Database size monitoring
-                        </span>
-                    </li>
-                    <li class="py-4 flex">
-                        <svg aria-hidden="true" class="flex-shrink-0 h-6 w-6 text-green-500" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                            </path>
-                        </svg>
-                        <span class="ml-3 text-base text-gray-500">
-                            Page Speed monitoring
-                        </span>
-                    </li>
-                    <li class="py-4 flex">
-                        <svg aria-hidden="true" class="flex-shrink-0 h-6 w-6 text-green-500" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                            </path>
-                        </svg>
-                        <span class="ml-3 text-base text-gray-500">
-                            More ...
-                        </span>
-                    </li>
+                    @php
+                        $items2 = [
+                            'Powerful administration',
+                            'Fine-Tuned AI Insights', 
+                            'One-Click Updates', 
+                            'Git Deployments', 
+                            'DB Cloud Backups', 
+                            'Client & Server management'
+                        ];
+                    @endphp
+
+                    @foreach ($items2 as $item)
+                        <li class="py-4 flex">
+                            <svg aria-hidden="true" class="flex-shrink-0 h-6 w-6 text-green-500" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"></path>
+                            </svg>
+                            <span class="ml-3 text-base text-gray-500">
+                                {{ $item }}
+                            </span>
+                        </li>
+                    @endforeach
+
                 </ul>
             </div>
         </div>

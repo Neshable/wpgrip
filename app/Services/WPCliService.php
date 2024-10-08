@@ -26,6 +26,11 @@ class WPCliService {
         return 'wp config get --format=json';
     }
 
+    public static function getAllWPConfigConstants()
+    {
+        return 'wp config list WP_ --format=json';
+    }
+
     public static function deactivatePlugin( string $plugin )
     {
         return 'wp plugin deactivate ' . $plugin;

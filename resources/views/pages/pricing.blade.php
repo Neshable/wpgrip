@@ -40,14 +40,14 @@
             <div class="mt-4 sm:mt-8 md:mt-10 md:grid md:grid-cols-2 md:gap-x-8 xl:mt-0 lg:col-span-2">
                 <ul class="divide-y divide-gray-200 -mt-4">
                     @php
-                        $items = [
-                            'Powerful administration',
-                            'Uptime & SSL Monitoring',
+                       $items = [
+                            'Uptime Monitoring',
+                            'SSL Monitoring',
+                            'Domain Monitoring',
                             'Vulnerabilities Monitoring',
-                            'PageSpeed Monitoring',
+                            'Performance Monitoring',
                             'History Stats'
                         ];
-
                     @endphp
 
                     @foreach ($items as $item)
@@ -65,7 +65,14 @@
                 </ul>
                 <ul class="border-t border-gray-200 divide-y divide-gray-200 md:border-t-0 md:-mt-4">
                     @php
-                        $items2 = ['Fine-Tuned AI Insights', 'One-Click Updates', 'Git Deployments', 'DB Backups', 'Client & Server management'];
+                         $items2 = [
+                            'Powerful administration',
+                            'Fine-Tuned AI Insights', 
+                            'One-Click Updates', 
+                            'Git Deployments', 
+                            'DB Cloud Backups', 
+                            'Client & Server management'
+                        ];
                     @endphp
 
                     @foreach ($items2 as $item)
