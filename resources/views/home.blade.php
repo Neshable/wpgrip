@@ -17,16 +17,16 @@
             </x-heading.h1>
 
             <p class="text-black m-3">
-                Gain complete control over your WordPress websites with a secure, streamlined experience. <br>
-                Manage plugins, optimize performance, and keep your sites secure — all from one powerful dashboard.
+                Gain complete control with an encrypted SSH connection and streamlined experience.<br>
+                Manage plugins, track performance, and keep your sites secure — all from one powerful dashboard.
             </p>
 
             <div class="flex flex-wrap gap-4 justify-center flex-col md:flex-row mt-6">
 
-                <x-button-link.secondary href="#pricing" class="self-center !py-3" elementType="a">
+                <x-button-link.primary href="/register" class="self-center !py-3" elementType="a">
                     {{ __('Start Your Free Trial') }}
-                </x-button-link.secondary>
-                <x-button-link.primary-outline href="//demo.saasykit.com"
+                </x-button-link.primary>
+                <x-button-link.primary-outline href="/pricing"
                     class=" bg-transparent self-center !py-3 border-primary-500">
                     {{ __('Check Pricing') }}
                 </x-button-link.primary-outline>
@@ -56,6 +56,8 @@
         </div>
     </x-section.hero>
 
+
+
     <div class="py-16 bg-gray-50 overflow-hidden lg:py-24">
         <div class="relative max-w-xl mx-auto px-4 sm:px-6 lg:px-8 lg:max-w-7xl">
             <svg class="hidden lg:block absolute left-full transform -translate-x-1/2 -translate-y-1/4" width="404"
@@ -71,14 +73,17 @@
             </svg>
 
             <div class="relative">
+
                 <x-heading.h2 class="mt-2 text-3xl text-center font-extrabold">
-                    One Unified Dashboard for <br> All Your WordPress Sites
+                    Different Tool. Modern Approach.
                 </x-heading.h2>
 
                 <p class="mt-4 max-w-3xl mx-auto text-center text-xl text-gray-500">
-                    WPGrip brings all your WordPress sites together in one unified dashboard, making complex site
-                    management easy and efficient. With secure SSH connections, WP-CLI command integration, and zero
-                    dependency on extra plugins, WPGrip redefines what's possible for WordPress professionals.
+                    Most WordPress management tools require installing multiple plugins that can slow down your site and
+                    introduce new security risks. Our solution is different. By connecting directly via SSH and using
+                    WP-CLI commands, we eliminate the need for extra plugins, giving you complete control without added
+                    vulnerabilities. This means faster performance, enhanced security, and a direct, efficient way to
+                    manage all your WordPress sites — perfect for developers and agencies.
                 </p>
             </div>
 
@@ -191,7 +196,7 @@
                             'Domain Monitoring',
                             'Vulnerabilities Monitoring',
                             'Performance Monitoring',
-                            'History Stats'
+                            'History Stats',
                         ];
 
                     @endphp
@@ -213,11 +218,11 @@
                     @php
                         $items2 = [
                             'Powerful administration',
-                            'Fine-Tuned AI Insights', 
-                            'One-Click Updates', 
-                            'Git Deployments', 
-                            'DB Cloud Backups', 
-                            'Client & Server management'
+                            'Fine-Tuned AI Insights',
+                            'One-Click Updates',
+                            'Git Deployments',
+                            'DB Cloud Backups',
+                            'Client & Server management',
                         ];
                     @endphp
 
@@ -412,22 +417,55 @@
     <div class="relative">
         <div class="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8 z-10 relative">
             <x-heading.h2 class="mt-2 text-3xl text-center font-extrabold">
-                FAQ
+                Got a Question?
             </x-heading.h2>
 
-            <div class="mt-6 border-t border-blue-600 border-opacity-25 pt-10">
+
+            <div class="mt-6  border-blue-600 border-opacity-25 pt-10">
                 <x-accordion class="mt-4 p-8">
-                    <x-accordion.item active="true" name="refund">
-                        <x-slot name="title">Do you offer a refund?</x-slot>
 
-                        Yes, we do offer a 30 days money back guarantee.
-
+                    <x-accordion.item active="false" name="what-is-wpgrip">
+                        <x-slot name="title">What is WPGrip?</x-slot>
+                        WPGrip is an all-in-one WordPress management platform that lets you control all your sites from
+                        a single, secure dashboard.
                     </x-accordion.item>
 
-                    <x-accordion.item active="false" name="trial">
-                        <x-slot name="title">Do you offer a trial?</x-slot>
+                    <x-accordion.item active="false" name="how-does-it-work">
+                        <x-slot name="title">How does it work?</x-slot>
+                        WPGrip connects directly to your hosting via SSH, executing WP-CLI commands for maximum
+                        control. No plugins are required, making it lightweight and secure.
+                    </x-accordion.item>
 
-                        Yes, we do offer a 30 days free trial.
+                    <x-accordion.item active="false" name="hosting-support">
+                        <x-slot name="title">What type of hosting providers does it support?</x-slot>
+                        WPGrip supports any hosting provider that allows SSH access and has WP-CLI installed, which
+                        covers almost 99% of the current hosting companies.
+                    </x-accordion.item>
+
+                    <x-accordion.item active="false" name="server-support">
+                        <x-slot name="title">Are custom servers supported?</x-slot>
+                        Not only are custom servers supported, but we actually recommend using a VPS. You need to have a
+                        Linux user that is the owner of the WordPress folder and can run any command inside.
+                    </x-accordion.item>
+
+                    <x-accordion.item active="false" name="requirements">
+                        <x-slot name="title">What are the requirements?</x-slot>
+                        To use WPGrip, your server must allow SSH connections and have WP-CLI available for the SSH
+                        user.
+                    </x-accordion.item>
+
+                    <x-accordion.item active="false" name="security">
+                        <x-slot name="title"> How does WPGrip enhance security?</x-slot>
+                        By eliminating the need for third-party plugins, WPgrip reduces vulnerabilities often introduced
+                        by plugins. Our direct SSH encrypted connections ensure a secure and efficient management
+                        experience.
+                    </x-accordion.item>
+
+                    <x-accordion.item active="false" name="alternative">
+                        <x-slot name="title">What features can I use without SSH access?</x-slot>
+                        Your experience will be fairly limited, but you can still use our monitoring tools to check your
+                        uptime, SSL status, domain expiry, and performance. 
+
                     </x-accordion.item>
                 </x-accordion>
             </div>
@@ -450,34 +488,28 @@
         </div>
     </div> --}}
 
+    <x-section.outro>
+        <x-heading.h6 class="text-primary-50 text-center">
+            Ready to dive in?
+        </x-heading.h6>
+        <x-heading.h2 class="text-primary-50 text-center">
+            Start your free trial today
+        </x-heading.h2>
 
-    <div class="bg-gradient-to-b py-16 lg:py-24 from-blue-100 to-white">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 px-4">
-            <div class="text-center">
-                <x-heading.h6>
-                    Take control today and start controlling your WordPress sites with WPGrip
-                </x-heading.h6>
-                <x-heading.h2>
-                    Ready to Harness AI Insights?
-                </x-heading.h2>
-            </div>
 
-            <div class="max-w-none md:max-w-6xl mx-auto text-center">
-                <p class="mt-4">
-                    Optimize your WordPress experience with AI-powered insights. WPGrip analyzes performance, predicts
-                    plugin conflicts, identifies issues, and reviews logs—empowering you to make data-driven decisions.
-                    Our
-                    AI model, specifically trained on WordPress data, delivers deep, actionable insights tailored to
-                    your
-                    needs.
-                </p>
-                <x-button-link.primary href="/pricing" class=" mt-8">
-                    Start Now
-                </x-button-link.primary>
-            </div>
+        <p class="max-w-3xl text-primary-50 text-center mx-auto mt-4">
+            Get access to our all-in-one dashboard today. With features like uptime and SSL monitoring, performance
+            insights, git deployments, and powerful AI-driven insights, our platform offers everything you need for
+            seamless management.
+        </p>
+
+        <div class="mt-10 text-center">
+
+            <x-button-link.secondary href="/register">
+                Start Free Trial
+            </x-button-link.secondary>
         </div>
-    </div>
-
+    </x-section.outro>
 
 
 </x-layouts.app>

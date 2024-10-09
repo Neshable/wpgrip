@@ -40,13 +40,13 @@
             <div class="mt-4 sm:mt-8 md:mt-10 md:grid md:grid-cols-2 md:gap-x-8 xl:mt-0 lg:col-span-2">
                 <ul class="divide-y divide-gray-200 -mt-4">
                     @php
-                       $items = [
+                        $items = [
                             'Uptime Monitoring',
                             'SSL Monitoring',
                             'Domain Monitoring',
                             'Vulnerabilities Monitoring',
                             'Performance Monitoring',
-                            'History Stats'
+                            'History Stats',
                         ];
                     @endphp
 
@@ -65,13 +65,13 @@
                 </ul>
                 <ul class="border-t border-gray-200 divide-y divide-gray-200 md:border-t-0 md:-mt-4">
                     @php
-                         $items2 = [
+                        $items2 = [
                             'Powerful administration',
-                            'Fine-Tuned AI Insights', 
-                            'One-Click Updates', 
-                            'Git Deployments', 
-                            'DB Cloud Backups', 
-                            'Client & Server management'
+                            'Fine-Tuned AI Insights',
+                            'One-Click Updates',
+                            'Git Deployments',
+                            'DB Cloud Backups',
+                            'Client & Server management',
                         ];
                     @endphp
 
@@ -120,6 +120,34 @@
         </div>
 
     </div> --}}
+
+    <div class="mx-auto max-w-4xl mt-16">
+
+        <div
+            class="divide-y divide-gray-200 rounded-lg bg-white shadow-lg shadow-black/5 ring-1 ring-black/5 dark:divide-gray-800 dark:bg-gray-700 dark:text-gray-300 dark:ring-gray-800 relative z-10 mb-6">
+            <ul class="divide-y divide-gray-200 dark:divide-gray-800">
+                <li class="flex items-center space-x-4 p-4 dark:border-gray-800"><!---->
+
+                    <div class="flex-1">
+                        <x-heading.h3 class="font-semibold mb-4">
+                            Just collaborating?
+                        </x-heading.h3>
+                        <p class="max-w-2xl text-sm mb-4 text-gray-500 dark:text-gray-400">
+                            A free account is enough. Other members can invite you to their workspaces. Once they do,
+                            you'll be able to view the sites from the external workspace.
+                        </p>
+                        <p class="max-w-2xl text-sm text-gray-800 font-bold dark:text-gray-400">
+                            You don't need a paid plan to be invited to other workspaces.
+                        </p>
+                    </div><a disabled="false"
+                        class="inline-flex items-center justify-center text-sm font-medium transition-all ease-in-out duration-100 focus:outline-none focus:ring border rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:border-gray-400 focus:bg-white px-3 py-2 text-sm w-48"
+                        target="_self" href="/register">Register now</a>
+                </li>
+            </ul>
+
+        </div>
+
+    </div>
 
 
     <div class="text-center mt-24 mx-4" id="faq">
