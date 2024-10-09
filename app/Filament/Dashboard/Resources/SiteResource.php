@@ -451,6 +451,9 @@ class SiteResource extends Resource
 
             // 'backups' => Pages\ShowBackups::route('/{record}/backups'), 
             // 'backups_settings' => Pages\ShowBackupsSettings::route('/{record}/backups/settings'), 
+            // Insights AI
+            'insights' => Pages\Insights::route('/{record}/insights'), 
+            
             // Updates tab
             'plugins' => Pages\Plugins::route('/{record}/plugins'), 
             'themes' => Pages\Themes::route('/{record}/themes'), 

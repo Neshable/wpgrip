@@ -83,6 +83,7 @@ class ListPlugins extends Component implements HasForms, HasTable
                         'inactive' => 'gray',
                         'dropin' => 'warning',
                         'active' => 'success',
+                        default => 'gray'
                     }),
                 ViewColumn::make('version')->view('filament.tables.columns.plugin-version'),
                 // TextColumn::make('version')
