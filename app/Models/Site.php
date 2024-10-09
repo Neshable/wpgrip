@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Artisan;
 
+use App\Jobs\Tests\PageSpeed;
+
 use App\Enums\SiteStatus;
 
 use Filament\Facades\Filament; 
@@ -65,30 +67,33 @@ class Site extends Model
                 'site_id' => $site->id,
             ]);
 
-            // Create monitor model if this is enabled.
-            if ( $site->uptime_monitor ) {
-                // Check to make sure we don't have monitors
-                $monitor = UptimeMonitor::where('site_id', $site->id)->first();
+            // Create the main uptime monitor for this site!
+             // Check to make sure we don't have monitors
+             $monitor = UptimeMonitor::where('site_id', $site->id)->first();
 
-                if ( !$monitor ) {
-                    
-                    $monitor = UptimeMonitor::create([
-                        'url' => trim($site->url, '/'),
-                        'look_for_string' => '',
-                        'uptime_check_method' => 'head',
-                        'certificate_check_enabled' => true,
-                        'site_id' =>  $site->id,
-                        'uptime_check_interval_in_minutes' => config('uptime-monitor.uptime_check.run_interval_in_minutes'),
-                    ]);
+             if ( !$monitor ) {
+                 
+                 $monitor = UptimeMonitor::create([
+                     'url' => trim($site->url, '/'),
+                     'look_for_string' => '',
+                     'uptime_check_method' => 'head',
+                     'certificate_check_enabled' => true,
+                     'site_id' =>  $site->id,
+                     'type' => 'main',
+                     'uptime_check_interval_in_minutes' => config('uptime-monitor.uptime_check.run_interval_in_minutes'),
+                 ]);
 
-                    if ( $monitor->id ) {
-                        // Check the uptime
-                        Artisan::call('monitor:check-uptime');
-                        Artisan::call('monitor:check-certificate');
-                    }
-                }
+                 if ( $monitor->id ) {
+                     // Check the uptime
+                     Artisan::call('monitor:check-uptime');
+                     Artisan::call('monitor:check-certificate');
+                 }
+             }
 
-            }  
+            // Dispatch the initial tests.
+            PageSpeed::dispatch( $site, 'mobile' );
+            PageSpeed::dispatch( $site, 'desktop' );
+
 
         });
 

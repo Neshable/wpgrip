@@ -87,10 +87,10 @@ class SiteResource extends Resource
                             ->helperText(new HtmlString('The <strong>absolute</strong> dir path to your wordpress site.'))  
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\Toggle::make('uptime_monitor')
-                        ->helperText(new HtmlString('Activate uptime monitor.'))
-                        ->visible(fn ($get): bool => empty($get('is_staging')))
-                        ->inline(),
+                        // Forms\Components\Toggle::make('uptime_monitor')
+                        // ->helperText(new HtmlString('Activate uptime monitor.'))
+                        // ->visible(fn ($get): bool => empty($get('is_staging')))
+                        // ->inline(),
                     ]),
                 // Second step
                 Forms\Components\Wizard\Step::make('Client and Server')

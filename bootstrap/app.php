@@ -10,6 +10,9 @@ use App\Jobs\External\GetVulnerabilityDatabase;
 use App\Jobs\Domain\BulkDomainExpiry;
 use App\Jobs\Global\CheckAllVulnerabilities;
 
+use App\Jobs\Tests\ScheduleTests;
+
+
 
 return Illuminate\Foundation\Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -39,10 +42,9 @@ return Illuminate\Foundation\Application::configure(basePath: dirname(__DIR__))
 
         // Domain specific - expiry date, blacklists...
         $schedule->job(new BulkDomainExpiry)->weekly();
-
+        // Performance checks - @todo test with large amount of sites
+        $schedule->job(new ScheduleTests)->twiceDaily(1, 13);
         
-        
-
         // Schedule::exec('node /home/forge/script.js')->daily();
     })
     ->withExceptions(function (Exceptions $exceptions) {
