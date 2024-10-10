@@ -107,6 +107,7 @@ class RepositoryResource extends Resource
                         'plugin' => 'icon-plugin',
                         'theme' => 'icon-wordpress',
                         'other' => 'icon-wordpress',
+                        default => 'icon-wordpress'
                     })
                     // ->description(fn (Repository $record): string => $record->site->url ? 'Site: ' . $record->site->url : 'Not connected' )
                     ->sortable(),
@@ -120,7 +121,8 @@ class RepositoryResource extends Resource
                     ->badge()
                     ->icon(fn (string $state): string => match ($state) {
                         'bitbucket' => 'icon-bitbucket',
-                        'github' => 'icon-github'
+                        'github' => 'icon-github',
+                        default => 'icon-wordpress'
                     }),
 
                 // Tables\Columns\TextColumn::make('remote')
