@@ -379,7 +379,7 @@ class SiteResource extends Resource
                 return $record->getDBSize();
                 }),
 
-            Tables\Columns\TextColumn::make('updated_at')
+            Tables\Columns\TextColumn::make('last_sync')
                 ->label('Last sync')
                 ->since()
 

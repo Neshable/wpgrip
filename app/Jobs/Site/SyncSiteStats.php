@@ -80,7 +80,9 @@ class SyncSiteStats implements ShouldQueue
             $this->fetchCliVersion();
             $this->fetchDBData();
 
+            $this->site->last_sync = Carbon::now();
             $this->site->save();
+           
             $this->connection->close();
 
             // Use this class also as a connection checker.
