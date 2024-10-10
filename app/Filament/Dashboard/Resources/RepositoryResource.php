@@ -104,7 +104,7 @@ class RepositoryResource extends Resource
                 Tables\Columns\TextColumn::make('type')
                     ->label('Type')
                     ->icon(fn (string $state): string => match ($state) {
-                        'plugin' => 'icon-plugin',
+                        'plugin' => 'icon-plugins',
                         'theme' => 'icon-wordpress',
                         'other' => 'icon-wordpress',
                         default => 'icon-wordpress'
