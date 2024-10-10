@@ -42,6 +42,8 @@
 
 </x-filament::modal>
 
+@livewire('top-menu-actions')
+
 @livewire('notifications')
 
 {{-- <div class="hidden sm:flex">

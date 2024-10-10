@@ -17,13 +17,16 @@ class SyncAllSitesStats implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    private $tenant_id;
+
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct( $tenant_id = false )
     {
+        $this->tenant_id = $tenant_id;
     }
 
     /**
@@ -33,16 +36,23 @@ class SyncAllSitesStats implements ShouldQueue
      */
     public function handle()
     {
-        $sites = Site::where('is_staging', false)->get();
-
+        if ( $this->tenant_id ) {
+            $sites = Site::where('is_staging', false)->where('tenant_id', $this->tenant_id )->get();   
+        } else {
+            $sites = Site::where('is_staging', false)->get();
+        }
+        
+        /**
+         * Loop and dispatch the background sync
+         */
         foreach ($sites as $site) 
         {
             if ( $site->enabled )
             {
-                SyncSiteStats::dispatch( $site, $latest_backup->frequency )->onQueue('default');
+                SyncSiteStats::dispatch( $site )->onQueue('default');
             }            
         }  
         
-        return;
+        return true;
     }
 }
