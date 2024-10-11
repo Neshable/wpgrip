@@ -18,7 +18,7 @@
                     href="#"
                     color="info"
                     x-on:click="
-                    window.navigator.clipboard.writeText('https://app.wpgrip.com/webhook/git/{{ $this->getRecord()->webhook }}')
+                    window.navigator.clipboard.writeText('https://www.wpgrip.com/webhook/git/{{ $this->getRecord()->webhook }}')
                     $tooltip('Copied webhook', { timeout: 2000 })" >
                         Copy webhook
                     </x-filament::link>
@@ -37,11 +37,11 @@
                     />
                 </x-filament::input.wrapper>
 
-                @if ( !$this->getRecord()->secret )
+                {{-- @if ( !$this->getRecord()->secret )
                 <x-filament::badge size="sm" color="warning">
                     You need to add the secret key in your repository settings if you want to use the webhook URL.
                 </x-filament::badge>
-                @endif
+                @endif --}}
         
                
             </x-filament::section>

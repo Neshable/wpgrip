@@ -128,10 +128,10 @@ class RepositoryResource extends Resource
                 // Tables\Columns\TextColumn::make('remote')
                 //     ->description(fn (Repository $record): string => $record->branch ? 'On branch: ' . $record->branch : 'No branch selected')
                 //     ->searchable(),
-                Tables\Columns\TextColumn::make('last_pull')
-                    ->dateTime()
-                    ->sortable()
-                    ->since(),
+                // Tables\Columns\TextColumn::make('last_pull')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->since(),
 
                 Tables\Columns\TextColumn::make('status')
                 ->badge()
