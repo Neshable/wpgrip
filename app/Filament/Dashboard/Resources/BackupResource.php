@@ -45,15 +45,33 @@ class BackupResource extends Resource
                             'db' => 'Database',
                             'files' => 'Files',
                         ]),
-                    Forms\Components\Select::make('frequency')
-                    ->options([
-                        '1' => 'Daily',
-                        '7' => 'Weekly',
-                        '30' => 'Monthly',
-                    ]),
-                    Forms\Components\TextInput::make('retention_days')
-                    ->numeric()
-                    ->default(null),
+                    Forms\Components\Radio::make('frequency')
+                        ->label('Backup Frequency')
+                        ->options([
+                            '1' => 'Daily',
+                            '3' => 'Bi-Weekly',
+                            '7' => 'Weekly',
+                            '30' => 'Monthly',
+                        ])
+                        ->required()
+                        ->inline()
+                        ->inlineLabel(false),
+                    Forms\Components\Radio::make('retention_days')
+                        ->label('Retention period')
+                        ->options([
+                            '3' => '3 Days',
+                            '7' => '1 Week',
+                            '14' => '2 Weeks',
+                            '30' => '1 Month',
+                            '60' => '2 Months',
+                            '90' => '3 Months',
+                        ])
+                        ->required()
+                        ->inline()
+                        ->inlineLabel(false)
+                    // Forms\Components\TextInput::make('retention_days')
+                    // ->numeric()
+                    // ->default(null),
                 ]),
                 Section::make('Storage')
                 ->schema([
@@ -85,24 +103,33 @@ class BackupResource extends Resource
                 // ->view('filament.tables.columns.sitename'),
                 Tables\Columns\TextColumn::make('site.name'),
                 Tables\Columns\TextColumn::make('type')
-                    ->icon('heroicon-m-circle-stack'),            
-               
-   
+                    ->icon(fn (string $state): string => match ($state) {
+                        'db' => 'heroicon-m-circle-stack',
+                        'files' => 'heroicon-m-folder',
+                        default => 'heroicon-m-circle-stack',
+                    })->tooltip(fn (string $state): string => $state),        
 
-                Tables\Columns\IconColumn::make('provider')
-                ->icon(fn (string $state): string => match ($state) {
-                    's3' => 'icon-s3',
-                    'reviewing' => 'heroicon-o-clock',
-                    'published' => 'heroicon-o-check-circle',
-                })->tooltip(fn (string $state): string => $state),
+                // Tables\Columns\IconColumn::make('provider')
+                // ->icon(fn (string $state): string => match ($state) {
+                //     's3' => 'icon-s3',
+                //     'reviewing' => 'heroicon-o-clock',
+                //     'published' => 'heroicon-o-check-circle',
+                // })->tooltip(fn (string $state): string => $state),
  
-                Tables\Columns\TextColumn::make('size')
-                    ->numeric()
-                    ->icon('heroicon-m-ellipsis-horizontal-circle')
-                    ->color('primary')
-                    ->sortable(),
+                // Tables\Columns\TextColumn::make('size')
+                //     ->numeric()
+                //     ->icon('heroicon-m-ellipsis-horizontal-circle')
+                //     ->color('primary')
+                //     ->sortable(),
                 Tables\Columns\TextColumn::make('frequency')
-                    ->numeric()
+                    ->formatStateUsing(fn (string $state, $record): string => match ($state) {
+                        '1' => 'Daily',
+                        '3' => 'Bi-Weekly',
+                        '7' => 'Weekly',
+                        '14' => 'Every 2nd Week',
+                        '30' => 'Monthly',
+                        default => $state,
+                    })
                     ->sortable(),
                 // Tables\Columns\TextColumn::make('retention_days')
                 //     ->numeric()
@@ -152,6 +179,14 @@ class BackupResource extends Resource
                         ->label('Type of Backup'),
                         Infolists\Components\TextEntry::make('frequency')
                         ->icon('heroicon-m-calendar-days')
+                        ->formatStateUsing(fn (string $state, $record): string => match ($state) {
+                            '1' => 'Daily',
+                            '3' => 'Bi-Weekly',
+                            '7' => 'Weekly',
+                            '14' => 'Every 2nd Week',
+                            '30' => 'Monthly',
+                            default => $state,
+                        })
                         ->tooltip('How often the backup is triggered')
                         ->label('Frequency'),
                         Infolists\Components\TextEntry::make('retention_days')

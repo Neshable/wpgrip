@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Artisan;
 
 use App\Jobs\Tests\PageSpeed;
+use App\Jobs\Site\SyncSiteStats;
 
 use App\Enums\SiteStatus;
 
@@ -89,6 +90,8 @@ class Site extends Model
                      Artisan::call('monitor:check-certificate');
                  }
              }
+            // Dispatch the connection to SSH
+            SyncSiteStats::dispatch( $site );
 
             // Dispatch the initial tests.
             PageSpeed::dispatch( $site, 'mobile' );

@@ -19,4 +19,6 @@ Schedule::command('app:metrics-beat')->dailyAt('00:01');
 
 Schedule::command('monitor:check-uptime')->everyMinute();
 Schedule::command('monitor:check-certificate')->everyMinute();
+// Delete expired records
+Schedule::command('delete:expired-records')->daily();
 

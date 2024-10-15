@@ -1,42 +1,35 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Backup\Database;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use phpseclib3\Net\SSH2;
+use App\Services\SSHSiteConnect;
 use Exception;
+
+use App\Models\Snapshot;
 
 class CreateRemoteDatabaseArchive implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $remoteServer;
-    protected $remoteUser;
-    protected $remotePassword;
-    protected $sitePath;
+    protected $site;
     protected $archiveFile;
     protected $snapshotId;
 
     /**
-     * CreateRemoteDatabaseArchive constructor.
+     * CreateRemoteArchive constructor.
      *
-     * @param string $remoteServer
-     * @param string $remoteUser
-     * @param string $remotePassword
-     * @param string $sitePath
+     * @param $site
      * @param int $snapshotId
      */
-    public function __construct($remoteServer, $remoteUser, $remotePassword, $sitePath, $snapshotId)
+    public function __construct($site, $snapshotId)
     {
-        $this->remoteServer = $remoteServer;
-        $this->remoteUser = $remoteUser;
-        $this->remotePassword = $remotePassword;
-        $this->sitePath = $sitePath; // The directory where wp-cli is located
-        $this->archiveFile = '/tmp/db-backup-' . time() . '.sql.gz'; // Compressed output file
+        $this->site = $site;
+        $this->archiveFile = 'db-backup-' . $site->id . '-' . time() . '.sql.gz';
         $this->snapshotId = $snapshotId;
     }
 
@@ -47,25 +40,46 @@ class CreateRemoteDatabaseArchive implements ShouldQueue
      */
     public function handle()
     {
-        // Establish SSH connection
-        $ssh = new SSH2($this->remoteServer);
-        if (!$ssh->login($this->remoteUser, $this->remotePassword)) {
+        // Establish SSH connection using SSHSiteConnect service
+        $connection = new SSHSiteConnect($this->site);
+        if (!$connection->active) {
             throw new Exception('Failed to authenticate with remote server');
         }
-        // For encryption use
-        // $command = "cd {$this->sitePath} && wp db export - | gzip -9 | openssl enc -aes-256-cbc -salt -out {$this->archiveFile}";
 
-        // Create a compressed database backup using wp-cli and gzip
-        $command = "cd {$this->sitePath} && wp db export - | gzip -9 > {$this->archiveFile}";
-        $ssh->exec($command);
+        // Step 1: Get the estimated size of the backup directory
+        $directorySize = $connection->exec("du -sb {$this->site->dir_path} | awk '{print $1}'");
+        $estimatedBackupSize = (int)trim($directorySize);
 
-        // Verify that the archive was created successfully
-        $checkFile = $ssh->exec("if [ -f {$this->archiveFile} ]; then echo 'exists'; else echo 'not_found'; fi");
-        if (trim($checkFile) !== 'exists') {
-            throw new Exception('Failed to create compressed database archive on the remote server');
+        // Step 2: Check available disk space on the remote server
+        $availableSpace = $connection->exec("df -P /tmp | awk 'NR==2 {print $4}'");
+        $availableSpaceBytes = trim($availableSpace) * 1024; // Convert KB to Bytes
+
+        // Step 3: Compare the available disk space with the estimated backup size
+        if ($availableSpaceBytes < $estimatedBackupSize) {
+            throw new Exception('Insufficient disk space available on remote server to create the archive');
         }
 
-        // Chain the next job to upload the archive to S3
-        $this->chain(new UploadRemoteBackupToS3($this->remoteServer, $this->remoteUser, $this->remotePassword, $this->archiveFile, $this->snapshotId))->dispatch();
+        // Step 4: Create the archive, excluding the archive itself if it's in the same directory
+        $tarCommand = "mkdir -p {$this->site->dir_path}/tmp ";
+        $tarCommand .= " && cd {$this->site->dir_path} && wp db export --all-tablespaces --single-transaction --quick --lock-tables=false - | gzip -9 - > tmp/{$this->archiveFile}";
+        $connection->exec($tarCommand);
+
+        // Make chmod 600 /path/to/file
+        $connection->exec("chmod 600 {$this->site->dir_path}/tmp/{$this->archiveFile}");
+
+        // Step 5: Verify archive creation success
+        $checkFile = $connection->exec("if [ -f {$this->site->dir_path}/tmp/{$this->archiveFile} ]; then echo 'exists'; else echo 'not_found'; fi");
+        if (trim($checkFile) !== 'exists') {
+            throw new Exception('Failed to create archive on the remote server');
+        }
+
+        // Update the snapshot with the archive path
+        $snapshot = Snapshot::find($this->snapshotId);
+        $snapshot->local_path = $this->archiveFile;
+        $snapshot->status = 'archived';
+        $snapshot->save();
+
+        // Close the SSH connection
+        $connection->close();
     }
 }

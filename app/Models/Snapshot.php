@@ -10,9 +10,12 @@ class Snapshot extends Model
     use HasFactory;
 
     protected $fillable = [
-        'enabled' ,
-        'file_path',
+        'enabled',
+        'status',
+        'local_path',
+        'remote_path',
         'backup_id',
+        'type',
         'tenant_id',
         'size',
         'frequency',
@@ -28,11 +31,26 @@ class Snapshot extends Model
         return $this->belongsTo(Backup::class);
     }
 
-      /**
+    /**
      * Get the owner of this site
      */
     public function tenant()
     {
         return $this->belongsTo(Tenant::class);
+    }
+
+    /**
+     * Return the path to the file in S3
+     *
+     * @return void
+     */
+    public function getS3path() 
+    {
+        if ( $this->local_path && $this->remote_path ) {
+            return $this->remote_path . '/' . basename( $this->local_path );
+        }
+
+        return false;
+
     }
 }

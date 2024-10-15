@@ -449,7 +449,7 @@ class SiteResource extends Resource
             'access' => Pages\Access::route('/{record}/access'), 
             'database' => Pages\Database::route('/{record}/database'), 
 
-            // 'backups' => Pages\ShowBackups::route('/{record}/backups'), 
+            
             // 'backups_settings' => Pages\ShowBackupsSettings::route('/{record}/backups/settings'), 
             // Insights AI
             'insights' => Pages\Insights::route('/{record}/insights'), 
@@ -471,6 +471,7 @@ class SiteResource extends Resource
             // 'checksums' => Pages\SecurityGroup\Checksumss::route('/{record}/security/checksums'),
             'repos' => Pages\Git::route('/{record}/repos'),
             'staging' => Pages\Staging::route('/{record}/staging'), 
+            'backups' => Pages\ShowBackups::route('/{record}/backups'), 
             
 
             // Git repos subpages

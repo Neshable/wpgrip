@@ -16,7 +16,9 @@ return new class extends Migration
             $table->timestamps();
             $table->boolean('enabled')->default(1);
             $table->string('status')->nullable();
-            $table->string('file_path')->nullable();
+            $table->string('type')->nullable();
+            $table->string('remote_path')->nullable();
+            $table->string('local_path')->nullable();
             $table->foreignId('backup_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('tenant_id')->nullable()->constrained()->onDelete('cascade');
             $table->bigInteger('size')->nullable();

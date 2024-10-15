@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Backup\Files;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -9,6 +9,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Services\SSHSiteConnect;
 use Exception;
+
+use App\Models\Snapshot;
 
 class CreateRemoteArchive implements ShouldQueue
 {
@@ -27,7 +29,7 @@ class CreateRemoteArchive implements ShouldQueue
     public function __construct($site, $snapshotId)
     {
         $this->site = $site;
-        $this->archiveFile = '/tmp/files-backup-' . time() . '.tar.gz';
+        $this->archiveFile = 'files-backup-' . $site->id . '-' . time() . '.tar.gz';
         $this->snapshotId = $snapshotId;
     }
 
@@ -58,17 +60,23 @@ class CreateRemoteArchive implements ShouldQueue
         }
 
         // Step 4: Create the archive, excluding the archive itself if it's in the same directory
-        $tarCommand = "tar --exclude='{$this->archiveFile}' -czf {$this->archiveFile} -C {$this->site->dir_path} .";
+        $tarCommand = "mkdir -p {$this->site->dir_path}/tmp && cd {$this->site->dir_path} && tar --exclude='tmp/*' -czf tmp/{$this->archiveFile} .";
         $connection->exec($tarCommand);
 
+        // Make chmod 600 /path/to/file
+        $connection->exec("chmod 600 {$this->site->dir_path}/tmp/{$this->archiveFile}");
+
         // Step 5: Verify archive creation success
-        $checkFile = $connection->exec("if [ -f {$this->archiveFile} ]; then echo 'exists'; else echo 'not_found'; fi");
+        $checkFile = $connection->exec("if [ -f {$this->site->dir_path}/tmp/{$this->archiveFile} ]; then echo 'exists'; else echo 'not_found'; fi");
         if (trim($checkFile) !== 'exists') {
             throw new Exception('Failed to create archive on the remote server');
         }
 
-        // Step 6: Chain the next job to upload the archive to S3
-        $this->chain(new UploadRemoteBackupToS3($connection->remoteServer, $connection->remoteUser, $connection->remotePassword, $this->archiveFile, $this->snapshotId))->dispatch();
+        // Update the snapshot with the archive path
+        $snapshot = Snapshot::find($this->snapshotId);
+        $snapshot->local_path = $this->archiveFile;
+        $snapshot->status = 'archived';
+        $snapshot->save();
 
         // Close the SSH connection
         $connection->close();

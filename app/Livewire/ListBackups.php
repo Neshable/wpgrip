@@ -4,17 +4,21 @@ namespace App\Livewire;
  
 use App\Models\Site;
 use App\Models\Backup;
+use App\Models\Snapshot;
 
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\ViewAction;
 
-use App\Jobs\RemoteDBBackup;
+use App\Filament\Dashboard\Resources\BackupResource\Pages;
+
 use App\Jobs\Backup\Database\ManualRemoteDBBackup;
 use App\Jobs\Backup\RemoteFilesBackup;
 use Filament\Forms\Components\Select;
 
 use Filament\Facades\Filament;
+use Filament\Tables;
 
 use Filament\Tables\Columns\ViewColumn;
 
@@ -50,89 +54,149 @@ class ListBackups extends Component implements HasForms, HasTable
     use InteractsWithTable;
     use InteractsWithForms;
 
-    public $site_id = 8899;
+    public $site_id;
     
     public function table(Table $table): Table
     {   
+        // $backupIds = Backup::query()->where('site_id', $this->site_id)->pluck('id');
+        // Snapshot::query()->whereIn('backup_id', $backupIds );
+
         return $table
-            ->query( Backup::query()->where('site_id', $this->site_id ) )
+            ->query( Backup::query()->where('site_id', $this->site_id) )
             ->deferLoading()
             ->columns([
-                ViewColumn::make('status')->view('filament.tables.columns.backup-status'),
-                TextColumn::make('created_at'),
-                // TextColumn::make('file_path'),
-                // TextColumn::make('site.name')->sortable(),
-                TextColumn::make('provider')->label('Storage'),
-                TextColumn::make('type'),
-                TextColumn::make('frequency'),
-                TextColumn::make('db_size')
-                    ->label('Size (MB)')
-                    ->getStateUsing(function (Backup $record) {
-                        return $record->getFormatedDBSize();
+                // Tables\Columns\ViewColumn::make('site')
+                // ->view('filament.tables.columns.sitename'),
+                // TextColumn::make('site.name'),
+                TextColumn::make('type')
+                    ->label('Backup Type')
+                    ->icon(fn (string $state): string => match ($state) {
+                        'db' => 'heroicon-m-circle-stack',
+                        'files' => 'heroicon-m-folder',
+                        default => 'heroicon-m-circle-stack',
+                    })->tooltip(fn (string $state): string => $state),        
+
+                // IconColumn::make('provider')
+                // ->icon(fn (string $state): string => match ($state) {
+                //     's3' => 'icon-s3',
+                //     'reviewing' => 'heroicon-o-clock',
+                //     'published' => 'heroicon-o-check-circle',
+                // })->tooltip(fn (string $state): string => $state),
+ 
+                // TextColumn::make('size')
+                //     ->numeric()
+                //     ->icon('heroicon-m-ellipsis-horizontal-circle')
+                //     ->color('primary')
+                //     ->sortable(),
+                TextColumn::make('frequency')
+                    ->formatStateUsing(fn (string $state, $record): string => match ($state) {
+                        '1' => 'Daily',
+                        '3' => 'Bi-Weekly',
+                        '7' => 'Weekly',
+                        '14' => 'Every 2nd Week',
+                        '30' => 'Monthly',
+                        default => $state,
                     })
-                    ->color('primary'),
-                TextColumn::make('delete_date')->label('Expires on'),
+                    ->sortable(),
+                // TextColumn::make('retention_days')
+                //     ->numeric()
+                //     ->sortable(),
+                TextColumn::make('last_backup')
+                    ->date()
+                    ->sortable(),
+                TextColumn::make('next_backup')
+                    ->date(),
+                TextColumn::make('snapshots_count')
+                    ->label('Available Snapshots')
+                    ->badge()
+                    ->counts('snapshots'),
+             
+                // Tables\Columns\IconColumn::make('enabled')
+                //     ->label('Status')
+                //     ->boolean(),
+                // TextColumn::make('created_at')->dateTime()->since(),
+                // TextColumn::make('backup.frequency')
+                //     ->label('Parent Backup Job')
+                //     ->formatStateUsing(fn (string $state, $record): string => match ($state) {
+                //         '1' => 'Daily',
+                //         '3' => 'Bi-Weekly',
+                //         '7' => 'Weekly',
+                //         '14' => 'Every 2nd Week',
+                //         '30' => 'Monthly',
+                //         default => $state,
+                //     }),
+                // TextColumn::make('backup.type')
+                //     ->label('Type')
+                //     ->icon(fn (string $state): string => match ($state) {
+                //         'db' => 'heroicon-m-circle-stack',
+                //         'files' => 'heroicon-m-folder',
+                //         default => 'heroicon-m-circle-stack',
+                //     })->tooltip(fn (string $state): string => $state),
+                // TextColumn::make('status')
+                // ->badge()
+                // ->color(fn (string $state): string => match ($state) {
+                //     'pending' => 'gray',
+                //     'archived' => 'warning',
+                //     'cleaning' => 'warning',
+                //     'completed' => 'success',
+                //     default => 'gray'
+                // }),
+                // TextColumn::make('size')
+                // ->formatStateUsing(function (string $state, $record) {
+                //     return number_format($record->size / 1024 / 1024, 2);
+                // })
+                // ->suffix('MB'),
+                // TextColumn::make('deletion_date')->dateTime(),
             ])
             ->filters([
                 // ...
             ])
             ->actions([
+                Action::make('view')
+                        ->label('View')
+                        ->url(fn (Backup $record): string => Pages\ViewBackup::getUrl(['record' => $record])),
+                        // ->openUrlInNewTab()
                 ActionGroup::make([
+                    Action::make('view')
+                        ->label('View')
+                        ->url(fn (Backup $record): string => Pages\ViewBackup::getUrl(['record' => $record])),
+                        // ->openUrlInNewTab()
+                    Action::make('pause')
+                        // ->icon('heroicon-o-arrow-down-tray')
+                        ->action( function(Backup $record ) {
+                        }),
+                    Action::make('edit')
+                        // ->icon('heroicon-o-arrow-down-tray')
+                        ->action( function(Backup $record ) {
+                        }),
                     Action::make('restore')
-                        ->requiresConfirmation()
-                        ->label('Restore Backup')
-                        ->modalHeading('Process of restoring a backup')
-                        ->modalSubmitActionLabel('Restore')
-                        ->successNotificationTitle('Are you sure you want to restore this backup?')
-                        ->color('warning')
-                        ->icon('heroicon-o-server-stack')
-                        ->modalIcon('heroicon-o-server-stack')
-                        ->action(fn (Backup $record) => $record->delete()),
-                    Action::make('download')
-                        ->color('info')
-                        ->icon('heroicon-o-arrow-down-tray')
-                        ->action( function(Backup $record) {
-                            if( Storage::disk('s3')->exists( $record->file_path ) )
-                            { 
-                                return Storage::disk('s3')->download( $record->file_path );  
-
-                                // $asset = Asset::find($id);
-                                // $assetPath = Storage::disk('s3')->url($record->file_path);
-                        
-                                // header("Cache-Control: public");
-                                // header("Content-Description: File Transfer");
-                                // header("Content-Disposition: attachment; filename=" . basename($assetPath));
-                                // header("Content-Type: " . $asset->mime);
-                        
-                                // return readfile($assetPath);
-                            }
-                            return false;
-                    
+                        // ->icon('heroicon-o-arrow-down-tray')
+                        ->action( function(Backup $record ) {
                         }),
                     DeleteAction::make(),
                 ])->icon('heroicon-m-ellipsis-horizontal'),
             ])
             ->headerActions([
                 
-                Action::make('create')
-                        ->requiresConfirmation()
-                        ->label('Backup DB Manually')
-                        ->modalHeading('Creating a new manual backup')
-                        ->modalSubmitActionLabel('Create')
-                        ->color('warning')
-                        ->icon('heroicon-o-server-stack')
-                        ->modalIcon('heroicon-o-server-stack')
-                        ->action(function () {
-                            // Set the site model.
-                            $record = Site::find( $this->site_id );
-                            ManualRemoteDBBackup::dispatchSync( $record, 'manual' );
-                            // RemoteDBBackup::dispatch( $record, 'manual' )->onQueue('longrunning');
-                            Notification::make()
-                                ->title('Backup process started.')
-                                ->success()
-                                ->body('The process will finish in the background. A notification will appear once it\'s completed.') 
-                                ->send();
-                        } ),
+                // Action::make('create')
+                        // ->requiresConfirmation()
+                        // ->label('Backup DB Manually')
+                        // ->modalHeading('Creating a new manual backup')
+                        // ->modalSubmitActionLabel('Create')
+                        // ->color('warning')
+                        // ->icon('heroicon-o-server-stack')
+                        // ->modalIcon('heroicon-o-server-stack')
+                        // ->action(function () {
+                        //     // Set the site model.
+                        //     $record = Site::find( $this->site_id );
+                        //     ManualRemoteDBBackup::dispatchSync( $record, 'manual' );
+                        //     // RemoteDBBackup::dispatch( $record, 'manual' )->onQueue('longrunning');
+                        //     Notification::make()
+                        //         ->title('Backup process started.')
+                        //         ->success()
+                        //         ->body('The process will finish in the background. A notification will appear once it\'s completed.') 
+                        //         ->send();
+                        // } ),
 
                 // Action::make('create')
                 //         ->form([
@@ -158,49 +222,7 @@ class ListBackups extends Component implements HasForms, HasTable
                 //                 ->body('The process will finish in the background. A notification will appear once it\'s completed.') 
                 //                 ->send();
                 //         }),
-                        
-
-                       
-                
-
-                Action::make('create-files')
-                    ->requiresConfirmation()
-                    ->label('Backup Files Manually')
-                    ->modalHeading('Creating a new manual files backup')
-                    ->modalSubmitActionLabel('Backup Files')
-                    ->color('info')
-                    ->icon('heroicon-o-server-stack')
-                    ->modalIcon('heroicon-o-server-stack')
-                    ->action(function () {
-                        $record = Site::find( $this->site_id );
-                        $timestamp = Carbon::now()->format('YmdHi');
-        
-                        Bus::chain([
-                            // Rsync from remote first.
-                            // @todo maybe separate files into wp-content and rest
-                            new CopyFromRemote( $record, $timestamp ),
-                            // Create archive.
-                            new CreateArchive( $record, $timestamp ),
-                            // Push to S3.
-                            new SendToS3( $record, $timestamp ),
-                            // Delete all traces.
-                            new DeleteAfterBackup( $record, $timestamp )
-                        ])->catch(function (Throwable $e) {
-                            //  First batch job failure detected
-                            GripNotifications::getBackupFail( $record->user_id );
-                        })->onQueue('longrunning')->dispatch();
-               
-                        // RemoteFilesBackup::dispatchSync( $record, 'manual' );
-                        Notification::make()
-                            ->title('Backup process started.')
-                            ->success()
-                            ->body('The process will finish in the background. A notification will appear once it\'s completed.') 
-                            ->send();
-                    } ),
-
-                Action::make('edit')
-                    ->label('Settings')           
-                    ->url(fn (): string => route('filament.dashboard.resources.sites.backups_settings', ['record' => $this->site_id ? $this->site_id : '2', 'tenant' => $this->getTenant()->slug ], false)),
+      
             ])
             ->bulkActions([
                 BulkAction::make('delete')

@@ -43,10 +43,10 @@
         </x-filament::tabs.item>
 
         <x-filament::tabs.item
-            {{-- :href="route('filament.dashboard.resources.sites.backups', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid])"  --}}
+            :href="route('filament.dashboard.resources.sites.backups', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid])" 
             tag="a"
             {{-- icon="icon-backups" --}}
-            {{-- :active="request()->getRequestUri() === \URL::route('filament.dashboard.resources.sites.backups', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid ], false)" --}}
+            :active="request()->getRequestUri() === \URL::route('filament.dashboard.resources.sites.backups', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid ], false)"
         >
             Backups
             <x-slot name="badge">

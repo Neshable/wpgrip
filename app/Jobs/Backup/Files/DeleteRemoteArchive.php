@@ -1,66 +1,76 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Backup\Files;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use phpseclib3\Net\SSH2;
-use App\Models\Snapshot;
+// use phpseclib3\Net\SFTP;
+use Illuminate\Support\Facades\Storage;
 use Exception;
+
+use Carbon\Carbon;
+use App\Models\Snapshot;
+
+// use App\Services\SFTPSiteConnect;
+use App\Services\SSHSiteConnect;
 
 class DeleteRemoteArchive implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $remoteServer;
-    protected $remoteUser;
-    protected $remotePassword;
+    protected $snapshot_id;
     protected $archiveFile;
-    protected $snapshotId;
+
+    private $site;
 
     /**
-     * DeleteRemoteBackupArchive constructor.
+     * Create a new job instance.
      *
-     * @param string $remoteServer
-     * @param string $remoteUser
-     * @param string $remotePassword
-     * @param string $archiveFile
-     * @param int $snapshotId
+     * @param int $snapshot_id
      */
-    public function __construct($remoteServer, $remoteUser, $remotePassword, $archiveFile, $snapshotId)
+    public function __construct( $site, $snapshot_id )
     {
-        $this->remoteServer = $remoteServer;
-        $this->remoteUser = $remoteUser;
-        $this->remotePassword = $remotePassword;
-        $this->archiveFile = $archiveFile;
-        $this->snapshotId = $snapshotId;
+        $this->site = $site;
+        $this->snapshot_id = $snapshot_id;
     }
 
+    /**
+     * Execute the job.
+     *
+     * @throws Exception
+     */
     public function handle()
     {
-        // SSH into the remote server
-        $ssh = new SSH2($this->remoteServer);
-        if (!$ssh->login($this->remoteUser, $this->remotePassword)) {
+        // Fetch the snapshot and retrieve the archive path
+        $snapshot = Snapshot::find( $this->snapshot_id );
+        if (!$snapshot || !$snapshot->local_path) {
+            throw new Exception('No archive path found in snapshot record');
+        }
+
+        // Establish SSH connection using SSHSiteConnect service
+        $connection = new SSHSiteConnect($this->site);
+        if (!$connection->active) {
             throw new Exception('Failed to authenticate with remote server');
         }
 
-        // Delete the archive file from the remote server
-        $ssh->exec("rm -f {$this->archiveFile}");
+        // Delete the remote archive file
+        $deleteCommand = "cd {$this->site->dir_path} && rm -rf tmp/{$snapshot->local_path}";
+        $connection->exec($deleteCommand);
 
-        // Verify the file is deleted
-        $checkFile = $ssh->exec("if [ -f {$this->archiveFile} ]; then echo 'exists'; else echo 'not_found'; fi");
+        // Verify the file was deleted successfully
+        $checkFile = $connection->exec("if [ -f {$this->site->dir_path} . '/tmp/' . {$snapshot->local_path} ]; then echo 'exists'; else echo 'not_found'; fi");
         if (trim($checkFile) === 'exists') {
-            throw new Exception('Failed to delete archive from the remote server');
+            throw new Exception('Failed to delete the archive file from the remote server');
         }
 
-        // Optionally update the snapshot status
-        $snapshot = Snapshot::find($this->snapshotId);
-        if ($snapshot) {
-            $snapshot->status = 'complete'; // Or 'restored', depending on the context
-            $snapshot->save();
-        }
+        // Close the SSH connection
+        $connection->close();
+
+         // Save our snapshot model
+         $snapshot->status = 'completed';
+         $snapshot->save();
     }
 }
