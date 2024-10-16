@@ -7,13 +7,13 @@
 
         <div class="mx-auto text-center h-160 md:h-180 px-4">
             <x-pill class="text-black font-bold bg-primary-50">
-                No Plugins. No Complications. Just Complete Control.
+                Tailor-Made for Developers. No Plugins. No Complications.
             </x-pill>
 
             <x-heading.h1 class="mt-4 font-bold">
                 All Your WordPress Sites.
                 <br class="hidden sm:block">
-                One Dashboard.
+                One Control Panel.
             </x-heading.h1>
 
             <p class="text-black m-3">
@@ -464,7 +464,7 @@
                     <x-accordion.item active="false" name="alternative">
                         <x-slot name="title">What features can I use without SSH access?</x-slot>
                         Your experience will be fairly limited, but you can still use our monitoring tools to check your
-                        uptime, SSL status, domain expiry, and performance. 
+                        uptime, SSL status, domain expiry, and performance.
 
                     </x-accordion.item>
                 </x-accordion>

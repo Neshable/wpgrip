@@ -116,11 +116,17 @@ class BackupResource extends Resource
                 //     'published' => 'heroicon-o-check-circle',
                 // })->tooltip(fn (string $state): string => $state),
  
-                // Tables\Columns\TextColumn::make('size')
-                //     ->numeric()
-                //     ->icon('heroicon-m-ellipsis-horizontal-circle')
-                //     ->color('primary')
-                //     ->sortable(),
+                Tables\Columns\TextColumn::make('size')
+                    ->label('Total Size')
+                    ->icon('heroicon-m-ellipsis-horizontal-circle')
+                    ->formatStateUsing(function (string $state, $record) {
+                        $sizeInMB = $record->size / 1024 / 1024;
+                        
+                        return $sizeInMB < 1000 
+                            ? number_format($sizeInMB, 2) . ' MB'
+                            : number_format($sizeInMB / 1024, 2) . ' GB';
+                    })
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('frequency')
                     ->formatStateUsing(fn (string $state, $record): string => match ($state) {
                         '1' => 'Daily',

@@ -69,8 +69,24 @@ class DeleteRemoteArchive implements ShouldQueue
         // Close the SSH connection
         $connection->close();
 
-         // Save our snapshot model
-         $snapshot->status = 'completed';
-         $snapshot->save();
+        // Save our snapshot model
+        $snapshot->status = 'completed';
+        $snapshot->save();
+
+         
+        // Update the backup model.
+        if ( $snapshot->backup )
+        {
+             // Calculate total size
+            $totalSize = $snapshot->backup->snapshots()->sum('size');
+            
+            $snapshot->backup->last_backup = Carbon::now();
+            $snapshot->backup->next_backup = Carbon::now()->addDays( $snapshot->backup->frequency ?? 30 );
+            if (  $totalSize )
+            {
+                $snapshot->backup->size = $totalSize;
+            }
+            $snapshot->backup->save();
+        }
     }
 }

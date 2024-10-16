@@ -91,7 +91,6 @@ class UploadRemoteArchive implements ShouldQueue
             // @todo get the schedule.
             $snapshot->deletion_date = Carbon::now()->addMonths(5);
             $snapshot->save();
-
         }
 
         // Close the file stream and delete the local temporary file

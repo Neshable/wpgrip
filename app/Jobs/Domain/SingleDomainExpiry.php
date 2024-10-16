@@ -47,11 +47,14 @@ class SingleDomainExpiry implements ShouldQueue
                 throw new Exception("Invalid URL format.");
             }
 
+            // Remove the www. prefix
+            $domain = str_replace('www.', '', $parsedUrl);
+
             // Instantiate the Whois object
             $whois = WhoisFactory::get()->createWhois();
             
             // Perform Whois Lookup
-            $info = $whois->loadDomainInfo($parsedUrl);
+            $info = $whois->loadDomainInfo($domain);
 
             if ($info && $info->expirationDate) {
                 // Update the expiry_date in the Site model with only the date part

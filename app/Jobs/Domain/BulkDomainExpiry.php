@@ -42,7 +42,5 @@ class BulkDomainExpiry implements ShouldQueue
                 SingleDomainExpiry::dispatch( $site )->onQueue('default');
             }            
         }  
-        
-        return;
     }
 }
