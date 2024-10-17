@@ -36,14 +36,14 @@ return Illuminate\Foundation\Application::configure(basePath: dirname(__DIR__))
     ->withSchedule(function (Schedule $schedule) {
         // Do a sync for all sites.
         $schedule->job(new SyncAllSitesStats)->daily();
-        $schedule->job(new GetVulnerabilityDatabase)->dailyAt('13:00');
+        $schedule->job(new GetVulnerabilityDatabase)->dailyAt('13:00')->onOneServer();
 
         // $schedule->job(new CheckAllVulnerabilities)->dailyAt('14:00');
 
         // Domain specific - expiry date, blacklists...
         $schedule->job(new BulkDomainExpiry)->weekly();
         // Performance checks - @todo test with large amount of sites
-        $schedule->job(new ScheduleTests)->twiceDaily(1, 13);
+        $schedule->job(new ScheduleTests)->twiceDaily(1, 13)->onOneServer();
         
         // Schedule::exec('node /home/forge/script.js')->daily();
     })

@@ -192,7 +192,7 @@
         </div>
 
         <p class="text-xs text-neutral-600 p-4">
-            {{ __('By continuing, you agree to our') }} <a target="_blank" href="{{route('terms-of-service')}}" class="text-primary-900 underline">{{ __('Terms of Service') }}</a> {{ __('and') }} <a target="_blank" href="{{route('privacy-policy')}}" class="text-primary-900 underline">{{ __('Privacy Policy') }}</a>.
+            {{ __('By continuing, you agree to our') }} <a target="_blank" href="#" class="text-primary-900 underline">{{ __('Terms of Service') }}</a> {{ __('and') }} <a target="_blank" href="#" class="text-primary-900 underline">{{ __('Privacy Policy') }}</a>.
         </p>
 
         <x-button-link.primary class="inline-block !w-full my-4" elementType="button" type="submit">

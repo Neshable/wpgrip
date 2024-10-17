@@ -13,17 +13,17 @@
                 <img src="{{asset(config('app.logo.light') )}}" class="h-10" alt="Logo" />
             </a>
         </div>
-        <div class="navbar-center hidden lg:flex">
+        {{-- <div class="navbar-center hidden lg:flex">
             <x-nav>
                 <x-layouts.app.navigation-links></x-layouts.app.navigation-links>
             </x-nav>
-        </div>
+        </div> --}}
         <div class="navbar-end">
             @auth
                 <x-layouts.app.user-menu></x-layouts.app.user-menu>
             @else
-                <x-link class="hidden md:block" href="{{route('login')}}">{{ __('Login') }}</x-link>
-                <x-button-link.secondary elementType="a"  class="self-center !py-2" href="#plans">{{ __('Get started') }}</x-button-link.secondary>
+                {{-- <x-link class="hidden md:block" href="{{route('login')}}">{{ __('Login') }}</x-link>
+                <x-button-link.secondary elementType="a"  class="self-center !py-2" href="#plans">{{ __('Get started') }}</x-button-link.secondary> --}}
             @endauth
         </div>
     </div>

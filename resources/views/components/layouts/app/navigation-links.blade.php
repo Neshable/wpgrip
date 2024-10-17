@@ -1,6 +1,6 @@
-<x-nav.item route="#features">{{ __('Features') }}</x-nav.item>
+{{-- <x-nav.item route="#features">{{ __('Features') }}</x-nav.item>
 <x-nav.item route="pricing">{{ __('Pricing') }}</x-nav.item>
-<x-nav.item route="roadmap">{{ __('Roadmap') }}</x-nav.item>
+<x-nav.item route="roadmap">{{ __('Roadmap') }}</x-nav.item> --}}
 
 {{-- @auth
     @if (auth()->user()->tenants()->count() > 0)

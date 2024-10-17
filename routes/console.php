@@ -13,12 +13,15 @@ use Illuminate\Support\Facades\Schedule;
 |
 */
 
+// The runInBackground method may only be used when scheduling tasks via the command and exec methods.
+
+
 Schedule::command('app:generate-sitemap')->everyOddHour();
 
 Schedule::command('app:metrics-beat')->dailyAt('00:01');
+Schedule::command('monitor:check-uptime')->everyMinute()->runInBackground();
+Schedule::command('monitor:check-certificate')->everyMinute()->runInBackground();
 
-Schedule::command('monitor:check-uptime')->everyMinute();
-Schedule::command('monitor:check-certificate')->everyMinute();
 // Delete expired records
-Schedule::command('delete:expired-records')->daily();
+Schedule::command('delete:expired-records')->daily()->runInBackground();
 

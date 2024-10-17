@@ -50,6 +50,11 @@ class DeleteRemoteArchive implements ShouldQueue
             throw new Exception('No archive path found in snapshot record');
         }
 
+        // Delete local file first
+        $localTmpPath = storage_path('tmp'); 
+        unlink( $localTmpPath . '/' . basename($snapshot->local_path) );
+
+
         // Establish SSH connection using SSHSiteConnect service
         $connection = new SSHSiteConnect($this->site);
         if (!$connection->active) {

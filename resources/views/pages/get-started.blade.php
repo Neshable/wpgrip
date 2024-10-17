@@ -12,10 +12,7 @@
         </div>
 
 
-
-
         <div class="mx-auto max-w-4xl mt-16">
-
             <div
                 class="divide-y divide-gray-200 rounded-lg bg-white shadow-lg shadow-black/5 ring-1 ring-black/5 dark:divide-gray-800 dark:bg-gray-700 dark:text-gray-300 dark:ring-gray-800 relative z-10 mb-6">
                 <ul class="divide-y divide-gray-200 dark:divide-gray-800">
@@ -26,11 +23,11 @@
                             </x-heading.h3>
 
                             <p class="max-w-2xl text-sm text-gray-500 dark:text-gray-400">
-                                To start adding your own sites and using WPGrip features, you will need to choose a subscription plan. Don't
+                                To start adding your own sites and using WPGrip features, you will <strong>need to choose a subscription plan</strong>. Don't
                                 worry, after subscribing you will be granted a free trial so you can check and see if WPGrip works for you.
                             </p>
                         </div>
-                        <x-button-link.secondary href="/pricing" class="self-center transition-all !py-3" elementType="a">
+                        <x-button-link.secondary href="#plans" class="self-center transition-all !py-3" elementType="a">
                             {{ __('See all plans') }}
                         </x-button-link.secondary>
 
@@ -56,6 +53,10 @@
 
             </div>
 
+        </div>
+
+        <div id="plans" class="py-16 bg-white overflow-hidden lg:pt-24 lg:pb-8">
+            <x-plans.all calculate-saving-rates="true" preselected-interval="month"></x-plans.all>
         </div>
     </div>
 

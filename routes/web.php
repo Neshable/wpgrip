@@ -22,24 +22,22 @@ use App\Http\Controllers\WebhookController;
 |
 */
 
-Route::get('/', function () {
-   return view('home');
-    return view('pages.landing-page');
-    // return view('coming-soon.vertical');
-    
-})->name('home')->middleware('sitemapped');
+// Redirect home to dashboard.
+Route::get('/', function ( UserDashboardManager $dashboardManager ) {
+    return redirect($dashboardManager->getUserDashboardUrl(Auth::user()));
+})->name('home')->middleware('auth');
 
 
 
-Route::get('/pricing', function () {
-     return view('pages.pricing');   
- })->name('pricing')->middleware('sitemapped');
-
+// Route::get('/pricing', function () {
+//      return view('pages.pricing');   
+//  })->name('pricing')->middleware('auth');
 
 // Normal dashboard
 Route::get('/dashboard', function (UserDashboardManager $dashboardManager) {
     return redirect($dashboardManager->getUserDashboardUrl(Auth::user()));
 })->name('dashboard')->middleware('auth');
+
 // Alternative dasboard if plan is selected
 Route::get('/get-started', function () {
     return view('pages.get-started');
@@ -116,28 +114,28 @@ Route::get('/subscription/change-plan-thank-you', [
 ])->name('subscription.change-plan.thank-you')->middleware('auth');
 
 // blog
-Route::get('/blog/{slug}', [
-    App\Http\Controllers\BlogController::class,
-    'view',
-])->name('blog.view');
+// Route::get('/blog/{slug}', [
+//     App\Http\Controllers\BlogController::class,
+//     'view',
+// ])->name('blog.view');
 
-Route::get('/blog', [
-    App\Http\Controllers\BlogController::class,
-    'all',
-])->name('blog')->middleware('sitemapped');
+// Route::get('/blog', [
+//     App\Http\Controllers\BlogController::class,
+//     'all',
+// ])->name('blog')->middleware('sitemapped');
 
-Route::get('/blog/category/{slug}', [
-    App\Http\Controllers\BlogController::class,
-    'category',
-])->name('blog.category');
+// Route::get('/blog/category/{slug}', [
+//     App\Http\Controllers\BlogController::class,
+//     'category',
+// ])->name('blog.category');
 
-Route::get('/terms-of-service', function () {
-    return view('pages.terms-of-service');
-})->name('terms-of-service')->middleware('sitemapped');
+// Route::get('/terms-of-service', function () {
+//     return view('pages.terms-of-service');
+// })->name('terms-of-service')->middleware('sitemapped');
 
-Route::get('/privacy-policy', function () {
-    return view('pages.privacy-policy');
-})->name('privacy-policy')->middleware('sitemapped');
+// Route::get('/privacy-policy', function () {
+//     return view('pages.privacy-policy');
+// })->name('privacy-policy')->middleware('sitemapped');
 
 // Product checkout routes
 
