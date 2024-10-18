@@ -134,6 +134,7 @@ class SshAndGitPull implements ShouldQueue
             {
                 GripNotifications::gitNoPublicKey();
                 $connection->close();
+                $this->saveToDb( true );
                 return false;
             }
 
@@ -187,22 +188,21 @@ class SshAndGitPull implements ShouldQueue
 
         $connection->close();
     
-        $this->saveToDb($success);
-
         if ( $success )
         {
             // Dispatch event for git pull success
             event(new GitPullSuccess( $this->repository ) );
-
+            // Save the db
+            $this->saveToDb();
             // dispatch user notification.
             GripNotifications::getGitPulledSuccess();
         }
         else
         {
+            // Pass true for errors.
+            $this->saveToDb(true);
             GripNotifications::getGitPulledFailed();
         }
-   
-
    
         return true;  
     }
