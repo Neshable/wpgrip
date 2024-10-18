@@ -69,7 +69,7 @@ class Site extends Model
             ]);
 
             // Proceeed only if this is not staging
-            if ( !$this->is_staging ) {
+            if ( !$site->is_staging ) {
                 // Create the main uptime monitor for this site!
                 // Check to make sure we don't have monitors
                 $monitor = UptimeMonitor::where('site_id', $site->id)->first();
