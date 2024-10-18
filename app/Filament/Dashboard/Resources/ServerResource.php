@@ -80,12 +80,14 @@ class ServerResource extends Resource
                 
                 Tables\Columns\TextColumn::make('name')
                     ->label('Friendly Name')
+                    ->searchable()
                     ->sortable(), 
                 Tables\Columns\TextColumn::make('provider')
                     ->badge(),
                 Tables\Columns\TextColumn::make('ip')
                     ->copyable()
                     ->copyMessage('IP copied to clipboard')
+                    ->searchable()
                     ->label('Public IP')
                     ->icon('heroicon-m-clipboard-document'),
                 Tables\Columns\TextColumn::make('private_ip')

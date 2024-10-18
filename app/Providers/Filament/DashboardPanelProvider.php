@@ -62,6 +62,10 @@ class DashboardPanelProvider extends PanelProvider
                     ->label('Orders')
                     ->url(fn (): string => OrderResource::getUrl())
                     ->icon('heroicon-o-rectangle-stack'),
+                MenuItem::make()
+                    ->label('Invitations')
+                    ->url(fn (): string => '/invitations' )
+                    ->icon('heroicon-o-envelope-open'),
                          
             ])
             ->discoverResources(in: app_path('Filament/Dashboard/Resources'), for: 'App\\Filament\\Dashboard\\Resources')
