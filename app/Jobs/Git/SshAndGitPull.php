@@ -204,9 +204,9 @@ class SshAndGitPull implements ShouldQueue
     public function isDirectoryAndGitValid($connection)
     {
         $checkCommands = [
-            'if [ -d "' . $this->pivot->path . '" ]; then echo "DIR_EXISTS"; else echo "DIR_NOT_EXISTS"; fi',
-            'if [ -d "' . $this->pivot->path . '/.git" ]; then echo "GIT_EXISTS"; else echo "GIT_NOT_EXISTS"; fi',
-            'cd ' . $this->pivot->path . ' && git rev-parse --abbrev-ref HEAD'
+            'if [ -d "' . $this->getAbsolutePathToDeploy() . '" ]; then echo "DIR_EXISTS"; else echo "DIR_NOT_EXISTS"; fi',
+            'if [ -d "' . $this->getAbsolutePathToDeploy() . '/.git" ]; then echo "GIT_EXISTS"; else echo "GIT_NOT_EXISTS"; fi',
+            'cd ' . $this->getAbsolutePathToDeploy() . ' && git rev-parse --abbrev-ref HEAD'
         ];
     
         foreach ($checkCommands as $key => $command) 
@@ -218,9 +218,9 @@ class SshAndGitPull implements ShouldQueue
             
             if ($key == 2 && trim($output) !== $this->pivot->branch) {
                 // sync the git remote with all branches
-                $connection->exec('cd ' . $this->pivot->path . ' && git fetch --all');
+                $connection->exec('cd ' . $this->getAbsolutePathToDeploy() . ' && git fetch --all');
                 // do git checkout to the `$this->pivot->branch`
-                $connection->exec('cd ' . $this->pivot->path . ' && git checkout ' . $this->pivot->branch);
+                $connection->exec('cd ' . $this->getAbsolutePathToDeploy() . ' && git checkout ' . $this->pivot->branch);
             }
         }
     
@@ -236,13 +236,23 @@ class SshAndGitPull implements ShouldQueue
     public function isRepositoryHaveUpdate($connection)
     {
         // Fetch the data from the remote repository and check the status
-        $checkCommand = 'cd ' . $this->pivot->path . ' && git fetch && git status';
+        $checkCommand = 'cd ' . $this->getAbsolutePathToDeploy() . ' && git fetch && git status';
 
         // Execute the command
         $status = $connection->exec($checkCommand);
 
         // If the status message contains 'up to date with', the local repository is  up to date
         return strpos($status, 'up to date with');
+    }
+
+    /**
+     * Return the absolute path to the repo.
+     *
+     * @return void
+     */
+    public function getAbsolutePathToDeploy()
+    {
+        return rtrim( $this->site->dir_path, '/' ) . '/' . $this->pivot->path;
     }
 
     /**
@@ -254,10 +264,10 @@ class SshAndGitPull implements ShouldQueue
     public function gitCloneNewRepo( $connection )
     {
         
-        $directoryCreated = $connection->exec('mkdir ' . $this->pivot->path);
+        $directoryCreated = $connection->exec('mkdir ' . $this->getAbsolutePathToDeploy());
     
         // Navigate to the repository directory and clone the remote repository.
-        $changeDirectoryCommand = 'cd ' . $this->pivot->path;
+        $changeDirectoryCommand = 'cd ' . $this->getAbsolutePathToDeploy();
         $cloneRepositoryCommand = $changeDirectoryCommand . ' && git clone --depth 1 --no-single-branch ' . $this->repository->remote . ' .';
         // Execute the command and store the result.
 
@@ -279,7 +289,7 @@ class SshAndGitPull implements ShouldQueue
         $parts = parse_url("ssh://" . $url); 
 
         // Full part.
-        $output = $connection->exec('cd ' . dirname( $this->pivot->path ) . ' && ssh -T ' . $parts['user'] . "@" . $parts['host'] );
+        $output = $connection->exec('cd ' . dirname( $this->getAbsolutePathToDeploy() ) . ' && ssh -T ' . $parts['user'] . "@" . $parts['host'] );
    
         if ( preg_match('/Permission denied/', $output) || !$connection->getExitStatusBool() ) 
         {
@@ -302,7 +312,7 @@ class SshAndGitPull implements ShouldQueue
         // If this is the first time we do pull. @todo figure out.
         $this->checkGitConfigs( $connection );
 
-        $gitCommand = 'cd ' . $this->pivot->path . ' && git add .; git commit -a -m "Commit to preserve
+        $gitCommand = 'cd ' . $this->getAbsolutePathToDeploy() . ' && git add .; git commit -a -m "Commit to preserve
         local changes"; git pull origin ' . $this->pivot->branch . ' -X theirs; if [ $? -eq 0 ]; then exit 0; else exit 1; fi';
         // $connection->ssh->disableQuietMode();
      
@@ -318,18 +328,18 @@ class SshAndGitPull implements ShouldQueue
     public function checkGitConfigs( $connection )
     {
         // Get the current settings
-        $gitEmail = $connection->exec('cd ' . $this->pivot->path . ' && git config --get user.email');
-        $gitName = $connection->exec('cd ' . $this->pivot->path . ' && git config --get user.name');
+        $gitEmail = $connection->exec('cd ' . $this->getAbsolutePathToDeploy() . ' && git config --get user.email');
+        $gitName = $connection->exec('cd ' . $this->getAbsolutePathToDeploy() . ' && git config --get user.name');
 
         // If email is not configured, set it
         if (empty($gitEmail)) {
-            $setGitEmail = 'cd ' . $this->pivot->path . ' && git config user.email "you@wpgrip.com"';
+            $setGitEmail = 'cd ' . $this->getAbsolutePathToDeploy() . ' && git config user.email "you@wpgrip.com"';
             $connection->exec($setGitEmail);
         }
 
         // If name is not configured, set it
         if (empty($gitName)) {
-            $setGitName = 'cd ' . $this->pivot->path . ' && git config user.name "WPGrip"';
+            $setGitName = 'cd ' . $this->getAbsolutePathToDeploy() . ' && git config user.name "WPGrip"';
             $connection->exec($setGitName);
         } 
         
@@ -368,7 +378,7 @@ class SshAndGitPull implements ShouldQueue
     public function create_commit_log( SSHSiteConnect $connection )
     {
        
-        $last_commits = 'cd ' . $this->pivot->path . ' && ' . $this->get_latest_git_commit();
+        $last_commits = 'cd ' . $this->getAbsolutePathToDeploy() . ' && ' . $this->get_latest_git_commit();
         
         $commit_response = json_decode( $connection->exec( $last_commits ) );
 

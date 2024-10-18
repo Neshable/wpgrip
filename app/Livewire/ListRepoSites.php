@@ -91,19 +91,14 @@ class ListRepoSites extends Component implements HasForms, HasTable
             ->heading('Connected sites')
             ->description('List of all sites where the repo is used.')
             ->headerActions([
-                CreateAction::make()
+                CreateAction::make('addsite')
                     // ->model( Repository::class )
                     ->label('Connect a site')
                     ->tooltip('Connect a site to this repository.')
-                    ->form([
-                            Forms\Components\TextInput::make('path')
-                                ->label('Absolute path to deploy')
-                                ->helperText('Make sure the directory doesn\'t exist. It will be created with the first deploy.')
-                                ->placeholder('/home/webapps/yourwebiste/')
-                                ->maxLength(255),
-
+                    ->form([                
                             Forms\Components\Select::make('site_id')
                                 ->label('Choose a site')
+                                ->helperText('You can select production or staging site.')
                                 ->searchable()
                                 // ->relationship(
                                 //     name: 'site',
@@ -114,12 +109,18 @@ class ListRepoSites extends Component implements HasForms, HasTable
                                         ->whereNotIn('sites.id', $this->repo_model->sites()->pluck('sites.id')->toArray())
                                         ->pluck('name', 'sites.id')
                                 ),
+                            Forms\Components\TextInput::make('path')
+                                ->label('Relative path to deploy')
+                                ->helperText('Make sure the directory doesn\'t exist. It will be created with the first deploy. This is relative path inside your WordPress installation.')
+                                ->placeholder('e.g. wp-content/themes/your-theme or wp-content/plugins/your-plugin')
+                                ->maxLength(255),
                             Forms\Components\TextInput::make('branch')
                                 ->label('Branch to use')
                                 ->helperText('Usually master or main, but you can use any of the existing branches')
                                 ->maxLength(255),
                             
                     ])
+                    ->modalHeading('Connect a Site to This Repository')
                     ->modalSubmitActionLabel('Connect Site')
                     ->createAnother( false )
                     ->before(function (array $data) {
