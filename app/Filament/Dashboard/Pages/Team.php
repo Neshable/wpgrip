@@ -11,6 +11,8 @@ class Team extends Page
 {
     protected static ?string $navigationGroup = 'Team';
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static string $view = 'filament.dashboard.pages.team';
 
     public static function getNavigationLabel(): string

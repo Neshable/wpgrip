@@ -128,20 +128,10 @@ class RepositoryResource extends Resource
                 // Tables\Columns\TextColumn::make('remote')
                 //     ->description(fn (Repository $record): string => $record->branch ? 'On branch: ' . $record->branch : 'No branch selected')
                 //     ->searchable(),
-                // Tables\Columns\TextColumn::make('last_pull')
-                //     ->dateTime()
-                //     ->sortable()
-                //     ->since(),
-
-                Tables\Columns\TextColumn::make('status')
-                ->badge()
-                ->color(fn (string $state): string => match ($state) {
-                    'draft' => 'gray',
-                    'problems' => 'warning',
-                    'active' => 'success',
-                    'disconnected' => 'danger',
-                    default =>'gray'
-                }),
+                Tables\Columns\TextColumn::make('sites_count')
+                    ->badge()
+                    ->label('Connected Sites')
+                    ->counts('sites'),
             ])
             ->recordUrl(
                 fn (Repository $record): string => Pages\ViewRepository::getUrl([$record->id]),

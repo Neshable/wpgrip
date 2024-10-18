@@ -20,9 +20,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
+use App\Filament\Dashboard\Pages\Team;
+
 class InvitationResource extends Resource
 {
     protected static ?string $model = Invitation::class;
+
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationGroup = 'Team';
 
@@ -107,6 +111,14 @@ class InvitationResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                // CreateAction::make(),
+                Tables\Actions\Action::make('view')
+                    ->label('View All Members')
+                    ->link()
+                    ->url(fn (): string => Team::getUrl()),
+                
             ])
             ->actions([
                 Tables\Actions\DeleteAction::make(),

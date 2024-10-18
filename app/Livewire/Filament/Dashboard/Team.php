@@ -18,6 +18,10 @@ use Livewire\Component;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 
+use Filament\Actions;
+
+use App\Filament\Dashboard\Resources\InvitationResource;
+
 class Team extends Component implements HasForms, HasTable
 {
     use InteractsWithForms;
@@ -73,6 +77,14 @@ class Team extends Component implements HasForms, HasTable
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                // CreateAction::make(),
+                Tables\Actions\Action::make('invite')
+                    ->label('Invite New Members')
+                    ->link()
+                    ->url(fn (): string => InvitationResource::getUrl() ),
+                
             ])
             ->actions([
                 Tables\Actions\Action::make('remove')

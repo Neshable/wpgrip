@@ -31,9 +31,12 @@ use Jeffgreco13\FilamentBreezy\BreezyCore;
 
 use App\Filament\Dashboard\Widgets;
 
+use App\Filament\Dashboard\Pages\Team;
 use App\Filament\Dashboard\Resources\OrderResource;
 use App\Filament\Dashboard\Resources\TransactionResource;
 use App\Filament\Dashboard\Resources\SubscriptionResource;
+// use App\Filament\Dashboard\Resources\InvitationResource;
+
 
 class DashboardPanelProvider extends PanelProvider
 {
@@ -59,13 +62,53 @@ class DashboardPanelProvider extends PanelProvider
                     ->url(fn () => route('filament.admin.pages.dashboard'))
                     ->icon('heroicon-s-cog-8-tooth'),
                 MenuItem::make()
+                    ->label('Invitations')
+                    ->url(fn (): string => '/invitations' )
+                    ->icon('heroicon-o-envelope-open'),
+                MenuItem::make()
                     ->label('Orders')
                     ->url(fn (): string => OrderResource::getUrl())
                     ->icon('heroicon-o-rectangle-stack'),
                 MenuItem::make()
-                    ->label('Invitations')
-                    ->url(fn (): string => '/invitations' )
-                    ->icon('heroicon-o-envelope-open'),
+                    ->label('Payment History')
+                    ->icon('heroicon-o-credit-card')
+                    ->visible(
+                        function () {
+                            $tenantPermissionManager = app(TenantPermissionManager::class);
+
+                            $tenant = Filament::getTenant();
+                            $user = auth()->user();
+
+                            // Tenant was created by the current user.
+                            if ($tenant->created_by == $user->id && !$user->isSubscribed() ) {
+                                return false;
+                            }
+
+                            return $tenantPermissionManager->tenantUserHasPermissionTo(
+                                $tenant,
+                                $user,
+                                TenancyPermissionConstants::PERMISSION_UPDATE_SUBSCRIPTIONS
+                            );
+                        }
+                    )
+                    ->url(fn (): string => TransactionResource::getUrl()),
+                MenuItem::make()
+                    ->label('Subscription')
+                    ->icon('heroicon-o-rectangle-stack')
+                    ->visible(
+                        function () {
+                            $tenantPermissionManager = app(TenantPermissionManager::class);
+
+                            return $tenantPermissionManager->tenantUserHasPermissionTo(
+                                Filament::getTenant(),
+                                auth()->user(),
+                                TenancyPermissionConstants::PERMISSION_UPDATE_SUBSCRIPTIONS
+                            );
+                        }
+                    )
+                    ->url(fn (): string => SubscriptionResource::getUrl()),
+
+                    
                          
             ])
             ->discoverResources(in: app_path('Filament/Dashboard/Resources'), for: 'App\\Filament\\Dashboard\\Resources')
@@ -131,51 +174,10 @@ class DashboardPanelProvider extends PanelProvider
                     ->collapsed()
                     ->icon('heroicon-o-rectangle-stack'),
             ])
-            ->navigationItems([
-                
+            ->navigationItems([              
                 
                 // Group billing
-
-                \Filament\Navigation\NavigationItem::make()
-                    ->label('Payment History')
-                    ->group('Billing')
-                    ->sort(1)
-                    ->visible(
-                        function () {
-                            $tenantPermissionManager = app(TenantPermissionManager::class);
-
-                            $tenant = Filament::getTenant();
-                            $user = auth()->user();
-
-                            // Tenant was created by the current user.
-                            if ($tenant->created_by == $user->id && !$user->isSubscribed() ) {
-                                return false;
-                            }
-
-                            return $tenantPermissionManager->tenantUserHasPermissionTo(
-                                $tenant,
-                                $user,
-                                TenancyPermissionConstants::PERMISSION_UPDATE_SUBSCRIPTIONS
-                            );
-                        }
-                    )
-                    ->url(fn (): string => TransactionResource::getUrl()),
-                \Filament\Navigation\NavigationItem::make()
-                    ->label('Subscription')
-                    ->group('Billing')
-                    ->sort(2)
-                    ->visible(
-                        function () {
-                            $tenantPermissionManager = app(TenantPermissionManager::class);
-
-                            return $tenantPermissionManager->tenantUserHasPermissionTo(
-                                Filament::getTenant(),
-                                auth()->user(),
-                                TenancyPermissionConstants::PERMISSION_UPDATE_SUBSCRIPTIONS
-                            );
-                        }
-                    )
-                    ->url(fn (): string => SubscriptionResource::getUrl()),
+               
                
             ])
             ->authMiddleware([
@@ -195,6 +197,7 @@ class DashboardPanelProvider extends PanelProvider
             ->tenantMenuItems([
                 MenuItem::make('Space Settings')
                     ->label('Workspace Settings')
+                    ->icon('heroicon-s-cog-8-tooth')
                     ->visible(
                         function () {
                             $tenantPermissionManager = app(TenantPermissionManager::class);
@@ -207,7 +210,40 @@ class DashboardPanelProvider extends PanelProvider
                         }
                     )
                     ->url(fn () => TenantSettings::getUrl())
-                    ->sort(3)
+                    ->sort(3),
+                MenuItem::make('Team Members')
+                    ->label('Team Members')
+                    ->icon('heroicon-s-users')
+                    ->visible(
+                        function () {
+                            $tenantPermissionManager = app(TenantPermissionManager::class);
+
+                            return $tenantPermissionManager->tenantUserHasPermissionTo(
+                                Filament::getTenant(),
+                                auth()->user(),
+                                TenancyPermissionConstants::PERMISSION_UPDATE_TENANT_SETTINGS
+                            );
+                        }
+                    )
+                    ->url(fn (): string => Team::getUrl())
+                    ->sort(3),
+                // MenuItem::make('Invite Members')
+                //     ->label('Invite Members')
+                //     ->visible(
+                //         function () {
+                //             $tenantPermissionManager = app(TenantPermissionManager::class);
+
+                //             return $tenantPermissionManager->tenantUserHasPermissionTo(
+                //                 Filament::getTenant(),
+                //                 auth()->user(),
+                //                 TenancyPermissionConstants::PERMISSION_UPDATE_TENANT_SETTINGS
+                //             );
+                //         }
+                //     )
+                //     ->url(fn (): string => InvitationResource::getUrl() )
+                //     ->sort(3),
+
+                
             ])
             ->tenantMenu()
             ->tenant(Tenant::class, 'uuid');

@@ -9,4 +9,7 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateRepository extends CreateRecord
 {
     protected static string $resource = RepositoryResource::class;
+
+    protected static bool $canCreateAnother = false;
+
 }
