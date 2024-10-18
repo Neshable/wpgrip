@@ -147,11 +147,17 @@ class SshAndGitPull implements ShouldQueue
 
             $connection->close();
     
-            $this->saveToDb( !$success );
-    
-            $success 
-                ? GripNotifications::getGitPulledSuccess()
-                : GripNotifications::getGitPulledFailed();
+            if ( $success ) 
+            {
+                $this->saveToDb();
+                GripNotifications::getGitPulledSuccess();
+            }
+            else
+            {
+                $this->saveToDb( true );
+                GripNotifications::getGitPulledFailed();
+            }
+ 
 
             return true;
         }
@@ -364,8 +370,9 @@ class SshAndGitPull implements ShouldQueue
             $this->repository->last_pull = Carbon::now();
         }
         
-        $this->repository->save();
         $this->pivot->save();
+        $this->repository->save();
+        
 
     }
 
