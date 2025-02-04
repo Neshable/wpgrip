@@ -52,7 +52,7 @@ class DashboardPanelProvider extends PanelProvider
             ])
             ->darkMode(false)
             ->unsavedChangesAlerts()
-            ->maxContentWidth('screen-2xl')
+            ->maxContentWidth('screen-4xl')
             // ->sidebarFullyCollapsibleOnDesktop()
             ->userMenuItems([
                 MenuItem::make()
@@ -128,6 +128,19 @@ class DashboardPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Blue,// '#1654D1',
                 'danger' => Color::Rose,
+                'gray' => [
+                    50 => '245, 246, 246',
+                    100 => '229, 231, 232',
+                    200 => '206, 208, 211',
+                    300 => '172, 176, 180',
+                    400 => '130, 135, 142',
+                    500 => '103, 108, 115',
+                    600 => '88, 92, 98',
+                    700 => '75, 78, 83',
+                    800 => '66, 68, 72',
+                    900 => '58, 59, 63',
+                    950 => '32, 33, 35',
+                ],
                 // 'gray' => Color::Slate, // Background
                 // 'info' => Color::Blue,
                 'success' => Color::Green,

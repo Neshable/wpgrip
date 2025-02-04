@@ -318,8 +318,11 @@ class SshAndGitPull implements ShouldQueue
         // If this is the first time we do pull. @todo figure out.
         $this->checkGitConfigs( $connection );
 
-        $gitCommand = 'cd ' . $this->getAbsolutePathToDeploy() . ' && git add .; git commit -a -m "Commit to preserve
-        local changes"; git pull origin ' . $this->pivot->branch . ' -X theirs; if [ $? -eq 0 ]; then exit 0; else exit 1; fi';
+        $gitCommand = 'cd ' . $this->getAbsolutePathToDeploy() . ' && ' .
+        'git fetch origin ' . $this->pivot->branch . ' && ' .  // Fetch the latest changes
+        'git reset --hard origin/' . $this->pivot->branch; // Reset local branch to remote state
+        // 'git clean -fd'; // Remove untracked files and directories
+
         // $connection->ssh->disableQuietMode();
      
         return $connection->exec($gitCommand);

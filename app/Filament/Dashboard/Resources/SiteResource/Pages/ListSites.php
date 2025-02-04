@@ -32,14 +32,14 @@ class ListSites extends ListRecords
     protected function getWidgets(): array
     {
         return [
-            SitesOverview::class,
+            //SitesOverview::class,
         ];
     }
 
     protected function getHeaderWidgets(): array
     {
         return [
-            SitesOverview::class,
+            //SitesOverview::class,
         ];
     }
 
