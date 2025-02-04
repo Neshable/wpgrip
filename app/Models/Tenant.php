@@ -5,6 +5,9 @@ namespace App\Models;
 use App\Services\SubscriptionManager;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 use App\Services\SSH\CreateUserSSHKeyPair;
 use Illuminate\Support\Facades\Crypt;
@@ -121,12 +124,12 @@ class Tenant extends Model
         return $this->hasMany(Invitation::class);
     }
 
-    public function users()
+    public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class)->using(TenantUser::class)->withPivot('id')->withTimestamps();
     }
 
-    public function subscriptions()
+    public function subscriptions(): HasMany
     {
         return $this->hasMany(Subscription::class);
     }
@@ -168,6 +171,11 @@ class Tenant extends Model
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function stripeData(): HasOne
+    {
+        return $this->hasOne(UserStripeData::class);
     }
 
     public function subscriptionProductMetadata()

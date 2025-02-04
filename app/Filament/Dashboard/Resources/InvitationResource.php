@@ -18,7 +18,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role;
 
 use App\Filament\Dashboard\Pages\Team;
 
@@ -64,13 +63,8 @@ class InvitationResource extends Resource
                     ])
                     ->maxLength(255),
                 Forms\Components\Select::make('role')
-                    ->options(function () {
-                        $rolesMap = TenancyPermissionConstants::getRoles();
-                        $rolesInDatabase = Role::whereIn('name', array_keys(TenancyPermissionConstants::getRoles()))->get();
-
-                        return $rolesInDatabase->mapWithKeys(function ($role) use ($rolesMap) {
-                            return [$role->name => $rolesMap[$role->name]];
-                        });
+                    ->options(function (TenantPermissionManager $tenantPermissionManager) {
+                        return $tenantPermissionManager->getAllAvailableTenantRolesForDisplay();
                     })
                     ->default(TenancyPermissionConstants::ROLE_USER)
                     ->required()

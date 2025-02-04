@@ -4,8 +4,10 @@ namespace App\Services\PaymentProviders\LemonSqueezy;
 
 use App\Client\LemonSqueezyClient;
 use App\Constants\DiscountConstants;
+use App\Constants\LemonSqueezyConstants;
 use App\Constants\PaymentProviderConstants;
 use App\Constants\PlanType;
+use App\Constants\SubscriptionType;
 use App\Models\Discount;
 use App\Models\Order;
 use App\Models\PaymentProvider;
@@ -31,9 +33,7 @@ class LemonSqueezyProvider implements PaymentProviderInterface
         private PlanManager $planManager,
         private DiscountManager $discountManager,
         private OneTimeProductManager $oneTimeProductManager,
-    ) {
-
-    }
+    ) {}
 
     public function createSubscriptionCheckoutRedirectLink(Plan $plan, Subscription $subscription, ?Discount $discount = null, int $quantity = 1): string
     {
@@ -55,7 +55,7 @@ class LemonSqueezyProvider implements PaymentProviderInterface
             'custom_price' => $price->price,
             'product_options' => [
                 'description' => $plan->description ?? $plan->name,
-                'redirect_url' => route('checkout.subscription.success'),
+                'redirect_url' => $this->getSubscriptionCheckoutSuccessUrl($subscription),
                 'enabled_variants' => [
                     $variantId,
                 ],
@@ -77,6 +77,12 @@ class LemonSqueezyProvider implements PaymentProviderInterface
                 ],
             ],
         ];
+
+        $shouldSkipTrial = $this->subscriptionManager->shouldSkipTrial($subscription);
+
+        if ($shouldSkipTrial) {
+            $object['checkout_options']['skip_trial'] = true;
+        }
 
         if ($discount) {
             $object['checkout_data']['discount_code'] = $this->findOrCreateLemonSqueezyDiscount($discount, $paymentProvider);
@@ -114,6 +120,8 @@ class LemonSqueezyProvider implements PaymentProviderInterface
         $variantQuantities = [];
         /** @var User $user */
         $user = auth()->user();
+
+        $variantId = null;
 
         foreach ($order->items()->get() as $item) {
             $product = $item->oneTimeProduct()->firstOrFail();
@@ -153,6 +161,11 @@ class LemonSqueezyProvider implements PaymentProviderInterface
 
         if ($discount) {
             $object['checkout_data']['discount_code'] = $this->findOrCreateLemonSqueezyDiscount($discount, $paymentProvider);
+        }
+
+        if ($variantId === null) {
+            Log::error('Failed to find variant ID for product: (did you forget to add it to the product?) '.$product->id);
+            throw new \Exception('Failed to find variant ID for product');
         }
 
         $response = $this->client->createCheckout($object, $variantId);
@@ -397,8 +410,54 @@ class LemonSqueezyProvider implements PaymentProviderInterface
         return $paymentProvider;
     }
 
-    public function supportsSeatBasedSubscriptions(): bool
+    public function getSupportedPlanTypes(): array
+    {
+        return [
+            PlanType::FLAT_RATE->value,
+            PlanType::USAGE_BASED->value,
+            PlanType::SEAT_BASED->value,
+        ];
+    }
+
+    public function reportUsage(Subscription $subscription, int $unitCount): bool
+    {
+        $paymentProvider = $this->assertProviderIsActive();
+
+        try {
+            $subscriptionItemId = $subscription->extra_payment_provider_data[LemonSqueezyConstants::SUBSCRIPTION_ITEM_ID] ?? null;
+
+            if ($subscriptionItemId === null) {
+                Log::error('Failed to find subscription item ID for subscription: '.$subscription->id);
+                throw new \Exception('Failed to find subscription item ID for subscription');
+            }
+
+            $response = $this->client->reportUsage($subscriptionItemId, $unitCount);
+
+            if (! $response->successful()) {
+                Log::error('Failed to report usage to lemon-squeezy for subscription: '.$subscription->id, $response->json());
+                throw new \Exception('Failed to report usage to lemon-squeezy for subscription: '.$subscription->id);
+            }
+
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function supportsSkippingTrial(): bool
     {
         return true;
+    }
+
+    private function getSubscriptionCheckoutSuccessUrl(Subscription $subscription)
+    {
+        if ($subscription->type === SubscriptionType::LOCALLY_MANAGED) {
+            return route('checkout.convert-local-subscription.success');
+        }
+
+        return route('checkout.subscription.success');
     }
 }

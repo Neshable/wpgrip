@@ -5,6 +5,7 @@ namespace App\Services\PaymentProviders\Stripe;
 use App\Constants\OrderStatus;
 use App\Constants\PaymentProviderConstants;
 use App\Constants\SubscriptionStatus;
+use App\Constants\SubscriptionType;
 use App\Constants\TransactionStatus;
 use App\Models\Currency;
 use App\Models\PaymentProvider;
@@ -23,9 +24,7 @@ class StripeWebhookHandler
         private SubscriptionManager $subscriptionManager,
         private TransactionManager $transactionManager,
         private OrderManager $orderManager,
-    ) {
-
-    }
+    ) {}
 
     public function handleWebhook(Request $request): JsonResponse
     {
@@ -57,6 +56,7 @@ class StripeWebhookHandler
             $cancelledAt = $event->data->object->canceled_at ? Carbon::createFromTimestampUTC($event->data->object->canceled_at)->toDateTimeString() : null;
 
             $this->subscriptionManager->updateSubscription($subscription, [
+                'type' => SubscriptionType::PAYMENT_PROVIDER_MANAGED,
                 'status' => $subscriptionStatus,
                 'ends_at' => $endsAt,
                 'payment_provider_subscription_id' => $event->data->object->id,
@@ -64,7 +64,7 @@ class StripeWebhookHandler
                 'payment_provider_id' => $paymentProvider->id,
                 'trial_ends_at' => $trialEndsAt,
                 'cancelled_at' => $cancelledAt,
-                'quantity' => $event->data->object->quantity,
+                'quantity' => $event->data->object->quantity ?? 1,
             ]);
         } elseif ($event->type == 'customer.subscription.trial_will_end') {
             // TODO send email to user

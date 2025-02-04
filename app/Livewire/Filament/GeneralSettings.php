@@ -4,7 +4,9 @@ namespace App\Livewire\Filament;
 
 use App\Models\Currency;
 use App\Models\EmailProvider;
+use App\Models\VerificationProvider;
 use App\Services\ConfigManager;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Textarea;
@@ -45,7 +47,7 @@ class GeneralSettings extends Component implements HasForms
             'datetime_format' => $this->configManager->get('app.datetime_format'),
             'default_currency' => $this->configManager->get('app.default_currency'),
             'google_tracking_id' => $this->configManager->get('app.google_tracking_id'),
-            'posthog_html_snippet' => $this->configManager->get('app.posthog_html_snippet'),
+            'tracking_scripts' => $this->configManager->get('app.tracking_scripts'),
             'payment_proration_enabled' => $this->configManager->get('app.payment.proration_enabled'),
             'default_email_provider' => $this->configManager->get('mail.default'),
             'default_email_from_name' => $this->configManager->get('mail.from.name'),
@@ -64,6 +66,17 @@ class GeneralSettings extends Component implements HasForms
             'recaptcha_enabled' => $this->configManager->get('app.recaptcha_enabled', false),
             'recaptcha_api_site_key' => $this->configManager->get('recaptcha.api_site_key', ''),
             'recaptcha_api_secret_key' => $this->configManager->get('recaptcha.api_secret_key', ''),
+            'cookie_consent_enabled' => $this->configManager->get('cookie-consent.enabled', false),
+            'two_factor_auth_enabled' => $this->configManager->get('app.two_factor_auth_enabled', false),
+            'trial_without_payment_enabled' => $this->configManager->get('app.trial_without_payment.enabled', false),
+            'trial_first_reminder_enabled' => $this->configManager->get('app.trial_without_payment.first_reminder_enabled', true),
+            'trial_second_reminder_enabled' => $this->configManager->get('app.trial_without_payment.second_reminder_enabled', true),
+            'trial_first_reminder_days' => $this->configManager->get('app.trial_without_payment.first_reminder_days'),
+            'trial_without_payment_sms_verification_enabled' => $this->configManager->get('app.trial_without_payment.sms_verification_enabled'),
+            'trial_second_reminder_days' => $this->configManager->get('app.trial_without_payment.second_reminder_days'),
+            'limit_user_trials_enabled' => $this->configManager->get('app.limit_user_trials.enabled'),
+            'limit_user_trials_max_count' => $this->configManager->get('app.limit_user_trials.max_count'),
+            'default_verification_provider' => $this->configManager->get('app.verification.default_provider'),
         ]);
     }
 
@@ -166,17 +179,85 @@ class GeneralSettings extends Component implements HasForms
                                 ->required()
                                 ->email(),
                         ]),
-                    Tabs\Tab::make(__('Analytics'))
+                    Tabs\Tab::make(__('Verification'))
+                        ->icon('heroicon-o-chat-bubble-oval-left-ellipsis')
+                        ->schema([
+                            Select::make('default_verification_provider')
+                                ->label(__('Default Verification Provider'))
+                                ->options(function () {
+                                    $providers = [];
+
+                                    foreach (VerificationProvider::all() as $provider) {
+                                        $providers[$provider->slug] = $provider->name;
+                                    }
+
+                                    return $providers;
+                                })
+                                ->helperText(__('This is the verification provider that will be used for all user phone SMS verifications.'))
+                                ->required()
+                                ->searchable(),
+                        ]),
+                    Tabs\Tab::make(__('Analytics & Cookies'))
                         ->icon('heroicon-o-squares-2x2')
                         ->schema([
+                            Toggle::make('cookie_consent_enabled')
+                                ->label(__('Cookie Consent Bar Enabled'))
+                                ->helperText(__('If enabled, the cookie consent bar will be shown to users.')),
                             TextInput::make('google_tracking_id')
+                                ->helperText(__('Google analytics will only be inserted if either "Cookie Consent Bar" is disabled or in case user has consented to cookies.'))
                                 ->label(__('Google Tracking ID')),
-                            Textarea::make('posthog_html_snippet')
-                                ->helperText(__('Paste your Posthog HTML snippet here.'))
-                                ->label(__('Posthog HTML Snippet')),
+                            Textarea::make('tracking_scripts')
+                                ->helperText(__('Paste in any other analytics or tracking scripts here. Those scripts will only be inserted if either "Cookie Consent Bar" is disabled or in case user has consented to cookies.'))
+                                ->label(__('Other Tracking Scripts')),
+                        ]),
+                    Tabs\Tab::make(__('Subscription Trials'))
+                        ->icon('heroicon-s-eye-dropper')
+                        ->schema([
+                            Section::make(__('Trials without Payment'))->schema([
+                                Toggle::make('trial_without_payment_enabled')
+                                    ->label(__('Trial Without Payment Enabled'))
+                                    ->helperText(__('If enabled, customers will be able to start subscription trials without entering payment details, and later they can enter payment details to continue their subscription.'))
+                                    ->required(),
+                                Toggle::make('trial_first_reminder_enabled')
+                                    ->label(__('First Reminder Enabled'))
+                                    ->helperText(__('If enabled, a reminder email will be sent to the user when the trial is ending soon.'))
+                                    ->live()
+                                    ->required(),
+                                TextInput::make('trial_first_reminder_days')
+                                    ->label(__('First Reminder Days'))
+                                    ->helperText(__('This email will remind the user that the trial is ending soon. Enter the number of days before the trial ends that the first reminder email will be sent.'))
+                                    ->disabled(fn ($get) => ! $get('trial_first_reminder_enabled'))
+                                    ->integer(),
+                                Toggle::make('trial_second_reminder_enabled')
+                                    ->label(__('Second Reminder Enabled'))
+                                    ->helperText(__('If enabled, a second reminder email will be sent to the user when the trial is ending soon.'))
+                                    ->live()
+                                    ->required(),
+                                TextInput::make('trial_second_reminder_days')
+                                    ->label(__('Second Reminder Days'))
+                                    ->helperText(__('Enter the number of days before the trial ends that the second reminder email will be sent.'))
+                                    ->disabled(fn ($get) => ! $get('trial_second_reminder_enabled'))
+                                    ->integer(),
+                                Toggle::make('trial_without_payment_sms_verification_enabled')
+                                    ->label(__('SMS Verification Enabled'))
+                                    ->helperText(__('If enabled, users will be required to verify their phone number via SMS before starting a trial without payment (to prevent abuse).'))
+                                    ->required(),
+                            ]),
+                            Section::make(__('Limit User Trials'))->schema([
+                                Toggle::make('limit_user_trials_enabled')
+                                    ->label(__('Limit User Trials Enabled'))
+                                    ->helperText(__('If enabled, users will only be able to start a limited number of trials (to prevent abuse).'))
+                                    ->live()
+                                    ->required(),
+                                TextInput::make('limit_user_trials_max_count')
+                                    ->label(__('Maximum Trial Count'))
+                                    ->helperText(__('Enter the maximum number of trials a user can start. If a user reaches this limit, they will not be able to start any more trials and they will be required to enter payment details to start subscription.'))
+                                    ->disabled(fn ($get) => ! $get('limit_user_trials_enabled'))
+                                    ->integer(),
+                            ]),
                         ]),
                     Tabs\Tab::make(__('Customer Dashboard'))
-                        ->icon('heroicon-o-squares-2x2')
+                        ->icon('heroicon-s-user')
                         ->schema([
                             Toggle::make('show_subscriptions')
                                 ->label(__('Show Subscriptions'))
@@ -210,6 +291,14 @@ class GeneralSettings extends Component implements HasForms
                                 ->label(__('Recaptcha Site Key')),
                             TextInput::make('recaptcha_api_secret_key')
                                 ->label(__('Recaptcha Secret Key')),
+                        ]),
+                    Tabs\Tab::make(__('Two Factor Authentication'))
+                        ->icon('heroicon-c-shield-check')
+                        ->schema([
+                            Toggle::make('two_factor_auth_enabled')
+                                ->label(__('Two Factor Authentication Enabled'))
+                                ->helperText(__('If enabled, users will be able to enable two factor authentication on their account. If disabled, the 2FA field will not be shown on the login form even for users who have it enabled.'))
+                                ->required(),
                         ]),
                     Tabs\Tab::make(__('Social Links'))
                         ->icon('heroicon-o-heart')
@@ -246,7 +335,7 @@ class GeneralSettings extends Component implements HasForms
         $this->configManager->set('app.datetime_format', $data['datetime_format']);
         $this->configManager->set('app.default_currency', $data['default_currency']);
         $this->configManager->set('app.google_tracking_id', $data['google_tracking_id'] ?? '');
-        $this->configManager->set('app.posthog_html_snippet', $data['posthog_html_snippet'] ?? '');
+        $this->configManager->set('app.tracking_scripts', $data['tracking_scripts'] ?? '');
         $this->configManager->set('app.payment.proration_enabled', $data['payment_proration_enabled']);
         $this->configManager->set('mail.default', $data['default_email_provider']);
         $this->configManager->set('mail.from.name', $data['default_email_from_name']);
@@ -265,6 +354,17 @@ class GeneralSettings extends Component implements HasForms
         $this->configManager->set('app.recaptcha_enabled', $data['recaptcha_enabled']);
         $this->configManager->set('recaptcha.api_site_key', $data['recaptcha_api_site_key']);
         $this->configManager->set('recaptcha.api_secret_key', $data['recaptcha_api_secret_key']);
+        $this->configManager->set('cookie-consent.enabled', $data['cookie_consent_enabled']);
+        $this->configManager->set('app.two_factor_auth_enabled', $data['two_factor_auth_enabled']);
+        $this->configManager->set('app.trial_without_payment.enabled', $data['trial_without_payment_enabled']);
+        $this->configManager->set('app.trial_without_payment.first_reminder_days', $data['trial_first_reminder_days'] ?? 3);
+        $this->configManager->set('app.trial_without_payment.second_reminder_days', $data['trial_second_reminder_days'] ?? 1);
+        $this->configManager->set('app.trial_without_payment.first_reminder_enabled', $data['trial_first_reminder_enabled']);
+        $this->configManager->set('app.trial_without_payment.second_reminder_enabled', $data['trial_second_reminder_enabled']);
+        $this->configManager->set('app.trial_without_payment.sms_verification_enabled', $data['trial_without_payment_sms_verification_enabled']);
+        $this->configManager->set('app.limit_user_trials.enabled', $data['limit_user_trials_enabled']);
+        $this->configManager->set('app.limit_user_trials.max_count', $data['limit_user_trials_max_count'] ?? 1);
+        $this->configManager->set('app.verification.default_provider', $data['default_verification_provider']);
 
         Notification::make()
             ->title(__('Settings Saved'))

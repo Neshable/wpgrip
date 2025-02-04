@@ -4,6 +4,31 @@ namespace App\Constants;
 
 class ConfigConstants
 {
+    public const ENCRYPTED_CONFIGS = [
+        'services.ses.secret',
+        'services.mailgun.secret',
+        'services.facebook.client_secret',
+        'services.google.client_secret',
+        'services.twitter-oauth-2.client_secret',
+        'services.bitbucket.client_secret',
+        'services.github.client_secret',
+        'services.linkedin-openid.client_secret',
+        'services.gitlab.client_secret',
+        'services.paddle.client_side_token',
+        'services.paddle.vendor_auth_code',
+        'services.paddle.webhook_secret',
+        'services.stripe.secret_key',
+        'services.stripe.publishable_key',
+        'services.stripe.webhook_signing_secret',
+        'services.lemon-squeezy.api_key',
+        'services.lemon-squeezy.signing_secret',
+        'services.postmark.token',
+        'services.resend.key',
+        'recaptcha.api_secret_key',
+        'services.twilio.sid',
+        'services.twilio.token',
+    ];
+
     public const OVERRIDABLE_CONFIGS = [  // correspond to laravel config keys
         'app.name',
         'app.description',
@@ -12,7 +37,7 @@ class ConfigConstants
         'app.datetime_format',
         'app.default_currency',
         'app.google_tracking_id',
-        'app.posthog_html_snippet',
+        'app.tracking_scripts',
         'app.payment.proration_enabled',
         'mail.default',
         'mail.from.name',
@@ -105,5 +130,27 @@ class ConfigConstants
         'invoices.seller.attributes.phone',
 
         'app.allow_tenant_invitations',
+
+        // Cookie Consent
+        'cookie-consent.enabled',
+
+        // Two Factor Auth
+        'app.two_factor_auth_enabled',
+
+        // Subscription Trial
+        'app.trial_without_payment.enabled',
+        'app.trial_without_payment.first_reminder_days',
+        'app.trial_without_payment.second_reminder_days',
+        'app.trial_without_payment.first_reminder_enabled',
+        'app.trial_without_payment.second_reminder_enabled',
+        'app.trial_without_payment.sms_verification_enabled',
+        'app.limit_user_trials.enabled',
+        'app.limit_user_trials.max_count',
+
+        // twilio
+        'services.twilio.sid',
+        'services.twilio.token',
+        'services.twilio.from',
+        'app.verification.default_provider',
     ];
 }

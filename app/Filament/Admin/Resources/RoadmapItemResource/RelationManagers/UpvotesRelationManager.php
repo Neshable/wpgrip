@@ -2,17 +2,14 @@
 
 namespace App\Filament\Admin\Resources\RoadmapItemResource\RelationManagers;
 
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class UpvotesRelationManager extends RelationManager
 {
-    protected static string $relationship = 'upvotes';
+    protected static string $relationship = 'userUpvotes';
 
     public function form(Form $form): Form
     {

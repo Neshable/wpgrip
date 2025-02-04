@@ -12,6 +12,7 @@ export default {
         './resources/views/filament/**/*.blade.php',
         './resources/views/site/**/*.blade.php',
         './resources/views/repo/**/*.blade.php',
+        './resources/views/vendor/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
         "./resources/**/*.js",
         "./resources/**/*.vue",

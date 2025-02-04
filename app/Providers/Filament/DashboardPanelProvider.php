@@ -2,8 +2,10 @@
 
 namespace App\Providers\Filament;
 
+use App\Constants\AnnouncementPlacement;
 use App\Constants\TenancyPermissionConstants;
 use App\Filament\Dashboard\Pages\TenantSettings;
+use App\Filament\Dashboard\Pages\TwoFactorAuth\TwoFactorAuth;
 use App\Models\Tenant;
 use App\Services\TenantPermissionManager;
 use Filament\Facades\Filament;
@@ -16,20 +18,19 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-
-use App\Http\Middleware\FilamentCustomHooksComponents;
-
-// use Filament\Widgets;
+use Filament\View\PanelsRenderHook;
+use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
-
-use App\Filament\Dashboard\Widgets;
+use App\Http\Middleware\FilamentCustomHooksComponents;
+use App\Filament\Dashboard\Widgets as DashboardWidgets;
 
 use App\Filament\Dashboard\Pages\Team;
 use App\Filament\Dashboard\Resources\OrderResource;
@@ -106,10 +107,15 @@ class DashboardPanelProvider extends PanelProvider
                             );
                         }
                     )
-                    ->url(fn (): string => SubscriptionResource::getUrl()),
-
-                    
-                         
+                    ->icon('heroicon-s-cog-8-tooth')
+                    ->url(fn () => TenantSettings::getUrl()),
+                MenuItem::make()
+                    ->label(__('2-Factor Authentication'))
+                    ->visible(
+                        fn () => config('app.two_factor_auth_enabled')
+                    )
+                    ->url(fn () => TwoFactorAuth::getUrl())
+                    ->icon('heroicon-s-cog-8-tooth'),
             ])
             ->discoverResources(in: app_path('Filament/Dashboard/Resources'), for: 'App\\Filament\\Dashboard\\Resources')
             ->discoverPages(in: app_path('Filament/Dashboard/Pages'), for: 'App\\Filament\\Dashboard\\Pages')
@@ -134,11 +140,11 @@ class DashboardPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/dashboard/theme.css')
             ->discoverWidgets(in: app_path('Filament/Dashboard/Widgets'), for: 'App\\Filament\\Dashboard\\Widgets')
             ->widgets([
-                Widgets\SitesOverview::class,
+                DashboardWidgets\SitesOverview::class,
 
-                Widgets\WPVersionChart::class,
-                Widgets\PHPVersionChart::class,
-                Widgets\PluginChart::class,
+                DashboardWidgets\WPVersionChart::class,
+                DashboardWidgets\PHPVersionChart::class,
+                DashboardWidgets\PluginChart::class,
                 // Widgets\AccountWidget::class,
             ])
             ->middleware([
@@ -180,6 +186,9 @@ class DashboardPanelProvider extends PanelProvider
                
                
             ])
+            ->renderHook(PanelsRenderHook::BODY_START,
+                fn (): string => Blade::render("@livewire('announcement.view', ['placement' => '".AnnouncementPlacement::USER_DASHBOARD->value."'])")
+            )
             ->authMiddleware([
                 Authenticate::class,
             ])->plugins([

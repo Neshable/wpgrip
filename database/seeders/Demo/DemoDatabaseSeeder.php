@@ -30,9 +30,7 @@ class DemoDatabaseSeeder extends Seeder
     public function __construct(
         private MetricsManager $metricsManager,
         private TenantPermissionManager $tenantPermissionManager,
-    ) {
-
-    }
+    ) {}
 
     private array $blogPostTitles = [
         'The Art of Responsive Web Design: A Comprehensive Guide',
@@ -443,7 +441,7 @@ class DemoDatabaseSeeder extends Seeder
                 'created_at' => now()->subDays(rand(1, 1000)),
             ]);
 
-            $item->upvotes()->attach($user->id, [
+            $item->userUpvotes()->attach($user->id, [
                 'ip_address' => rand(0, 255).'.'.
                     rand(0, 255).'.'.
                     rand(0, 255).'.'.

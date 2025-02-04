@@ -3,10 +3,14 @@
 namespace App\Services;
 
 use App\Constants\PaymentProviderConstants;
+use App\Constants\PlanType;
 use App\Constants\SubscriptionStatus;
+use App\Constants\SubscriptionType;
 use App\Events\Subscription\InvoicePaymentFailed;
 use App\Events\Subscription\Subscribed;
 use App\Events\Subscription\SubscriptionCancelled;
+use App\Events\Subscription\SubscriptionRenewed;
+use App\Exceptions\CouldNotCreateLocalSubscriptionException;
 use App\Exceptions\SubscriptionCreationNotAllowedException;
 use App\Exceptions\TenantException;
 use App\Models\PaymentProvider;
@@ -15,6 +19,7 @@ use App\Models\Product;
 use App\Models\Subscription;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Models\UserSubscriptionTrial;
 use App\Services\PaymentProviders\PaymentProviderInterface;
 use Carbon\Carbon;
 use Filament\Facades\Filament;
@@ -26,9 +31,7 @@ class SubscriptionManager
     public function __construct(
         private CalculationManager $calculationManager,
         private PlanManager $planManager,
-    ) {
-
-    }
+    ) {}
 
     public function create(
         string $planSlug,
@@ -36,7 +39,9 @@ class SubscriptionManager
         int $quantity,
         Tenant $tenant,
         ?PaymentProvider $paymentProvider = null,
-        ?string $paymentProviderSubscriptionId = null
+        ?string $paymentProviderSubscriptionId = null,
+        bool $localSubscription = false,
+        ?Carbon $endsAt = null,
     ): Subscription {
 
         if (! $this->canCreateSubscription($tenant->id)) {
@@ -46,7 +51,7 @@ class SubscriptionManager
         $plan = Plan::where('slug', $planSlug)->where('is_active', true)->firstOrFail();
 
         $newSubscription = null;
-        DB::transaction(function () use ($plan, $userId, &$newSubscription, $paymentProvider, $paymentProviderSubscriptionId, $quantity, $tenant) {
+        DB::transaction(function () use ($plan, $userId, &$newSubscription, $paymentProvider, $paymentProviderSubscriptionId, $quantity, $tenant, $localSubscription, $endsAt) {
             $this->deleteAllNewSubscriptions($userId, $tenant);
 
             $planPrice = $this->calculationManager->getPlanPrice($plan);
@@ -62,6 +67,10 @@ class SubscriptionManager
                 'interval_count' => $plan->interval_count,
                 'quantity' => $quantity,
                 'tenant_id' => $tenant->id,
+                'price_type' => $planPrice->type,
+                'price_tiers' => $planPrice->tiers,
+                'price_per_unit' => $planPrice->price_per_unit,
+                'type' => SubscriptionType::PAYMENT_PROVIDER_MANAGED,
             ];
 
             if ($paymentProvider) {
@@ -72,10 +81,45 @@ class SubscriptionManager
                 $subscriptionAttributes['payment_provider_subscription_id'] = $paymentProviderSubscriptionId;
             }
 
+            if ($localSubscription) {
+                $subscriptionAttributes['type'] = SubscriptionType::LOCALLY_MANAGED;
+
+                $endDate = $endsAt ?? ($plan->has_trial ? now()->addDays($this->calculateSubscriptionTrialDays($plan)) : null);
+                if ($endDate === null) {
+                    throw new CouldNotCreateLocalSubscriptionException('Could not determine local subscription end date');
+                }
+
+                $subscriptionAttributes['ends_at'] = $endDate;
+
+                if ($plan->has_trial) {
+                    $subscriptionAttributes['trial_ends_at'] = $endDate;
+                }
+
+                $user = User::find($userId);
+                if ($this->shouldUserVerifyPhoneNumberForTrial($user)) {
+                    $subscriptionAttributes['status'] = SubscriptionStatus::PENDING_USER_VERIFICATION->value;
+                } else {
+                    $subscriptionAttributes['status'] = SubscriptionStatus::ACTIVE->value;
+                }
+            }
+
             $newSubscription = Subscription::create($subscriptionAttributes);
+
+            if ($localSubscription) {
+                // if it's a local subscription, dispatch Subscribed event.
+                // Payment provider subscriptions events are dispatched by payment provider strategy
+                Subscribed::dispatch($newSubscription);
+            }
+
+            $this->updateUserSubscriptionTrials($newSubscription->id);
         });
 
         return $newSubscription;
+    }
+
+    public function shouldUserVerifyPhoneNumberForTrial(User $user): bool
+    {
+        return config('app.trial_without_payment.sms_verification_enabled') && ! $user->isPhoneNumberVerified();
     }
 
     public function canCreateSubscription(int $tenantId): bool
@@ -103,6 +147,7 @@ class SubscriptionManager
         // make it all in one statement to avoid overwriting webhook status updates
         Subscription::where('id', $subscriptionId)
             ->where('status', SubscriptionStatus::NEW->value)
+            ->where('type', SubscriptionType::PAYMENT_PROVIDER_MANAGED)
             ->update([
                 'status' => SubscriptionStatus::PENDING->value,
             ]);
@@ -131,12 +176,17 @@ class SubscriptionManager
             ->first();
     }
 
-    public function findActiveByUserAndSubscriptionUuid(int $userId, string $subscriptionUuid): ?Subscription
+    public function findActiveTenantSubscriptionWithPlanType(PlanType $planType, ?Tenant $tenant): ?Subscription
     {
-        return Subscription::where('user_id', $userId)
-            ->where('uuid', $subscriptionUuid)
+        if (! $tenant) {
+            return null;
+        }
+
+        return Subscription::where('tenant_id', $tenant->id)
             ->where('status', '=', SubscriptionStatus::ACTIVE->value)
-            ->first();
+            ->whereHas('plan', function ($query) use ($planType) {
+                $query->where('type', $planType->value);
+            })->first();
     }
 
     public function findNewByPlanSlugAndTenant(string $planSlug, Tenant $tenant): ?Subscription
@@ -152,6 +202,32 @@ class SubscriptionManager
     public function findByUuidOrFail(string $uuid): Subscription
     {
         return Subscription::where('uuid', $uuid)->firstOrFail();
+    }
+
+    public function findByUuidAndUserIdOrFail(string $uuid, int $userId): Subscription
+    {
+        return Subscription::where('uuid', $uuid)
+            ->where('user_id', $userId)
+            ->firstOrFail();
+    }
+
+    public function isLocalSubscription(Subscription $subscription): bool
+    {
+        return $subscription->type === SubscriptionType::LOCALLY_MANAGED;
+    }
+
+    public function shouldSkipTrial(Subscription $subscription)
+    {
+        if ($this->isLocalSubscription($subscription) && $subscription->plan->has_trial) {
+            return true;
+        }
+
+        return ! $this->canUserHaveSubscriptionTrial($subscription->user);
+    }
+
+    public function findById(int $id): ?Subscription
+    {
+        return Subscription::find($id);
     }
 
     public function findByPaymentProviderId(PaymentProvider $paymentProvider, string $paymentProviderSubscriptionId): ?Subscription
@@ -170,6 +246,8 @@ class SubscriptionManager
         $oldEndsAt = $subscription->ends_at;
         $newEndsAt = $data['ends_at'] ?? $oldEndsAt;
         $subscription->update($data);
+
+        $this->updateUserSubscriptionTrials($subscription->id);
 
         $this->handleDispatchingEvents(
             $oldStatus,
@@ -214,7 +292,7 @@ class SubscriptionManager
 
         // if $newEndsAt > $oldEndsAt, then subscription is renewed
         if ($newEndsAt && $oldEndsAt && $newEndsAt->greaterThan($oldEndsAt)) {
-            Subscribed::dispatch($subscription);
+            SubscriptionRenewed::dispatch($subscription, $oldEndsAt, $newEndsAt);
         }
     }
 
@@ -234,12 +312,16 @@ class SubscriptionManager
 
         $now = Carbon::now();
 
-        return round(abs(now()->add($interval->date_identifier, $intervalCount)->diffInDays($now)));
+        return intval(round(abs(now()->add($interval->date_identifier, $intervalCount)->diffInDays($now))));
     }
 
     public function changePlan(Subscription $subscription, PaymentProviderInterface $paymentProviderStrategy, string $newPlanSlug, bool $isProrated = false): bool
     {
         if ($subscription->plan->slug === $newPlanSlug) {
+            return false;
+        }
+
+        if (! $this->planManager->isPlanChangeable($subscription->plan)) {
             return false;
         }
 
@@ -266,7 +348,8 @@ class SubscriptionManager
 
     public function canAddDiscount(Subscription $subscription)
     {
-        return ($subscription->status === SubscriptionStatus::ACTIVE->value ||
+        return $subscription->type === SubscriptionType::PAYMENT_PROVIDER_MANAGED &&
+            ($subscription->status === SubscriptionStatus::ACTIVE->value ||
             $subscription->status === SubscriptionStatus::PAST_DUE->value)
             && $subscription->price > 0
             && $subscription->discounts()->count() === 0  // only one discount per subscription for now
@@ -331,6 +414,32 @@ class SubscriptionManager
 
         $subscriptions = $userTenant
             ->subscriptions()
+            ->where('status', SubscriptionStatus::ACTIVE->value)
+            ->where('ends_at', '>', Carbon::now())
+            ->get();
+
+        if ($productSlug) {
+            $subscriptions = $subscriptions->filter(function (Subscription $subscription) use ($productSlug) {
+                return $subscription->plan->product->slug === $productSlug;
+            });
+        }
+
+        return $subscriptions->count() > 0;
+    }
+
+    public function isUserSubscribedViaAnyTenant(?User $user, ?string $productSlug = null): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        $tenantIds = $user->tenants()->pluck('tenant_id')->toArray();
+
+        if (empty($tenantIds)) {
+            return false;
+        }
+
+        $subscriptions = Subscription::whereIn('tenant_id', $tenantIds)
             ->where('status', SubscriptionStatus::ACTIVE->value)
             ->where('ends_at', '>', Carbon::now())
             ->get();
@@ -413,17 +522,135 @@ class SubscriptionManager
 
     public function canEditSubscriptionPaymentDetails(Subscription $subscription)
     {
-        return $subscription->status === SubscriptionStatus::ACTIVE->value || $subscription->status === SubscriptionStatus::PAST_DUE->value;
-
+        return $subscription->type === SubscriptionType::PAYMENT_PROVIDER_MANAGED &&
+            ($subscription->status === SubscriptionStatus::ACTIVE->value || $subscription->status === SubscriptionStatus::PAST_DUE->value);
     }
 
     public function canCancelSubscription(Subscription $subscription)
     {
-        return ! $subscription->is_canceled_at_end_of_cycle && $subscription->status === SubscriptionStatus::ACTIVE->value;
+        return $subscription->type === SubscriptionType::PAYMENT_PROVIDER_MANAGED &&
+            ! $subscription->is_canceled_at_end_of_cycle &&
+            $subscription->status === SubscriptionStatus::ACTIVE->value;
     }
 
     public function canDiscardSubscriptionCancellation(Subscription $subscription)
     {
-        return $subscription->is_canceled_at_end_of_cycle && $subscription->status === SubscriptionStatus::ACTIVE->value;
+        return $subscription->type === SubscriptionType::PAYMENT_PROVIDER_MANAGED &&
+            $subscription->is_canceled_at_end_of_cycle &&
+            $subscription->status === SubscriptionStatus::ACTIVE->value;
+    }
+
+    public function canChangeSubscriptionPlan(Subscription $subscription)
+    {
+        return $subscription->type === SubscriptionType::PAYMENT_PROVIDER_MANAGED &&
+            $this->planManager->isPlanChangeable($subscription->plan) &&
+            $subscription->status === SubscriptionStatus::ACTIVE->value;
+    }
+
+    public function getLocalSubscriptionExpiringIn(int $days)
+    {
+        return Subscription::where('type', SubscriptionType::LOCALLY_MANAGED)
+            ->where('status', SubscriptionStatus::ACTIVE->value)
+            // on that exact day
+            ->whereDate('ends_at', Carbon::now()->addDays($days)->toDateString())
+            ->get();
+    }
+
+    public function canEndSubscription(Subscription $subscription)
+    {
+        return $this->isLocalSubscription($subscription) &&
+            $subscription->status === SubscriptionStatus::ACTIVE->value;
+    }
+
+    public function endSubscription(Subscription $subscription): bool
+    {
+        if (! $this->isLocalSubscription($subscription)) {
+            return false;
+        }
+
+        $subscription->update([
+            'status' => SubscriptionStatus::INACTIVE->value,
+            'ends_at' => now(),
+            'trial_ends_at' => now(),
+        ]);
+
+        return true;
+    }
+
+    public function cleanupLocalSubscriptionStatuses()
+    {
+        $subscriptions = Subscription::where('type', SubscriptionType::LOCALLY_MANAGED)
+            ->where('status', SubscriptionStatus::ACTIVE->value)
+            ->where('ends_at', '<', now())
+            ->get();
+
+        $subscriptions->each(function (Subscription $subscription) {
+            $this->updateSubscription($subscription, [
+                'status' => SubscriptionStatus::INACTIVE->value,
+            ]);
+        });
+    }
+
+    public function updateUserSubscriptionTrials(int $subscriptionId)
+    {
+        $subscription = Subscription::where('id', $subscriptionId)
+            ->where('status', SubscriptionStatus::ACTIVE->value)
+            ->whereNotNull('trial_ends_at')
+            ->first();
+
+        if (! $subscription) {
+            return;
+        }
+
+        $user = $subscription->user;
+
+        // if user already has a trial for this subscription, do not create another one
+        $user->subscriptionTrials()
+            ->where('subscription_id', $subscription->id)
+            ->firstOrCreate([
+                'subscription_id' => $subscription->id,
+                'trial_ends_at' => $subscription->trial_ends_at,
+            ]);
+    }
+
+    public function getUserSubscriptionTrialCount(int $userId): int
+    {
+        return UserSubscriptionTrial::where('user_id', $userId)->count();
+    }
+
+    public function canUserHaveSubscriptionTrial(?User $user): bool
+    {
+        if (! $user) {
+            return true;
+        }
+
+        if (! config('app.limit_user_trials.enabled')) {
+            return true;
+        }
+
+        if ($this->getUserSubscriptionTrialCount($user->id) >= config('app.limit_user_trials.max_count')) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function activateSubscriptionsPendingUserVerification(User $user)
+    {
+        $subscriptions = Subscription::where('user_id', $user->id)
+            ->where('status', SubscriptionStatus::PENDING_USER_VERIFICATION->value)
+            ->get();
+
+        $subscriptions->each(function (Subscription $subscription) {
+            $this->updateSubscription($subscription, [
+                'status' => SubscriptionStatus::ACTIVE->value,
+            ]);
+        });
+    }
+
+    public function subscriptionRequiresUserVerification(Subscription $subscription): bool
+    {
+        return $subscription->status === SubscriptionStatus::PENDING_USER_VERIFICATION->value &&
+            $this->shouldUserVerifyPhoneNumberForTrial($subscription->user);
     }
 }

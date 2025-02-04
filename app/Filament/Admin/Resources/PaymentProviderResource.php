@@ -37,20 +37,22 @@ class PaymentProviderResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->reorderable('sort')
             ->columns([
                 Tables\Columns\TextColumn::make('icon')
                     ->getStateUsing(function (PaymentProvider $record) {
                         return new HtmlString(
                             '<div class="flex gap-2">'.
-                            ' <img src="'.asset('images/payment-providers/'.$record->slug.'.png').'" alt="{{ $paymentProvider->getName() }}" class="h-6"> '
+                            ' <img src="'.asset('images/payment-providers/'.$record->slug.'.png').'" alt="'.$record->name.'" class="h-6"> '
                             .'</div>'
                         );
                     }),
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')->label(__('Name')),
                 Tables\Columns\TextColumn::make('slug')
+                    ->label(__('Slug'))
                     ->searchable(),
-                Tables\Columns\IconColumn::make('is_active')
-                    ->boolean(),
+                Tables\Columns\ToggleColumn::make('is_active')
+                    ->label(__('Active')),
             ])
             ->filters([
                 //
@@ -59,7 +61,8 @@ class PaymentProviderResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-            ]);
+            ])
+            ->defaultSort('sort', 'asc');
     }
 
     public static function getRelations(): array

@@ -1,4 +1,8 @@
 <x-layouts.app>
+    <x-slot name="title">
+        {{ __('Blog') }}
+    </x-slot>
+
     <div class="text-center pt-4 pb-0 md:pt-16 md:mb-10">
         <x-heading.h1 class="font-semibold">
             {{ __('From our blog') }}
@@ -8,8 +12,8 @@
         </p>
 
         <div class="flex gap-3 justify-center pt-6">
-            <x-link.social-icon name="x" title="{{ __('Twitter page') }}" link="https://x.com/intent/post?text={{ urlencode(__('Check out the latest news and updates :app blog!', ['app' => config('app.name')])) }}&url={{ urlencode(url()->current()) }}" class="hover:text-primary-500"/>
-            <x-link.social-icon name="linkedin" title="{{ __('LinkedIn community') }}" link="https://www.linkedin.com/shareArticle?url={{ urlencode(url()->current()) }}&title={{ urlencode(__('Check out the latest news and updates :app blog!', ['app' => config('app.name')])) }}" class="hover:text-primary-500"/>
+            <x-link.social-icon name="x" link="https://x.com/intent/post?text={{ urlencode(__('Check out the latest news and updates :app blog!', ['app' => config('app.name')])) }}&url={{ urlencode(url()->current()) }}" class="hover:text-primary-500"/>
+            <x-link.social-icon name="linkedin" link="https://www.linkedin.com/shareArticle?url={{ urlencode(url()->current()) }}&title={{ urlencode(__('Check out the latest news and updates :app blog!', ['app' => config('app.name')])) }}" class="hover:text-primary-500"/>
         </div>
     </div>
 

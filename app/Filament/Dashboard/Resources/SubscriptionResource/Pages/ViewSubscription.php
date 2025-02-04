@@ -2,7 +2,6 @@
 
 namespace App\Filament\Dashboard\Resources\SubscriptionResource\Pages;
 
-use App\Constants\SubscriptionStatus;
 use App\Filament\Dashboard\Resources\SubscriptionResource;
 use App\Filament\Dashboard\Resources\SubscriptionResource\ActionHandlers\DiscardSubscriptionCancellationActionHandler;
 use App\Models\Subscription;
@@ -22,8 +21,8 @@ class ViewSubscription extends ViewRecord
                     ->label(__('Change Plan'))
                     ->color('primary')
                     ->icon('heroicon-o-rocket-launch')
-                    ->visible(function (Subscription $record): bool {
-                        return $record->status === SubscriptionStatus::ACTIVE->value;
+                    ->visible(function (Subscription $record, SubscriptionManager $subscriptionManager): bool {
+                        return $subscriptionManager->canChangeSubscriptionPlan($record);
                     })
                     ->url(fn (Subscription $record): string => SubscriptionResource::getUrl('change-plan', ['record' => $record->uuid])),
                 \Filament\Actions\Action::make('update-payment-details')

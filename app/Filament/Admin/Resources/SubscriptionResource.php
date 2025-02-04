@@ -3,21 +3,32 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Constants\DiscountConstants;
+use App\Constants\PlanPriceTierConstants;
+use App\Constants\PlanPriceType;
 use App\Constants\PlanType;
 use App\Constants\SubscriptionStatus;
+use App\Constants\SubscriptionType;
+use App\Exceptions\SubscriptionCreationNotAllowedException;
 use App\Filament\Admin\Resources\TenantResource\Pages\EditTenant;
 use App\Mapper\SubscriptionStatusMapper;
 use App\Models\Subscription;
+use App\Models\User;
+use App\Services\PlanManager;
+use App\Services\SubscriptionManager;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\HtmlString;
 
 class SubscriptionResource extends Resource
 {
@@ -78,13 +89,16 @@ class SubscriptionResource extends Resource
                 Tables\Columns\TextColumn::make('tenant.name')->label(__('Tenant'))->searchable(),
                 Tables\Columns\TextColumn::make('plan.name')->label(__('Plan'))->searchable(),
                 Tables\Columns\TextColumn::make('price')->formatStateUsing(function (string $state, $record) {
-                    if ($record->plan->type === PlanType::FLAT_RATE->value) {
-                        return money($state, $record->currency->code).' / '.$record->interval->name;
-                    } elseif ($record->plan->type === PlanType::SEAT_BASED->value) {
-                        return money($state, $record->currency->code).' / '.$record->interval->name.' / '.__('seat');
+                    $interval = $record->interval->name;
+                    if ($record->interval_count > 1) {
+                        $interval = $record->interval_count.' '.__(str()->of($record->interval->name)->plural()->toString());
                     }
 
-                    return money($state, $record->currency->code);
+                    if ($record->plan->type === PlanType::SEAT_BASED->value) {
+                        $interval .= ' / '.__('seat');
+                    }
+
+                    return money($state, $record->currency->code).' / '.$interval;
                 }),
                 Tables\Columns\TextColumn::make('payment_provider_id')
                     ->formatStateUsing(function (string $state, $record) {
@@ -94,9 +108,7 @@ class SubscriptionResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->colors([
-                        'success' => SubscriptionStatus::ACTIVE->value,
-                    ])
+                    ->color(fn (Subscription $record, SubscriptionStatusMapper $mapper): string => $mapper->mapColor($record->status))
                     ->formatStateUsing(
                         function (string $state, $record, SubscriptionStatusMapper $mapper) {
                             return $mapper->mapForDisplay($state);
@@ -117,6 +129,65 @@ class SubscriptionResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
+            ->headerActions([
+                Tables\Actions\Action::make('create')
+                    ->label(__('Create Subscription'))
+                    ->form([
+                        Forms\Components\Select::make('user_id')
+                            ->relationship('user', 'name')
+                            ->searchable()
+                            ->getSearchResultsUsing(function (string $query) {
+                                return \App\Models\User::query()
+                                    ->where('name', 'like', '%'.$query.'%')
+                                    ->orWhere('email', 'like', '%'.$query.'%')
+                                    ->limit(20)->pluck('name', 'id')->toArray();
+                            })
+                            ->helperText(__('Adding a subscription to a user will create a "locally managed" subscription, which means the user will be able to use subscription features without being billed, and they can later convert to a "payment provider managed" subscription from their dashboard.'))
+                            ->required(),
+                        \Filament\Forms\Components\Select::make('plan_id')
+                            ->label(__('Plan'))
+                            ->options(function (PlanManager $planManager) {
+                                return $planManager->getAllActivePlans()->mapWithKeys(function ($plan) {
+                                    return [$plan->id => $plan->name];
+                                });
+                            })
+                            ->required(),
+                        Forms\Components\DateTimePicker::make('ends_at')
+                            ->displayFormat(config('app.datetime_format'))
+                            ->afterOrEqual('now')
+                            ->helperText(__('The date when the subscription will end.'))
+                            ->required(),
+                    ])
+                    ->action(function (array $data, SubscriptionManager $subscriptionManager, PlanManager $planManager) {
+                        $user = User::find($data['user_id']);
+                        $plan = $planManager->getActivePlanById($data['plan_id']);
+
+                        try {
+                            $subscriptionManager->create(
+                                $plan->slug,
+                                $user->id,
+                                localSubscription: true,
+                                endsAt: Carbon::parse($data['ends_at'])
+                            );
+                        } catch (SubscriptionCreationNotAllowedException $e) {
+                            Notification::make()
+                                ->title(__('Failed to create subscription. User already has an active subscription and cannot have more than one.'))
+                                ->danger()
+                                ->send();
+                        }
+
+                        Notification::make()
+                            ->title(__('Subscription created successfully.'))
+                            ->success()
+                            ->send();
+                    }),
+            ])
+            ->modifyQueryUsing(fn (Builder $query) => $query->with([
+                'user',
+                'currency',
+                'paymentProvider',
+                'interval',
+            ]))
             ->bulkActions([
             ])->defaultSort('created_at', 'desc');
     }
@@ -124,7 +195,7 @@ class SubscriptionResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            'usages' => \App\Filament\Admin\Resources\SubscriptionResource\RelationManagers\UsagesRelationManager::class,
         ];
     }
 
@@ -179,8 +250,9 @@ class SubscriptionResource extends Resource
 
                 TextEntry::make('status_'.$i)
                     ->label(__('Status'))
+                    ->color(fn ($record, SubscriptionStatusMapper $mapper): string => $mapper->mapColor($record->status))
                     ->badge()
-                    ->getStateUsing(fn () => $versionModel->status),
+                    ->getStateUsing(fn ($record, SubscriptionStatusMapper $mapper): string => $mapper->mapForDisplay($record->status)),
 
                 TextEntry::make('changed_by_'.$i)
                     ->label(__('Changed By'))
@@ -191,6 +263,7 @@ class SubscriptionResource extends Resource
                     ->getStateUsing(fn () => date(config('app.datetime_format'), strtotime($versionModel->ends_at))),
 
                 TextEntry::make('payment_provider_status_'.$i)
+                    ->color('info')
                     ->label(__('Payment Provider Status'))
                     ->badge()
                     ->getStateUsing(fn () => $versionModel->payment_provider_status ?? '-'),
@@ -224,14 +297,45 @@ class SubscriptionResource extends Resource
                                             ]),
                                         TextEntry::make('plan.name'),
                                         TextEntry::make('price')->formatStateUsing(function (string $state, $record) {
-                                            if ($record->plan->type === PlanType::FLAT_RATE->value) {
-                                                return money($state, $record->currency->code).' / '.$record->interval->name;
-                                            } elseif ($record->plan->type === PlanType::SEAT_BASED->value) {
-                                                return money($state, $record->currency->code).' / '.$record->interval->name.' / '.__('seat');
+                                            $interval = $record->interval->name;
+                                            if ($record->interval_count > 1) {
+                                                $interval = $record->interval_count.' '.__(str()->of($record->interval->name)->plural()->toString());
                                             }
 
-                                            return money($state, $record->currency->code);
+                                            if ($record->plan->type === PlanType::SEAT_BASED->value) {
+                                                $interval .= ' / '.__('seat');
+                                            }
+
+                                            return money($state, $record->currency->code).' / '.$interval;
                                         }),
+                                        TextEntry::make('price_per_unit')
+                                            ->visible(fn (Subscription $record): bool => $record->price_type === PlanPriceType::USAGE_BASED_PER_UNIT->value && $record->price_per_unit !== null)
+                                            ->formatStateUsing(function (string $state, $record) {
+                                                return money($state, $record->currency->code).' / '.__($record->plan->meter->name);
+                                            }),
+                                        TextEntry::make('price_tiers')
+                                            ->visible(fn (Subscription $record): bool => in_array($record->price_type, [PlanPriceType::USAGE_BASED_TIERED_VOLUME->value, PlanPriceType::USAGE_BASED_TIERED_GRADUATED->value]) && $record->price_tiers !== null)
+                                            ->getStateUsing(function (Subscription $record) {
+                                                $start = 0;
+                                                $unitMeterName = $record->plan->meter->name;
+                                                $currencyCode = $record->currency->code;
+                                                $output = '';
+                                                $startingPhrase = __('From');
+                                                foreach ($record->price_tiers as $tier) {
+                                                    $output .= $startingPhrase.' '.$start.' - '.$tier[PlanPriceTierConstants::UNTIL_UNIT].' '.__(str()->plural($unitMeterName)).' → '.money($tier[PlanPriceTierConstants::PER_UNIT], $currencyCode).' / '.__($unitMeterName);
+                                                    if ($tier[PlanPriceTierConstants::FLAT_FEE] > 0) {
+                                                        $output .= ' + '.money($tier[PlanPriceTierConstants::FLAT_FEE], $currencyCode);
+                                                    }
+                                                    $start = intval($tier[PlanPriceTierConstants::UNTIL_UNIT]) + 1;
+                                                    $output .= '<br>';
+
+                                                    if ($record->price_type === PlanPriceType::USAGE_BASED_TIERED_GRADUATED->value) {
+                                                        $startingPhrase = __('Next');
+                                                    }
+                                                }
+
+                                                return new HtmlString($output);
+                                            }),
                                         TextEntry::make('payment_provider_id')
                                             ->formatStateUsing(function (string $state, $record) {
                                                 return $record->paymentProvider->name;
@@ -243,12 +347,22 @@ class SubscriptionResource extends Resource
                                         TextEntry::make('trial_ends_at')->dateTime(config('app.datetime_format'))->label(__('Trial Ends At'))->visible(fn (Subscription $record): bool => $record->trial_ends_at !== null),
                                         TextEntry::make('status')
                                             ->badge()
-                                            ->colors([
-                                                'success' => SubscriptionStatus::ACTIVE->value,
-                                            ])
+                                            ->color(fn (Subscription $record, SubscriptionStatusMapper $mapper): string => $mapper->mapColor($record->status))
                                             ->formatStateUsing(fn (string $state, SubscriptionStatusMapper $mapper): string => $mapper->mapForDisplay($state)),
+                                        TextEntry::make('type')->badge()->color('info')->formatStateUsing(
+                                            function (string $state) {
+                                                switch ($state) {
+                                                    case SubscriptionType::PAYMENT_PROVIDER_MANAGED:
+                                                        return __('Payment Provider Managed');
+                                                    case SubscriptionType::LOCALLY_MANAGED:
+                                                        return __('Locally Managed');
+                                                }
+
+                                                return $state;
+                                            }),
                                         TextEntry::make('is_canceled_at_end_of_cycle')
                                             ->label(__('Renews automatically'))
+                                            ->visible(fn (Subscription $record, SubscriptionManager $subscriptionManager): bool => $subscriptionManager->canCancelSubscription($record))
                                             ->icon(function ($state) {
                                                 $state = boolval($state);
 

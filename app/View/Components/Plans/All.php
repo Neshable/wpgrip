@@ -19,8 +19,8 @@ class All extends Component
         public string $preselectedInterval = '',
         public bool $calculateSavingRates = false,
         public ?string $currentSubscriptionUuid = null,
-    ) {
-    }
+        public bool $showDefaultProduct = false,
+    ) {}
 
     /**
      * Get the view / contents that represent the component.
@@ -42,6 +42,14 @@ class All extends Component
     protected function enrichViewData(array $viewData, Collection $plans)
     {
         $viewData['plans'] = $plans;
+
+        if ($this->showDefaultProduct) {
+            $defaultProduct = $this->planManager->getDefaultProduct();
+
+            if ($defaultProduct) {
+                $viewData['defaultProduct'] = $defaultProduct;
+            }
+        }
 
         $viewData['isGrouped'] = $this->isGrouped;
 
@@ -109,7 +117,7 @@ class All extends Component
 
             $imaginaryPrice = $this->calculatePriceForImaginaryInterval($firstPrice, $firstInterval, $currentInterval);
 
-            $intervalSavingPercentage[$currentInterval] = (($imaginaryPrice - $currentPrice) / ($imaginaryPrice)) * 100;
+            $intervalSavingPercentage[$currentInterval] = $imaginaryPrice == 0 ? 0 : (($imaginaryPrice - $currentPrice) / ($imaginaryPrice)) * 100;
         }
 
         return array_map(function ($saving) {
@@ -121,6 +129,7 @@ class All extends Component
     {
         // per week (approximate)
         $intervalConversion = [
+            'day' => 1 / 7,
             'week' => 1,
             'month' => 4,
             'year' => 48,
@@ -129,6 +138,6 @@ class All extends Component
         $currentIntervalInWeeks = $intervalConversion[$currentInterval];
         $imaginaryIntervalInWeeks = $intervalConversion[$imaginaryInterval];
 
-        return ceil($currentPrice * $imaginaryIntervalInWeeks / $currentIntervalInWeeks);
+        return intval(ceil($currentPrice * $imaginaryIntervalInWeeks / $currentIntervalInWeeks));
     }
 }

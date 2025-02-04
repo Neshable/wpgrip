@@ -5,14 +5,13 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\TenantResource\Pages;
 use App\Filament\Admin\Resources\TenantResource\RelationManagers;
 use App\Models\Tenant;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TenantResource extends Resource
 {
@@ -27,6 +26,11 @@ class TenantResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\Select::make('created_by')
+                    ->getSearchResultsUsing(fn (string $search): array => User::where('name', 'like', "%{$search}%")->limit(20)->pluck('name', 'id')->toArray())
+                    ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name)
+                    ->default(auth()->id())
+                    ->searchable(),
             ]);
     }
 
@@ -40,17 +44,14 @@ class TenantResource extends Resource
                 Tables\Columns\TextColumn::make('subscriptions_count')
                     ->counts('subscriptions')
                     ->label(__('Subscriptions'))
-                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('orders_count')
                     ->counts('orders')
                     ->label(__('Orders'))
-                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('users_count')
                     ->counts('users')
                     ->label(__('Users'))
-                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('uuid')
                     ->label(__('UUID'))
@@ -67,6 +68,7 @@ class TenantResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('updated_at', 'desc')
             ->filters([
                 //
             ])
@@ -101,10 +103,4 @@ class TenantResource extends Resource
     {
         return false;
     }
-
-    public static function canCreate(): bool
-    {
-        return false;
-    }
-
 }

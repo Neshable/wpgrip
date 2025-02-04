@@ -3,13 +3,18 @@
 namespace Tests\Feature\Services;
 
 use App\Constants\SubscriptionStatus;
+use App\Events\Subscription\Subscribed;
+use App\Events\Subscription\SubscriptionCancelled;
+use App\Events\Subscription\SubscriptionRenewed;
 use App\Exceptions\SubscriptionCreationNotAllowedException;
 use App\Models\Currency;
 use App\Models\Interval;
 use App\Models\Plan;
 use App\Models\PlanPrice;
 use App\Models\Subscription;
+use App\Models\UserSubscriptionTrial;
 use App\Services\SubscriptionManager;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Tests\Feature\FeatureTest;
 
@@ -123,6 +128,170 @@ class SubscriptionManagerTest extends FeatureTest
         $subscription = $manager->create($slug, $user->id, 1, $tenant);
 
         $this->assertNotNull($subscription);
+    }
+
+    public function test_update_subscription_dispatches_subscribed_event()
+    {
+        $tenant = $this->createTenant();
+        $user = $this->createUser($tenant);
+        $this->actingAs($user);
+
+        $slug = Str::random();
+        $plan = Plan::factory()->create([
+            'slug' => $slug,
+            'is_active' => true,
+        ]);
+
+        $subscription = Subscription::factory()->create([
+            'user_id' => $user->id,
+            'status' => SubscriptionStatus::PENDING->value,
+            'plan_id' => $plan->id,
+            'tenant_id' => $tenant->id,
+        ]);
+
+        /** @var SubscriptionManager $manager */
+        $manager = app()->make(SubscriptionManager::class);
+
+        Event::fake();
+
+        $subscription = $manager->updateSubscription($subscription, [
+            'status' => SubscriptionStatus::ACTIVE->value,
+        ]);
+
+        Event::assertDispatched(Subscribed::class);
+    }
+
+    public function test_update_subscription_dispatches_canceled_event()
+    {
+        $tenant = $this->createTenant();
+        $user = $this->createUser($tenant);
+        $this->actingAs($user);
+
+        $slug = Str::random();
+        $plan = Plan::factory()->create([
+            'slug' => $slug,
+            'is_active' => true,
+        ]);
+
+        $subscription = Subscription::factory()->create([
+            'user_id' => $user->id,
+            'status' => SubscriptionStatus::ACTIVE->value,
+            'plan_id' => $plan->id,
+            'tenant_id' => $tenant->id,
+        ]);
+
+        /** @var SubscriptionManager $manager */
+        $manager = app()->make(SubscriptionManager::class);
+
+        Event::fake();
+
+        $subscription = $manager->updateSubscription($subscription, [
+            'status' => SubscriptionStatus::CANCELED->value,
+        ]);
+
+        Event::assertDispatched(SubscriptionCancelled::class);
+    }
+
+    public function test_update_subscription_dispatches_renewed_event()
+    {
+        $tenant = $this->createTenant();
+        $user = $this->createUser($tenant);
+        $this->actingAs($user);
+
+        $slug = Str::random();
+        $plan = Plan::factory()->create([
+            'slug' => $slug,
+            'is_active' => true,
+        ]);
+
+        $subscription = Subscription::factory()->create([
+            'user_id' => $user->id,
+            'status' => SubscriptionStatus::ACTIVE->value,
+            'plan_id' => $plan->id,
+            'ends_at' => now(),
+            'tenant_id' => $tenant->id,
+        ]);
+
+        /** @var SubscriptionManager $manager */
+        $manager = app()->make(SubscriptionManager::class);
+
+        Event::fake();
+
+        $subscription = $manager->updateSubscription($subscription, [
+            'status' => SubscriptionStatus::ACTIVE->value,
+            'ends_at' => now()->addDays(30),
+        ]);
+
+        Event::assertDispatched(SubscriptionRenewed::class);
+    }
+
+    public function test_can_user_have_subscription_trial()
+    {
+
+        config()->set('app.limit_user_trials.enabled', true);
+        config()->set('app.limit_user_trials.max_count', 1);
+
+        $manager = app()->make(SubscriptionManager::class);
+
+        $this->assertTrue($manager->canUserHaveSubscriptionTrial(null));
+
+        $user = $this->createUser();
+        $this->actingAs($user);
+
+        $slug = Str::random();
+        $plan = Plan::factory()->create([
+            'slug' => $slug,
+            'is_active' => true,
+        ]);
+
+        $tenant = $this->createTenant();
+
+        $subscription = Subscription::factory()->create([
+            'user_id' => $user->id,
+            'status' => SubscriptionStatus::ACTIVE->value,
+            'plan_id' => $plan->id,
+            'ends_at' => now(),
+            'trial_ends_at' => now()->addDays(7),
+            'tenant_id' => $tenant->id,
+        ]);
+
+        $this->assertTrue($manager->canUserHaveSubscriptionTrial($user));
+    }
+
+    public function test_can_user_have_subscription_trial_not_allowed()
+    {
+        config()->set('app.limit_user_trials.enabled', true);
+        config()->set('app.limit_user_trials.max_count', 1);
+
+        $manager = app()->make(SubscriptionManager::class);
+
+        $user = $this->createUser();
+        $this->actingAs($user);
+
+        $slug = Str::random();
+        $plan = Plan::factory()->create([
+            'slug' => $slug,
+            'is_active' => true,
+        ]);
+
+        $tenant = $this->createTenant();
+
+        $subscription = Subscription::factory()->create([
+            'user_id' => $user->id,
+            'status' => SubscriptionStatus::ACTIVE->value,
+            'plan_id' => $plan->id,
+            'ends_at' => now(),
+            'trial_ends_at' => now()->addDays(7),
+            'tenant_id' => $tenant->id,
+        ]);
+
+        UserSubscriptionTrial::factory()->create([
+            'user_id' => $user->id,
+            'subscription_id' => $subscription->id,
+            'trial_ends_at' => now()->addDays(7),
+        ]);
+
+        $this->assertFalse($manager->canUserHaveSubscriptionTrial($user));
     }
 
     public static function nonDeadSubscriptionProvider()

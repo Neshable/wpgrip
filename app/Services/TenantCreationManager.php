@@ -12,10 +12,8 @@ use Illuminate\Support\Str;
 class TenantCreationManager
 {
     public function __construct(
-        private TenantPermissionManager $tenantPermissionManager
-    ) {
-
-    }
+        private TenantPermissionManager $tenantPermissionManager,
+    ) {}
 
     public function findUserTenantsForNewOrder(?User $user)
     {
@@ -101,5 +99,12 @@ class TenantCreationManager
         $this->tenantPermissionManager->assignTenantUserRole($tenant, $user, TenancyPermissionConstants::TENANT_CREATOR_ROLE);
 
         return $tenant;
+    }
+
+    public function createTenantForFreePlanUser(User $user)
+    {
+        if ($user->tenants->count() == 0) {
+            $this->createTenant($user);
+        }
     }
 }

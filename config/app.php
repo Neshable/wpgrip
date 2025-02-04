@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Facade;
-use Illuminate\Support\ServiceProvider;
 
 return [
 
@@ -156,7 +155,7 @@ return [
     'email_color_tint' => '#344ddc',  // used to add brand color to email templates (since it's not possible to use tailwind vars in emails)
 
     'google_tracking_id' => env('GOOGLE_TRACKING_ID'),
-    'posthog_html_snippet' => env('POSTHOG_HTML_SNIPPET'),
+    'tracking_scripts' => env('TRACKING_SCRIPTS'),
 
     'payment' => [
         'proration_enabled' => env('PAYMENT_PRORATION_ENABLED', true),
@@ -186,43 +185,33 @@ return [
         // 'dark' => 'images/logo-dark.svg',
     ],
 
-    'roadmap_enabled' => true,
+    'roadmap_enabled' => env('ROADMAP_ENABLED', true),
 
-    'recaptcha_enabled' => false,
+    'recaptcha_enabled' => env('RECAPTCHA_ENABLED', false),
+
+    'multiple_subscriptions_enabled' => env('MULTIPLE_SUBSCRIPTIONS_ENABLED', false),
+
+    'two_factor_auth_enabled' => env('TWO_FACTOR_AUTH_ENABLED', true),
 
     'allow_tenant_invitations' => true,
 
-    /*
-    |--------------------------------------------------------------------------
-    | Autoloaded Service Providers
-    |--------------------------------------------------------------------------
-    |
-    | The service providers listed here will be automatically loaded on the
-    | request to your application. Feel free to add your own services to
-    | this array to grant expanded functionality to your applications.
-    |
-    */
+    'trial_without_payment' => [
+        'enabled' => env('TRIAL_WITHOUT_PAYMENT_ENABLED', false),
+        'first_reminder_enabled' => env('TRIAL_WITHOUT_PAYMENT_FIRST_REMINDER_ENABLED', true),
+        'first_reminder_days' => env('TRIAL_WITHOUT_PAYMENT_FIRST_REMINDER_DAYS', 3),
+        'second_reminder_enabled' => env('TRIAL_WITHOUT_PAYMENT_SECOND_REMINDER_ENABLED', true),
+        'second_reminder_days' => env('TRIAL_WITHOUT_PAYMENT_SECOND_REMINDER_DAYS', 1),
+        'sms_verification_enabled' => env('TRIAL_WITHOUT_PAYMENT_SMS_VERIFICATION_ENABLED', false),
+    ],
 
-    'providers' => ServiceProvider::defaultProviders()->merge([
-        /*
-         * Package Service Providers...
-         */
-        App\Providers\ConfigProvider::class,
-        App\Providers\BladeProvider::class,
+    'limit_user_trials' => [
+        'enabled' => env('LIMIT_USER_TRIALS_ENABLED', false),
+        'max_count' => env('LIMIT_USER_TRIALS_MAX_COUNT', 1),
+    ],
 
-        /*
-         * Application Service Providers...
-         */
-        App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
-        App\Providers\HorizonServiceProvider::class,
-        App\Providers\Filament\AdminPanelProvider::class,
-        App\Providers\Filament\DashboardPanelProvider::class,
-        App\Providers\RouteServiceProvider::class,
-        Spatie\Permission\PermissionServiceProvider::class,
-
-    ])->toArray(),
+    'verification' => [
+        'default_provider' => env('VERIFICATION_DEFAULT_PROVIDER', 'twilio'),
+    ],
 
     /*
     |--------------------------------------------------------------------------

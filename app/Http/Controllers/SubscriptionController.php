@@ -20,9 +20,7 @@ class SubscriptionController extends Controller
         private CalculationManager $calculationManager,
         private TenantPermissionManager $tenantPermissionManager,
         private TenantManager $tenantManager,
-    ) {
-
-    }
+    ) {}
 
     public function changePlan(string $subscriptionUuid, string $newPlanSlug, string $tenantUuid, Request $request)
     {
@@ -55,8 +53,6 @@ class SubscriptionController extends Controller
         );
 
         $newPlan = $this->planManager->getActivePlanBySlug($newPlanSlug);
-
-        $user = auth()->user();
 
         $isProrated = config('app.payment.proration_enabled', true);
 

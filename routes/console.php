@@ -25,3 +25,9 @@ Schedule::command('monitor:check-certificate')->everyMinute()->runInBackground()
 // Delete expired records
 Schedule::command('delete:expired-records')->daily()->runInBackground();
 
+
+Schedule::command('app:local-subscription-expiring-soon-reminder')->dailyAt('00:01');
+
+Schedule::command('app:cleanup-local-subscription-statuses')->hourly();
+
+Schedule::command('app:sync-seat-based-subscription-quantities')->hourly();

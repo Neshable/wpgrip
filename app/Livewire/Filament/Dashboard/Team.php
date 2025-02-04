@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Filament\Dashboard;
 
-use App\Constants\TenancyPermissionConstants;
 use App\Models\User;
 use App\Services\TenantManager;
 use App\Services\TenantPermissionManager;
@@ -14,9 +13,9 @@ use Filament\Tables;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Livewire\Component;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Component;
 
 use Filament\Actions;
 
@@ -48,7 +47,7 @@ class Team extends Component implements HasForms, HasTable
                         return $tenantPermissionManager->getTenantUserRoles(Filament::getTenant(), $user)[0] ?? null;
                     })
                     ->options(function (TenantPermissionManager $tenantPermissionManager) {
-                        return TenancyPermissionConstants::getRoles();
+                        return $tenantPermissionManager->getAllAvailableTenantRolesForDisplay();
                     })
                     ->disabled(function (User $user) {
                         return $user->id === auth()->user()->id;
@@ -121,5 +120,4 @@ class Team extends Component implements HasForms, HasTable
     {
         return view('livewire.filament.dashboard.team');
     }
-
 }

@@ -27,7 +27,6 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -84,6 +83,10 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Settings')
                     ->icon('heroicon-s-cog')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Announcements')
+                    ->icon('heroicon-s-megaphone')
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label('Blog')

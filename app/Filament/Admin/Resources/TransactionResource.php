@@ -18,6 +18,7 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class TransactionResource extends Resource
 {
@@ -45,10 +46,7 @@ class TransactionResource extends Resource
                 }),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->colors([
-                        'success' => TransactionStatus::SUCCESS->value,
-                        'danger' => TransactionStatus::FAILED->value,
-                    ])
+                    ->color(fn (Transaction $record, TransactionStatusMapper $mapper): string => $mapper->mapColor($record->status))
                     ->formatStateUsing(function (string $state, $record, TransactionStatusMapper $mapper) {
                         return $mapper->mapForDisplay($state);
                     })
@@ -94,6 +92,14 @@ class TransactionResource extends Resource
                         ),
                 ]),
             ])
+            ->modifyQueryUsing(fn (Builder $query) => $query->with([
+                'user',
+                'currency',
+                'paymentProvider',
+                'order',
+                'subscription',
+                'subscription.plan',
+            ]))
             ->bulkActions([
 
             ]);
@@ -144,7 +150,7 @@ class TransactionResource extends Resource
                                     ->formatStateUsing(function (string $state, $record) {
                                         return $record->subscription->plan?->name ?? '-';
                                     })
-                                    ->url(fn (Transaction $record) => $record->subscription ? ViewSubscription::getUrl(['record' => $record->subscription]) : '-')->badge(),
+                                    ->url(fn (Transaction $record) => $record->subscription ? ViewSubscription::getUrl(['record' => $record->subscription]) : '-')->badge()->color('info'),
                                 TextEntry::make('status')
                                     ->colors([
                                         'success' => TransactionStatus::SUCCESS->value,
@@ -157,7 +163,7 @@ class TransactionResource extends Resource
                                 TextEntry::make('payment_provider_transaction_id')->copyable(),
                                 TextEntry::make('error_reason')->visible(fn (Transaction $record) => $record->error_reason !== null),
                                 TextEntry::make('payment_provider_id')->label(__('Payment Provider'))->getStateUsing(fn (Transaction $record) => $record->paymentProvider->name),
-                                TextEntry::make('payment_provider_status')->badge(),
+                                TextEntry::make('payment_provider_status')->badge()->color('info'),
                                 TextEntry::make('amount')->formatStateUsing(function (string $state, $record) {
                                     return money($state, $record->currency->code);
                                 }),
@@ -210,11 +216,13 @@ class TransactionResource extends Resource
                 TextEntry::make('status_'.$i)
                     ->label(__('Status'))
                     ->badge()
-                    ->getStateUsing(fn () => $versionModel->status),
+                    ->color(fn ($record, TransactionStatusMapper $mapper): string => $mapper->mapColor($record->status))
+                    ->getStateUsing(fn ($record, TransactionStatusMapper $mapper): string => $mapper->mapForDisplay($record->status)),
 
                 TextEntry::make('provider_status_'.$i)
                     ->label(__('Payment Provider Status'))
                     ->badge()
+                    ->color('info')
                     ->getStateUsing(fn () => $versionModel->payment_provider_status),
 
                 TextEntry::make('amount_'.$i)

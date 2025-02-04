@@ -10,6 +10,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class BlogPostResource extends Resource
@@ -69,7 +70,7 @@ class BlogPostResource extends Resource
                         ),
                     Forms\Components\SpatieMediaLibraryFileUpload::make('image')
                         ->collection('blog-images')
-                        ->image(),
+                        ->acceptedFileTypes(['image/webp', 'image/jpeg', 'image/png']),
                     Forms\Components\Toggle::make('is_published')
                         ->required(),
                     Forms\Components\DateTimePicker::make('published_at')
@@ -95,6 +96,10 @@ class BlogPostResource extends Resource
                 Tables\Columns\IconColumn::make('is_published')
                     ->boolean(),
             ])
+            ->modifyQueryUsing(fn (Builder $query) => $query->with([
+                'author',
+                'user',
+            ]))
             ->filters([
                 //
             ])

@@ -13,17 +13,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
+use Laragear\TwoFactor\Contracts\TwoFactorAuthenticatable;
+use Laragear\TwoFactor\TwoFactorAuthentication;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-
-
-class User extends Authenticatable implements FilamentUser, MustVerifyEmail, HasTenants
+class User extends Authenticatable implements FilamentUser, HasTenants, MustVerifyEmail, TwoFactorAuthenticatable
 {
-    use HasApiTokens, HasFactory, HasRoles, Notifiable;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable, TwoFactorAuthentication;
 
     /**
      * The attributes that are mass assignable.
@@ -37,6 +38,9 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         'is_admin',
         'public_name',
         'is_blocked',
+        'notes',
+        'phone_number',
+        'phone_number_verified_at',
     ];
 
     /**
@@ -56,16 +60,16 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'phone_number_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 
-
-    public function roadmapItems()
+    public function roadmapItems(): HasMany
     {
         return $this->hasMany(RoadmapItem::class);
     }
 
-    public function roadmapItemUpvotes()
+    public function roadmapItemUpvotes(): BelongsToMany
     {
         return $this->belongsToMany(RoadmapItem::class, 'roadmap_item_user_upvotes');
     }
@@ -85,9 +89,14 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         return $this->hasMany(Subscription::class);
     }
 
-    public function orders()
+    public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function subscriptionTrials(): HasMany
+    {
+        return $this->hasMany(UserSubscriptionTrial::class);
     }
 
     public function transactions(): HasMany
@@ -117,6 +126,11 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
     public function isAdmin()
     {
         return $this->is_admin;
+    }
+
+    public function isPhoneNumberVerified()
+    {
+        return $this->phone_number_verified_at !== null;
     }
 
     public function canImpersonate()
@@ -150,10 +164,10 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
 
     public function sendEmailVerificationNotification()
     {
-        $this->notify(new QueuedVerifyEmail());
+        $this->notify(new QueuedVerifyEmail);
     }
 
-    public function address()
+    public function address(): HasOne
     {
         return $this->hasOne(Address::class);
     }

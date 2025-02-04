@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\PaymentProviders\PaddleController as PaddleController;
+use App\Services\SessionManager;
+use App\Services\TenantCreationManager;
 use App\Services\UserDashboardManager;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Auth;
@@ -46,6 +48,19 @@ Route::get('/get-started', function () {
 
 Auth::routes();
 
+Route::get('/plan/start', function (
+    TenantCreationManager $tenantCreationManager,
+    SessionManager $sessionManager
+) {
+    if (! auth()->check()) {
+        $sessionManager->setCreateTenantForFreePlanUser(true);
+    } else {
+        $tenantCreationManager->createTenantForFreePlanUser(auth()->user());
+    }
+
+    return redirect()->route('register');
+})->name('plan.start');
+
 Route::get('/email/verify', function () {
     return view('auth.verify');
 })->middleware('auth')->name('verification.notice');
@@ -60,6 +75,16 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 
     return redirect('/');
 })->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::get('/phone/verify', function () {
+    return view('verify.sms-verification');
+})->name('user.phone-verify')
+    ->middleware('auth');
+
+Route::get('/phone/verified', function () {
+    return view('verify.sms-verification-success');
+})->name('user.phone-verified')
+    ->middleware('auth');
 
 Route::post('/email/verification-notification', function (\Illuminate\Http\Request $request) {
     $request->user()->sendEmailVerificationNotification();
@@ -84,6 +109,11 @@ Route::get('/checkout/plan/{planSlug}', [
     'subscriptionCheckout',
 ])->name('checkout.subscription');
 
+Route::get('/checkout/convert-subscription/{subscriptionUuid}', [
+    App\Http\Controllers\SubscriptionCheckoutController::class,
+    'convertLocalSubscriptionCheckout',
+])->name('checkout.convert-local-subscription');
+
 Route::get('/already-subscribed', function () {
     return view('checkout.already-subscribed');
 })->name('checkout.subscription.already-subscribed');
@@ -92,6 +122,11 @@ Route::get('/checkout/subscription/success', [
     App\Http\Controllers\SubscriptionCheckoutController::class,
     'subscriptionCheckoutSuccess',
 ])->name('checkout.subscription.success')->middleware('auth');
+
+Route::get('/checkout/convert-subscription-success', [
+    App\Http\Controllers\SubscriptionCheckoutController::class,
+    'convertLocalSubscriptionCheckoutSuccess',
+])->name('checkout.convert-local-subscription.success')->middleware('auth');
 
 Route::get('/payment-provider/paddle/payment-link', [
     PaddleController::class,

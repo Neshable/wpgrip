@@ -7,7 +7,7 @@
     /* Blog Post Styles */
     article.blog-post {
         @apply font-light;
-        @apply text-lg	;
+        @apply text-lg;
     }
 
     article.blog-post p {
@@ -57,6 +57,18 @@
         @apply mt-6;
     }
 
+    article.blog-post li {
+        @apply my-2;
+    }
+
+    article.blog-post pre{
+        @apply mt-4;
+    }
+
+    article.blog-post a {
+        @apply font-semibold;
+    }
+
     article.blog-post ol {
         @apply list-decimal;
         @apply pl-6;
@@ -67,7 +79,7 @@
         @apply font-semibold;
     }
 
-    code {
+    pre {
         @apply font-mono;
         @apply bg-gray-100 #{!important};
         @apply rounded-md;
@@ -81,9 +93,16 @@
         @apply max-w-full;
     }
 
-    code:hover .copy-button {
+    pre:hover .copy-button {
         @apply block;
         @apply visible;
+    }
+
+    code {
+        @apply font-mono;
+        @apply bg-gray-100;
+        @apply rounded-md;
+        @apply p-1;
     }
 
     /* For Webkit-based browsers (Chrome, Safari and Opera) */
