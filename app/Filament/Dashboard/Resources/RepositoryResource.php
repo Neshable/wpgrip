@@ -142,6 +142,7 @@ class RepositoryResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
+            ->defaultPaginationPageOption(25)
             ->bulkActions([
                 // Tables\Actions\BulkActionGroup::make([
                 //     Tables\Actions\DeleteBulkAction::make(),

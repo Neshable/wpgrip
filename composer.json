@@ -79,6 +79,12 @@
             "Tests\\": "tests/"
         }
     },
+    "repositories": [
+        {
+        "type": "vcs",
+        "url": "https://code.saasykit.com/saasykit/filament-onboarding.git"
+        }
+    ],
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

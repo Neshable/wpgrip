@@ -23,6 +23,10 @@ use App\Enums\ServerType;
 use App\Filament\Dashboard\Resources\SiteResource\RelationManagers\SitesRelationManager;
 use App\Jobs\GetServerStats;
 
+use Filament\Infolists\Components\Section;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
+
 use Filament\Tables\Actions\Action;
 
 class ServerResource extends Resource
@@ -149,10 +153,40 @@ class ServerResource extends Resource
             ]);
     }
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        
+        return $infolist
+            ->schema([
+                Section::make('Server Overview')
+                ->description('')
+                ->schema([
+                    Infolists\Components\TextEntry::make('name')->label('Friendly Name'),
+                    Infolists\Components\TextEntry::make('provider')->badge(),
+                    Infolists\Components\TextEntry::make('ip')
+                        ->copyable()
+                        ->copyMessage('IP copied to clipboard')
+                        ->label('Public IP')
+                        ->icon('heroicon-m-clipboard-document'),
+                    Infolists\Components\TextEntry::make('private_ip')
+                        ->copyable()
+                        ->copyMessage('Private IP copied to clipboard')
+                        ->copyMessageDuration(1500)
+                        ->label('Private IP')
+                        ->icon('heroicon-m-clipboard-document'),
+                    Infolists\Components\TextEntry::make('ssh_port')->label('SSH Port'),
+
+                ])->columns(2)
+            ]);
+
+    
+           
+    }
+
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\SitesRelationManager::class,
         ];
     }
 
@@ -167,6 +201,7 @@ class ServerResource extends Resource
         return [
             'index' => Pages\ListServers::route('/'),
             'create' => Pages\CreateServer::route('/create'),
+            'view' => Pages\ViewServer::route('/{record}'),
             'edit' => Pages\EditServer::route('/{record}/edit'),
         ];
     }

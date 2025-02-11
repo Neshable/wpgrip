@@ -76,7 +76,7 @@
     </x-button-link.primary>
 </div> --}}
 
-<div {{$attributes->merge(['class' => 'relative px-8 py-10 xl:py-16 flex flex-col gap-4 mx-auto text-center bg-gray-100 rounded-2xl transition' . ($popular ? ' bg-gradient-to-br from-blue-700 to-blue-900 relative text-white lg:-mt-8 lg:mb-8' : '')])}}>
+{{-- <div {{$attributes->merge(['class' => 'relative px-8 py-10 xl:py-16 flex flex-col gap-4 mx-auto text-center bg-gray-100 rounded-2xl transition' . ($popular ? ' bg-gradient-to-br from-blue-700 to-blue-900 relative text-white lg:-mt-8 lg:mb-8' : '')])}}>
     @if ($popular)
     <div class="absolute border-0 top-0 -mt-3 left-1/2 transform -translate-x-1/2 bg-white text-black mx-auto rounded z-0 text-xs px-2 py-1">
         {{ __('Most popular') }}
@@ -100,4 +100,4 @@
     <x-button-link.primary class="mt-8 {{ $popular ? '!bg-black' : ''}}" href="{{ Auth::check() ? $link : '/register'}}">
         Start a free trial
     </x-button-link.primary>
-</div>
+</div> --}}
