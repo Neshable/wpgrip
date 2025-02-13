@@ -53,6 +53,10 @@ class ListRepoSites extends Component implements HasForms, HasTable
             ->relationship( fn (): BelongsToMany => $this->repo_model->sites() )
             ->paginated(false)
             ->columns([
+            Tables\Columns\ImageColumn::make('')
+                ->width(35)
+                ->height(35)
+                ->defaultImageUrl(url('/images/wordpress.svg')),
             Tables\Columns\ViewColumn::make('name')
                 ->view('filament.tables.columns.sitename'),
             // Tables\Columns\TextColumn::make('url')

@@ -32,6 +32,10 @@ class SitesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
+                    Tables\Columns\ImageColumn::make('')
+                        ->width(35)
+                        ->height(35)
+                        ->defaultImageUrl(url('/images/wordpress.svg')),
                     Tables\Columns\ViewColumn::make('name')
                         ->searchable()
                         ->view('filament.tables.columns.sitename'),

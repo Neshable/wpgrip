@@ -302,9 +302,7 @@ class SiteResource extends Resource
             //     ->extraImgAttributes(['loading' => 'lazy'])
             //     ->width(250)
             //     ->height(150),
-            Tables\Columns\ViewColumn::make('status')
-            ->label(false)
-            ->view('filament.tables.columns.siteinfo'),
+          
             // Tables\Columns\IconColumn::make('ssh_connection')
             //     ->label(false)
             //     ->boolean()
@@ -316,9 +314,13 @@ class SiteResource extends Resource
                 ->circular()
                 ->size(20)
                 ->defaultImageUrl(fn (Site $record): string => url('https://s2.googleusercontent.com/s2/favicons?domain=' . $record->url)),
-            Tables\Columns\ViewColumn::make('name')
+            
+                Tables\Columns\ViewColumn::make('name')
                 ->searchable()
                 ->view('filament.tables.columns.sitename'),
+                Tables\Columns\ViewColumn::make('status')
+                ->label(false)
+                ->view('filament.tables.columns.siteinfo'),
             Tables\Columns\TextColumn::make('server.name')
                 ->label('Server/Hosting')
                 ->searchable()
