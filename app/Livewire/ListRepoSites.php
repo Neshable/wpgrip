@@ -149,7 +149,7 @@ class ListRepoSites extends Component implements HasForms, HasTable
             ->actions([
                 Tables\Actions\Action::make('deploy')
                     ->action(function ( Site $site ) {
-                        SshAndGitPull::dispatchSync( $this->repo_model, $site );
+                        SshAndGitPull::dispatch( $this->repo_model, $site );
                     } )
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
