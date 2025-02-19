@@ -40,6 +40,11 @@ Route::get('/dashboard', function (UserDashboardManager $dashboardManager) {
     return redirect($dashboardManager->getUserDashboardUrl(Auth::user()));
 })->name('dashboard')->middleware('auth');
 
+// Route to email verification
+Route::get('/verify-email', function () {
+    return view('auth.not-verified');
+})->name('not-verified')->middleware('auth');
+
 // Alternative dasboard if plan is selected
 Route::get('/get-started', function () {
     return view('pages.get-started');

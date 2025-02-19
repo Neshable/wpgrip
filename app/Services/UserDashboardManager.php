@@ -12,6 +12,10 @@ class UserDashboardManager
         // if ( !$user->isSubscribed() ) {
         //     return route('home-no-plan');
         // }
+        // If user hasn't verified the email show the pending verification.
+        if ( !$user->hasVerifiedEmail()) {
+            return route('not-verified');
+        }
 
         $tenant = $user->tenants()->orderByPivot('is_default', 'desc')->first();
 
