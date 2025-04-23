@@ -55,7 +55,7 @@ class Repository extends Model
     public function sites()
     {
         return $this->belongsToMany(Site::class, 'site_repositories')
-                    ->withPivot(['id', 'path', 'branch']);
+                    ->withPivot(['id', 'path', 'branch', 'status_text', 'status']);
     }
     
     

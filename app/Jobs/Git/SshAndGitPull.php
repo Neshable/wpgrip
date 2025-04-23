@@ -23,6 +23,8 @@ use Illuminate\Queue\SerializesModels;
 use Filament\Notifications\Notification;
 use Filament\Notifications\Actions\Action;
 
+use App\Enums\RepoStatus;
+
 class SshAndGitPull implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -56,6 +58,20 @@ class SshAndGitPull implements ShouldQueue
      */
     public $commit;
 
+    /**
+     * The status of the repository
+     *
+     * @var string
+     */
+    public $status;
+
+    /**
+     * The error message
+     *
+     * @var string|null
+     */
+    public $status_text;
+
 
     /**
      * Create a new job instance.
@@ -67,7 +83,7 @@ class SshAndGitPull implements ShouldQueue
         // Get original production site.
         $this->repository = $repository;
         $this->site = $site;
-       
+        $this->status = RepoStatus::WORKING->value;
     }
 
 
@@ -83,12 +99,17 @@ class SshAndGitPull implements ShouldQueue
      */
     public function handle()
     {
+        
+        
         // Cache the pivot table in the class constructor.
         $temp_site = $this->repository->sites->firstWhere('id', $this->site->id);
-      
+
+        
+        // If the site is found, set the pivot, otherwise return false and set the status text.
         if( $temp_site ) 
         {
             $this->pivot = $temp_site->pivot;
+            
         } else {
             return false;
         }
@@ -100,7 +121,8 @@ class SshAndGitPull implements ShouldQueue
 
         if (!$this->site) 
         {
-            GripNotifications::getCustomFailure('No site connected to this repo.');
+            $this->status_text = 'No site connected to this repo.';
+            GripNotifications::getCustomFailure($this->status_text);
             return false;
         }
         
@@ -109,17 +131,24 @@ class SshAndGitPull implements ShouldQueue
 
         if (!$server) 
         {
-            GripNotifications::getCustomFailure('No server assigned.');
+            $this->status_text = 'No server assigned.';
+            GripNotifications::getCustomFailure($this->status_text);
             return false;
         }
+ 
+
+        // Update the repository status to working.
+        $this->repository->update(['status' => RepoStatus::WORKING->value]);
    
         // Init a new connection to websites's production server.
         $connection = new SSHSiteConnect($this->site);
         
         if (!$connection->active) 
         {
-            GripNotifications::getUnauthorizedNotificaiton();
-            $this->saveToDb(true);
+            $this->status_text = 'SSH connection failed.';
+            $this->status = RepoStatus::ERROR->value;
+            // GripNotifications::getUnauthorizedNotificaiton();
+            $this->saveToDb();
             $connection->close();
             return false;
         }
@@ -132,9 +161,11 @@ class SshAndGitPull implements ShouldQueue
             // Check for public key access
             if ( !$this->checkGitPublicKey( $connection ) ) 
             {
-                GripNotifications::gitNoPublicKey();
+                // GripNotifications::gitNoPublicKey();
+                $this->status_text = 'No public key found.';
+                $this->status = RepoStatus::ERROR->value;
+                $this->saveToDb();
                 $connection->close();
-                $this->saveToDb( true );
                 return false;
             }
 
@@ -150,13 +181,18 @@ class SshAndGitPull implements ShouldQueue
     
             if ( $success ) 
             {
+                // Update the repository status to success.
+                $this->status = RepoStatus::SUCCESS->value;
+                $this->status_text = 'Git clone success.';
                 $this->saveToDb();
-                GripNotifications::getGitPulledSuccess();
+                // GripNotifications::getGitPulledSuccess();
             }
             else
             {
-                $this->saveToDb( true );
-                GripNotifications::getGitPulledFailed();
+                $this->status = RepoStatus::ERROR->value;
+                $this->status_text = 'Git clone failed.';
+                $this->saveToDb();
+                // GripNotifications::getGitPulledFailed();
             }
  
 
@@ -171,9 +207,10 @@ class SshAndGitPull implements ShouldQueue
         // Check if repo is up to date.      
         if ( $this->isRepositoryHaveUpdate($connection) ) 
         {
-            GripNotifications::getGitUpToDate();
-            // Dispatch event for git pull success
-            // event(new GitPullSuccess( $this->repository ) );
+            $this->status = RepoStatus::SUCCESS->value;
+            $this->status_text = 'Repository is up to date.';
+            $this->saveToDb();
+            // GripNotifications::getGitUpToDate();
             $connection->close();
             return false;
         } 
@@ -193,15 +230,19 @@ class SshAndGitPull implements ShouldQueue
             // Dispatch event for git pull success
             event(new GitPullSuccess( $this->repository ) );
             // Save the db
+            $this->status = RepoStatus::SUCCESS->value;
+            $this->status_text = 'Git pull success.';
             $this->saveToDb();
             // dispatch user notification.
-            GripNotifications::getGitPulledSuccess();
+            // GripNotifications::getGitPulledSuccess();
         }
         else
         {
             // Pass true for errors.
-            $this->saveToDb(true);
-            GripNotifications::getGitPulledFailed();
+            $this->status = RepoStatus::ERROR->value;
+            $this->status_text = 'Git pull failed.';
+            $this->saveToDb();
+            // GripNotifications::getGitPulledFailed();
         }
    
         return true;  
@@ -363,19 +404,12 @@ class SshAndGitPull implements ShouldQueue
      */
     public function saveToDb( $error = false )
     {
-        if ( $error ) 
-        {
-            $this->pivot->is_active = false;
+        if( $this->pivot ) {
+            $this->repository->sites()->updateExistingPivot($this->site->id, [
+                'status' => $this->status,
+                'status_text' => $this->status_text
+            ]);
         }
-        else 
-        {
-            $this->pivot->is_active = true;
-            $this->repository->last_pull = Carbon::now();
-        }
-        
-        $this->pivot->save();
-        $this->repository->save();
-        
 
     }
 

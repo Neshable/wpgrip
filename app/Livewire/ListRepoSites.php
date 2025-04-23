@@ -37,6 +37,8 @@ use Filament\Tables\Actions\Action;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+use App\Enums\RepoStatus;
+
 class ListRepoSites extends Component implements HasForms, HasTable
 {
     use InteractsWithTable;
@@ -57,17 +59,33 @@ class ListRepoSites extends Component implements HasForms, HasTable
                 ->width(35)
                 ->height(35)
                 ->defaultImageUrl(url('/images/wordpress.svg')),
-            Tables\Columns\ViewColumn::make('name')
+            Tables\Columns\TextColumn::make('name')
                 ->view('filament.tables.columns.sitename'),
-            // Tables\Columns\TextColumn::make('url')
-            //     ->label('URL'),
-            Tables\Columns\TextColumn::make('path')
-                ->label('Path'),
-            Tables\Columns\IconColumn::make('is_active')
-                ->label('Active')
-                ->boolean(),
-            Tables\Columns\TextColumn::make('branch')
-                ->label('Branch'),
+            Tables\Columns\TextColumn::make('pivot.path')
+                ->label('Path')
+                ->formatStateUsing(function ($record) {
+                    $branchIcon = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>';
+                    return $record->pivot->path . '<br><span class="text-gray-500"><strong>Branch:</strong> ' . $branchIcon . $record->pivot->branch . '</span>';
+                })
+                ->html()
+                ->searchable(['path', 'branch'])
+                ->sortable(),
+            Tables\Columns\TextColumn::make('pivot.status')
+                ->label('Status')
+                ->badge()
+                ->color(fn (string $state): string => match ($state) {
+                    'error' => 'danger',
+                    'success' => 'success',
+                    default => 'gray',
+                }),
+            Tables\Columns\TextColumn::make('status_text')
+                ->label('Status Message')
+                ->searchable()
+                ->sortable()
+                ->wrap()
+                ->limit(50),
             Tables\Columns\ToggleColumn::make('auto_deploy')
                 ->label('Auto Deploy')
                 // ->updateState(function ($state) {
@@ -138,6 +156,7 @@ class ListRepoSites extends Component implements HasForms, HasTable
                             return $this->repo_model->sites()->attach( $data['site_id'], array(
                                 'branch' => $data['branch'],
                                 'is_active' => 0,
+                                'status' => RepoStatus::PENDING->value,
                                 'path' => $data['path'],
                             ) );
                             

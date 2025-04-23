@@ -25,6 +25,8 @@ class BackupResource extends Resource
 
     protected static ?string $navigationIcon = 'icon-backups';
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
