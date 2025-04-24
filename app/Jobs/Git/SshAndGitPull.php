@@ -72,6 +72,12 @@ class SshAndGitPull implements ShouldQueue
      */
     public $status_text;
 
+    /**
+     * The last pull date
+     *
+     * @var string|null
+     */
+    public $last_pull;
 
     /**
      * Create a new job instance.
@@ -126,7 +132,7 @@ class SshAndGitPull implements ShouldQueue
             return false;
         }
         
-
+        $this->last_pull = Carbon::now();
         $server = $this->site->server;
 
         if (!$server) 
@@ -407,7 +413,8 @@ class SshAndGitPull implements ShouldQueue
         if( $this->pivot ) {
             $this->repository->sites()->updateExistingPivot($this->site->id, [
                 'status' => $this->status,
-                'status_text' => $this->status_text
+                'status_text' => $this->status_text,
+                'last_pull' => $this->last_pull
             ]);
         }
 

@@ -119,6 +119,11 @@ class RepositoryResource extends Resource
                     ->sortable(),
                     Tables\Columns\TextColumn::make('provider')
                     ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'bitbucket' => 'info',  // Bitbucket blue
+                        'github' => 'gray',     // GitHub gray
+                        default => 'primary'    // WordPress blue
+                    })
                     ->icon(fn (string $state): string => match ($state) {
                         'bitbucket' => 'icon-bitbucket',
                         'github' => 'icon-github',
