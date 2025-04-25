@@ -81,7 +81,7 @@ class ListRepoSites extends Component implements HasForms, HasTable
                     default => 'gray',
                 }),
             Tables\Columns\TextColumn::make('status_text')
-                ->label('Status Message')
+                ->label('Last Status Log')
                 ->searchable()
                 ->sortable()
                 ->wrap()
@@ -102,10 +102,10 @@ class ListRepoSites extends Component implements HasForms, HasTable
 
                 }),
             Tables\Columns\TextColumn::make('last_pull')
-                            ->dateTime()
-                            ->label('Last deploy')
-                            ->sortable()
-                            ->since(),
+                    ->dateTime()
+                    ->label('Last Activity')
+                    ->sortable()
+                    ->since(),
             ])
             ->filters([
                 //
@@ -168,6 +168,12 @@ class ListRepoSites extends Component implements HasForms, HasTable
             ->actions([
                 Tables\Actions\Action::make('deploy')
                     ->action(function ( Site $site ) {
+                        // Update the pivot status to WORKING
+                        $this->repo_model->sites()
+                            ->updateExistingPivot($site->id, [
+                                'status' => \App\Enums\RepoStatus::WORKING->value
+                            ]);
+                        
                         SshAndGitPull::dispatch( $this->repo_model, $site );
                     } )
                     ->icon('heroicon-o-check-circle')

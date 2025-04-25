@@ -437,6 +437,7 @@ class SiteResource extends Resource
             'create' => Pages\CreateSite::route('/create'),
             'edit' => Pages\EditSite::route('/{record}/edit'),
             'view' => Pages\ViewSite::route('/{record}'),
+            'repositories' => Pages\Repositories::route('/{record}/repositories'),
 
           
             'monitoring' => Pages\Monitoring::route('/{record}/monitoring'), 

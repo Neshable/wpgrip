@@ -185,4 +185,9 @@ class Tenant extends Model
 
         return $subscriptionManager->getTenantSubscriptionProductMetadata($this);
     }
+
+    public function getTenantPath(): string
+    {
+        return 'tenants/' . $this->uuid;
+    }
 }

@@ -59,11 +59,11 @@
 
     </x-filament::section>
 
-    <div
+    {{-- <div
     x-data="{}"
     x-load-css="[@js(\Filament\Support\Facades\FilamentAsset::getStyleHref('img-comparison-css'))]"
     x-load-js="[@js(\Filament\Support\Facades\FilamentAsset::getScriptSrc('img-comparison-js'))]"
     >
     @livewire('list-screenshots', ['site_id' => $this->getRecord()->id ] )   
-    </div> 
+    </div>  --}}
 @endsection

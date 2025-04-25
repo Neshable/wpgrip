@@ -63,32 +63,34 @@ class ListRepos extends Component implements HasForms, HasTable
                     'bitbucket' => 'icon-bitbucket',
                     'github' => 'icon-github'
                 }),
-            Tables\Columns\TextColumn::make('pivot.path')
-                ->label('Path'),
+                Tables\Columns\TextColumn::make('pivot.path')
+                ->label('Path')
+                ->formatStateUsing(function ($record) {
+                    $branchIcon = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>';
+                    return $record->pivot->path . '<br><span class="text-gray-500"><strong>Branch:</strong> ' . $branchIcon . $record->pivot->branch . '</span>';
+                })
+                ->html()
+                ->sortable(),
         
-            Tables\Columns\IconColumn::make('pivot.is_active')
-                ->label('Active')
-                ->boolean(),
-            Tables\Columns\TextColumn::make('pivot.branch')
-                ->label('Branch'),
-            Tables\Columns\ToggleColumn::make('pivot.auto_deploy')
-                ->label('Auto Deploy')
-                // ->updateState(function ($state) {
-                //     dd($state);
-                // })
-                ->updateStateUsing(function ($record, $state) {
-                    // dd($record->id);
-                    // $record->auto_deploy = $state;
-                    // $record->save();
-
-                    $record->sites()->updateExistingPivot($this->site_model->id, [
-                        'auto_deploy' => $state,
-                    ]);
-
+                Tables\Columns\TextColumn::make('status')
+                ->label('Status')
+                ->badge()
+                ->color(fn (string $state): string => match ($state) {
+                    'error' => 'danger',
+                    'success' => 'success',
+                    default => 'gray',
                 }),
+            Tables\Columns\TextColumn::make('status_text')
+                ->label('Last Status Log')
+                ->sortable()
+                ->wrap()
+                ->limit(50),
+            
             Tables\Columns\TextColumn::make('last_pull')
                 ->dateTime()
-                ->label('Last sync')
+                ->label('Last Activity')
                 ->sortable()
                 ->since(),
          
@@ -103,139 +105,32 @@ class ListRepos extends Component implements HasForms, HasTable
                 //
             ])
             ->headerActions([
-                // CreateAction::make()
-                //     ->model( Repository::class )
-                //     ->label('Add New Repository')
-                //     ->tooltip('Assign new repository to your wordpress site.')
-                //     ->form([
-                //             Forms\Components\TextInput::make('name')
-                //                 ->label('Friendly Name')
-                //                 ->maxLength(255)
-                //                 ->alpha(),
-                //             Forms\Components\TextInput::make('path')
-                //                 ->label('Absolute Server Path')
-                //                 ->maxLength(255),
-                //             Forms\Components\TextInput::make('remote')
-                //                 ->label('GIT Remote URL')
-                //                 ->maxLength(255),
-                //             Forms\Components\TextInput::make('branch')
-                //                 ->label('Remote Branch to Track')
-                //                 ->maxLength(255),
-                //             Forms\Components\Radio::make('provider')
-                //                 ->label('Provider')
-                //                 ->options([
-                //                     'bitbucket' => 'BitBucket',
-                //                     'github' => 'GitHub'
-                //                 ]),
-                //             // Forms\Components\TextInput::make('provider')
-                //             //     ->maxLength(255),
-                //                 // ->enum(MyStatus::class),
-                        
-                //         // Wizard::make([
-                //         //     Wizard\Step::make('Repository Information')
-                //         //         ->afterValidation(function () {
-                                   
-                //         //         })
-                //         //         ->beforeValidation(function () {
-                //         //             // Notification::make()
-                //         //             // ->title('Before validation')
-                //         //             // ->success()
-                //         //             // ->send();
-                //         //         })
-                //         //         // ->icon('heroicon-m-shopping-bag')
-                //         //         ->description('Get your repo details in place.')
-                //         //         ->schema([
-                //         //             Forms\Components\TextInput::make('name')
-                //         //                 ->label('Friendly Name')
-                //         //                 ->maxLength(255)
-                //         //                 ->alpha(),
-                //         //             Forms\Components\TextInput::make('path')
-                //         //                 ->label('Absolute Server Path')
-                //         //                 ->maxLength(255),
-                //         //             Forms\Components\TextInput::make('remote')
-                //         //                 ->label('GIT Remote URL')
-                //         //                 ->maxLength(255),
-                //         //             Forms\Components\TextInput::make('branch')
-                //         //                 ->label('Remote Branch to Track')
-                //         //                 ->maxLength(255),
-                //         //             Forms\Components\Radio::make('provider')
-                //         //                 ->label('Provider')
-                //         //                 ->options([
-                //         //                     'bitbucket' => 'BitBucket',
-                //         //                     'github' => 'GitHub'
-                //         //                 ]),
-                //         //             // Forms\Components\TextInput::make('provider')
-                //         //             //     ->maxLength(255),
-                //         //                 // ->enum(MyStatus::class),
-                //         //         ]),
-                //         //     Wizard\Step::make('Delivery')
-                //         //         ->schema([
-                //         //             // ...
-                //         //         ]),
-                //         //     Wizard\Step::make('Billing')
-                //         //         ->schema([
-                //         //             // ...
-                //         //         ]),
-                //         // ])->columnSpan('full')
-                //         // ->persistStepInQueryString()
-                //         // ->submitAction(new HtmlString('<button type="submit">Submit</button>'))
-                        
-                //         // Forms\Components\TextInput::make('webhook')
-                //         //     ->maxLength(255),
-                //         // Forms\Components\TextInput::make('checksum')
-                //         //     ->maxLength(255),
-                //         // Forms\Components\TextInput::make('remote')
-                //         //     ->maxLength(255)->activeUrl(),
-                //         // Forms\Components\TextInput::make('branch')
-                //         //     ->maxLength(255),
-                //         // Forms\Components\DatePicker::make('last_pull'),
-                //     ])
-                //     ->before(function (array $data) {
-                //         // dd($data);
-                //         // Runs before the form fields are saved to the database.
-                //     })
-                //     ->using(function (array $data, string $model): ?Repository  {
-                //         if ( $this->site_model->id )
-                //         {   
-                //             // For this site!
-                //             $data['site_id'] = $this->site_model->id;
-                //             return $model::create($data);
-                //         }
-
-                //         return false;
-                //     })
+                // Tables\Actions\Action::make('view_repositories')
+                //     ->label('View All Repositories')
+                //     ->icon('heroicon-m-code-bracket')
+                //     ->url(fn (): string => route('filament.dashboard.resources.repositories.index', [
+                //         'tenant' => Filament::getTenant()
+                //     ]))
+                //     ->openUrlInNewTab(),
             ])
             ->actions([
-               
-                // Tables\Actions\ActionGroup::make([
-                //     Action::make('pull')
-                //     ->label('Deploy')
-                //     ->action(function ( Repository $repository ) {
-                //         SshAndGitPull::dispatchSync( $repository );
-                //     } )
-                //     ->icon('heroicon-o-check-circle')
-                //     ->color('success')
-                //     ->requiresConfirmation()
-                //     ->modalHeading('Pull Repository?')
-                //     ->modalDescription('Are you sure you\'d like to sync this repo?')
-                //     ->modalSubmitActionLabel('Yes, pull now')
-                //     ->tooltip('Pull this repo'),
-                //     Tables\Actions\ViewAction::make(),
-                //     Tables\Actions\EditAction::make(),
-                //     Tables\Actions\DeleteAction::make(),
-                //     Action::make('Check')
-                //         ->action(function (  Repository $repository ) {
-   
-                //             SshAndGitStatus::dispatchSync( $repository );
-                            
-                //             Notification::make()
-                //                 ->title('Git pulled!')
-                //                 ->success()
-                //                 ->send();
-                //         } )
-                //         ->label('Check connection')
-                //         ->tooltip('Pull this repo'),
-                // ]),
+                Tables\Actions\Action::make('deploy')
+                ->action(function (Repository $repository) {
+                    // Update the pivot status to WORKING
+                    $this->site_model->repositories()
+                        ->updateExistingPivot($repository->id, [
+                            'status' => \App\Enums\RepoStatus::WORKING->value
+                        ]);
+                        
+                    SshAndGitPull::dispatch($repository, $this->site_model);
+                })
+                ->icon('heroicon-o-check-circle')
+                ->color('success')
+                ->requiresConfirmation()
+                ->modalHeading('Deploy repository?')
+                ->modalDescription('Are you sure you\'d like to sync this repo?')
+                ->modalSubmitActionLabel('Yes, deploy now')
+                ->tooltip('Deploy this repo'),
             ])
             ->bulkActions([
                 // Tables\Actions\BulkActionGroup::make([

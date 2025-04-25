@@ -2,16 +2,15 @@
 
 @section('content')
 
-    @include('site.single.menus.tools-page-submenu')
 
-    {{-- <x-filament::section>
+    <x-filament::section>
         <x-slot name="heading">
             Connected Repositories
         </x-slot>
     
-        Your Git repository should support Git over SSH. An SSH Key identifies your server without the need of passwords. You will first need to generate and download an SSH Key. It's very easy. Just click the button below.
-    </x-filament::section> --}}
+        Here you can view and manage all Git repositories connected to this WordPress site. Each repository can be configured with its own deployment path and branch, and you can enable automatic deployments when changes are pushed to the repository.
+    </x-filament::section>
 
-    @livewire('list-repos', ['site_model' => $this->getRecord() ] )
+    @livewire('list-repos', ['site_model' => $this->getRecord()])
        
 @endsection

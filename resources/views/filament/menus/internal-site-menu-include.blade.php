@@ -74,6 +74,15 @@ Monitors
     Security
 </x-filament::tabs.item>
 
+<x-filament::tabs.item
+    :href="route( 'filament.dashboard.resources.sites.repositories', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )" 
+    tag="a"
+    :wire:navigate
+    icon="heroicon-m-code-bracket"
+    :active="request()->getRequestUri() === \URL::route('filament.dashboard.resources.sites.repositories', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid ], false)"
+>
+Repositories
+</x-filament::tabs.item>
 
 <x-filament::tabs.item
     :href="route( 'filament.dashboard.resources.sites.tools', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )" 
@@ -84,6 +93,8 @@ Monitors
 >
 Dev Tools
 </x-filament::tabs.item>
+
+
 
 {{-- Other tabs --}}
 </x-filament::tabs>

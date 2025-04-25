@@ -17,44 +17,37 @@ class Speditor {
     public $site;
 
     /**
-     * The user object
-     *
-     * @var User
-     */
-    public $user;
-
-
-    /**
      * Current timestamp by Carbon
+     *
+     * @var Carbon|null
      */
     public $timestamp;
 
     /**
-     * Sanitized URL for folter/file name
+     * Sanitized URL for folder/file name
      *
      * @var string
      */
     public $sanitizedUrl = 'sanitized_url';
 
     /**
-     * The
+     * Constructor
      *
-     * @param string $ip
-     * @param integer $port
+     * @param Site $site The site object
+     * @param Carbon|null $timestamp Optional timestamp
      */
     public function __construct( Site $site, $timestamp = null )
     {
         $this->site = $site;
-        $this->user = User::find( $site->user_id );
+        $this->timestamp = $timestamp;
         $this->sanitizedUrl = preg_replace( '/[^a-z0-9_\-]/i', '_', parse_url( $site->url, PHP_URL_HOST ) );
-       
     }
-
 
     public function getLocalBackupPath()
     {
         return base_path('/temp_files' );
     }
+
     /**
      * Gets the local path of where all the backups should be stored and deleted after.
      *
@@ -71,13 +64,12 @@ class Speditor {
         return base_path('/temp_files/site_' . $this->site->id . '_' . $this->sanitizedUrl );
     }
 
-
     public function getS3BackupPath()
     {
         // Global path for all backups
-         $path = $this->user->getUserPath() . "/site-id-" . $this->site->id . "/backups";
+        $path = $this->site->tenant->getTenantPath() . '/site-id-' . $this->site->id . '/backups';
  
-         return $path;
+        return $path;
     }
 
     /**
@@ -88,22 +80,20 @@ class Speditor {
     public function getS3ScreenshotPath()
     {
         // Global path for all backups
-         $path = $this->user->getUserPath() . "/site-id-" . $this->site->id . "/screenshots";
+        $path = $this->site->tenant->getTenantPath() . '/site-id-' . $this->site->id . '/screenshots';
  
-         return $path;
+        return $path;
     }
 
     public function getS3FilesBackupPath()
     {
         // Global path for all file backups
-        return self::getS3BackupPath() . "/files";
+        return self::getS3BackupPath() . '/files';
     }
 
     public function getS3DatabaseBackupPath()
     {
         // Global path for all db backups
-        return self::getS3BackupPath() . "/db";
+        return self::getS3BackupPath() . '/db';
     }
-
-    
 }

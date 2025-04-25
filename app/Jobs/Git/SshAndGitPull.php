@@ -105,17 +105,13 @@ class SshAndGitPull implements ShouldQueue
      */
     public function handle()
     {
-        
-        
         // Cache the pivot table in the class constructor.
         $temp_site = $this->repository->sites->firstWhere('id', $this->site->id);
 
-        
         // If the site is found, set the pivot, otherwise return false and set the status text.
         if( $temp_site ) 
         {
             $this->pivot = $temp_site->pivot;
-            
         } else {
             return false;
         }
@@ -132,7 +128,6 @@ class SshAndGitPull implements ShouldQueue
             return false;
         }
         
-        $this->last_pull = Carbon::now();
         $server = $this->site->server;
 
         if (!$server) 
@@ -215,6 +210,7 @@ class SshAndGitPull implements ShouldQueue
         {
             $this->status = RepoStatus::SUCCESS->value;
             $this->status_text = 'Repository is up to date.';
+            $this->last_pull = Carbon::now();
             $this->saveToDb();
             // GripNotifications::getGitUpToDate();
             $connection->close();
@@ -238,6 +234,7 @@ class SshAndGitPull implements ShouldQueue
             // Save the db
             $this->status = RepoStatus::SUCCESS->value;
             $this->status_text = 'Git pull success.';
+            $this->last_pull = Carbon::now();
             $this->saveToDb();
             // dispatch user notification.
             // GripNotifications::getGitPulledSuccess();
@@ -414,7 +411,7 @@ class SshAndGitPull implements ShouldQueue
             $this->repository->sites()->updateExistingPivot($this->site->id, [
                 'status' => $this->status,
                 'status_text' => $this->status_text,
-                'last_pull' => $this->last_pull
+                'last_pull' => Carbon::now()
             ]);
         }
 
