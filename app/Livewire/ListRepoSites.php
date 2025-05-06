@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Notifications\Notification;
 
 use App\Jobs\Git\SshAndGitPull;
+use App\Jobs\Git\SshAndChangeBranch;
 use App\Jobs\Git\SshAndGitStatus;
 
 use Filament\Infolists\Components\Actions;
@@ -70,7 +71,6 @@ class ListRepoSites extends Component implements HasForms, HasTable
                     return $record->pivot->path . '<br><span class="text-gray-500"><strong>Branch:</strong> ' . $branchIcon . $record->pivot->branch . '</span>';
                 })
                 ->html()
-                ->searchable(['path', 'branch'])
                 ->sortable(),
             Tables\Columns\TextColumn::make('pivot.status')
                 ->label('Status')
@@ -78,11 +78,11 @@ class ListRepoSites extends Component implements HasForms, HasTable
                 ->color(fn (string $state): string => match ($state) {
                     'error' => 'danger',
                     'success' => 'success',
+                    'working' => 'warning',
                     default => 'gray',
                 }),
             Tables\Columns\TextColumn::make('status_text')
                 ->label('Last Status Log')
-                ->searchable()
                 ->sortable()
                 ->wrap()
                 ->limit(50),
@@ -92,10 +92,7 @@ class ListRepoSites extends Component implements HasForms, HasTable
                 //     dd($state);
                 // })
                 ->updateStateUsing(function ($record, $state) {
-                    // dd($record->id);
-                    // $record->auto_deploy = $state;
-                    // $record->save();
-
+    
                     $this->repo_model->sites()->updateExistingPivot($record->id, [
                         'auto_deploy' => $state,
                     ]);
@@ -176,7 +173,8 @@ class ListRepoSites extends Component implements HasForms, HasTable
                         
                         SshAndGitPull::dispatch( $this->repo_model, $site );
                     } )
-                    ->icon('heroicon-o-check-circle')
+                    ->label('Deploy')
+                    ->icon('heroicon-o-arrow-up-on-square-stack')
                     ->color('success')
                     ->requiresConfirmation()
                     ->modalHeading('Deploy repository?')
@@ -185,10 +183,45 @@ class ListRepoSites extends Component implements HasForms, HasTable
                     ->tooltip('Deploy this repo'),
                 Tables\Actions\ActionGroup::make([  
                     // Tables\Actions\DeleteAction::make(),
+                    Action::make('change_branch')
+                        ->label('Change Branch')
+                        ->color('info')
+                        ->icon('heroicon-o-arrow-turn-down-right')
+                        ->requiresConfirmation()
+                        ->modalHeading('Change active branch?')
+                        ->modalSubmitActionLabel('Change')
+                        ->form([                
+                            Forms\Components\TextInput::make('branch')
+                                ->label('New branch to use')
+                                ->helperText('Usually master or main, but you can use any of the existing branches')
+                                ->maxLength(255),     
+                        ])
+           
+                    // ->action(function ( Site $site ) {
+                    //     // Update the pivot status to WORKING
+                    //     $this->repo_model->sites()
+                    //         ->updateExistingPivot($site->id, [
+                    //             'status' => \App\Enums\RepoStatus::WORKING->value
+                    //         ]);
+                        
+                    //     SshAndGitPull::dispatch( $this->repo_model, $site );
+                    // } )
+
+                    ->action(function (array $data,  Site $site )  {      
+                        // Update the pivot status to WORKING
+                        $this->repo_model->sites()
+                            ->updateExistingPivot($site->id, [
+                                'status' => \App\Enums\RepoStatus::WORKING->value
+                            ]);
+                        
+                        SshAndChangeBranch::dispatch( $this->repo_model, $site, $data['branch'] );
+                    }),
                     Action::make('detach')
                         ->label('Remove')
+                        ->color('danger')
                         ->requiresConfirmation()
                         ->modalHeading('Remove repository?')
+                        ->icon('heroicon-o-trash')
                         ->modalDescription('After this action the repository will remain on the server but will be deleted from here.')
                         ->modalSubmitActionLabel('Yes, detach')
                         ->action(function ( Site $site ) {

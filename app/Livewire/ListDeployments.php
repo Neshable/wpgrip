@@ -90,8 +90,8 @@ class ListDeployments extends Component implements HasForms, HasTable
             ])
             ->headerActions([
             ])
-            ->heading('Deployments')
-            ->description('History of all your deployments.')
+            ->heading('Deployment Logs')
+            ->description('History of all your past deployments.')
             ->emptyStateHeading('No deployments found')
             ->emptyStateDescription('You haven\'t done any deployments yet.')
             ->bulkActions([

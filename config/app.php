@@ -180,8 +180,8 @@ return [
     // this is the name of the logo file in the public directory
     'logo' => [
         'light' => 'images/logo-dark.svg',
-        // 'light' => 'images/logo-light.svg',
-        'dark' => 'images/logo-dark.png',
+        'dark' => 'images/logo-light.svg',
+        // 'dark' => 'images/logo-dark.png',
         // 'dark' => 'images/logo-dark.svg',
     ],
 

@@ -380,7 +380,11 @@ class SiteResource extends Resource
                 ->getStateUsing(function (Site $record) {
                 return $record->getDBSize();
                 }),
-
+            // Tables\Columns\TextColumn::make('status')
+            //     ->label('Status')
+            //     ->getStateUsing(function (Site $record) {
+            //         return $record->status;
+            //     }),
             Tables\Columns\TextColumn::make('last_sync')
                 ->label('Last sync')
                 ->since()
