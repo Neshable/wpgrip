@@ -23,6 +23,8 @@
             'Site URL' => $this->getRecord()->url,
             'Client name' => isset($this->getRecord()->client) ? $this->getRecord()->client->name : 'Client',
             'Server IP' => $this->getRecord()->server->ip,
+            'Server Name' => $this->getRecord()->server->name,
+            'Server Provider' => $this->getRecord()->server->provider,
         ];
 
     @endphp
@@ -173,41 +175,43 @@
         </div>
     </div> --}}
 
-    <div class="w-full rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
-        <div class="px-6 py-4 border-b">
-            <h2 class="text-2xl">
-                Summary
-            </h2>
-            <p class="text-sm text-gray-500">
-                Overview of some important site metrics.
-            </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="w-full rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+            <div class="px-6 py-4 border-b">
+                <h2 class="text-2xl">
+                    Site Essentials
+                </h2>
+                <p class="text-sm text-gray-500">
+                    Core metrics and configuration details
+                </p>
+            </div>
+            <div>
+                @each('site.listing.simple', $fields, 'field')
+            </div>
         </div>
-        <div>
-            @each('site.listing.simple', $fields, 'field')
+
+        <div class="w-full rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+            <div class="px-6 py-4 border-b">
+                <h2 class="text-2xl">
+                    Extended Details
+                </h2>
+                <p class="text-sm text-gray-500">
+                    Domain, client, and server information
+                </p>
+            </div>
+            <div>
+                @each('site.listing.simple', $additional_fields, 'field')
+            </div>
         </div>
     </div>
 
     <div class="w-full rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
         <div class="px-6 py-4 border-b">
             <h2 class="text-2xl">
-                Additional Info
+                Database Structure
             </h2>
             <p class="text-sm text-gray-500">
-                Other available information for this site.
-            </p>
-        </div>
-        <div>
-            @each('site.listing.simple', $additional_fields, 'field')
-        </div>
-    </div>
-
-    <div class="w-full rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
-        <div class="px-6 py-4 border-b">
-            <h2 class="text-2xl">
-                Database tables
-            </h2>
-            <p class="text-sm text-gray-500">
-                List of available tables in the current site's database.
+                Storage allocation across database tables
             </p>
         </div>
         <div>
