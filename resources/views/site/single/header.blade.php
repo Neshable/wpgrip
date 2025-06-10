@@ -21,10 +21,12 @@ $tenant = Filament\Facades\Filament::getTenant();
 <div class="bg-white border-gray-200 rounded-lg shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 ">
 
     <div class="flex flex-col items-center md:flex-row">   
-        @if ( $this->getRecord()->screenshot_path && Storage::disk('local')->exists($this->getRecord()->screenshot_path))
-                <img class="object-cover w-full rounded-t-lg h-28 md:h-28 md:w-auto md:rounded-none md:rounded-l-lg" 
-                src="{{ Storage::url($this->getRecord()->screenshot_path) }}" alt="">
-            @endif 
+    
+        @if ( $this->getRecord()->screenshot_path && Storage::disk('public')->exists($this->getRecord()->screenshot_path))
+            <img class="object-cover w-full rounded-t-lg h-28 md:h-28 md:w-auto md:rounded-none md:rounded-l-lg" 
+            src="{{ Storage::disk('public')->url($this->getRecord()->screenshot_path) }}" alt="">
+        @endif 
+        
         <div class="w-full relative px-6 py-4 h-full flex-row items-center justify-between">
             <div class="flex flex-col md:flex-row md:items-center">
                 <div class="pb-4 md:pb-0">
