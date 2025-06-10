@@ -142,7 +142,20 @@ class RepositoryResource extends Resource
                 fn (Repository $record): string => Pages\ViewRepository::getUrl([$record->id]),
             )
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('provider')
+                    ->options([
+                        'bitbucket' => 'BitBucket',
+                        'github' => 'GitHub',
+                    ]),
+                Tables\Filters\SelectFilter::make('type')
+                    ->options([
+                        'plugin' => 'Plugin',
+                        'theme' => 'Theme',
+                        'other' => 'Other',
+                    ]),
+                Tables\Filters\Filter::make('has_sites')
+                    ->query(fn (Builder $query): Builder => $query->has('sites'))
+                    ->toggle(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

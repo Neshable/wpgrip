@@ -122,7 +122,7 @@ class ListRepos extends Component implements HasForms, HasTable
                             'status' => \App\Enums\RepoStatus::WORKING->value
                         ]);
                         
-                    SshAndGitPull::dispatch($repository, $this->site_model);
+                    SshAndGitPull::dispatch($repository, $this->site_model );
                 })
                 ->icon('heroicon-o-check-circle')
                 ->color('success')

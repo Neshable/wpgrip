@@ -5,7 +5,7 @@ namespace App\Jobs\Git;
 use App\Models\Repository;
 use App\Models\Deployment;
 use App\Models\Site;
-
+use App\Models\User;
 use App\Services\SSHSiteConnect;
 use App\Services\GripNotifications;
 
@@ -87,6 +87,13 @@ class SshAndChangeBranch implements ShouldQueue
     public $last_pull;
 
     /**
+     * The recipient of the notification
+     *
+     * @var \App\Models\User|null
+     */
+    public $recipient;
+
+    /**
      * Create a new job instance.
      *
      * @return void
@@ -98,6 +105,7 @@ class SshAndChangeBranch implements ShouldQueue
         $this->site = $site;
         $this->branch = $branch;
         $this->status = RepoStatus::WORKING->value;
+        $this->recipient = auth()->user();
     }
 
 

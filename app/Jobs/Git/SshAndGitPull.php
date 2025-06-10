@@ -5,6 +5,7 @@ namespace App\Jobs\Git;
 use App\Models\Repository;
 use App\Models\Deployment;
 use App\Models\Site;
+use App\Models\User;
 
 use App\Services\SSHSiteConnect;
 use App\Services\GripNotifications;
@@ -19,6 +20,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+
 
 use Filament\Notifications\Notification;
 use Filament\Notifications\Actions\Action;
@@ -80,16 +82,24 @@ class SshAndGitPull implements ShouldQueue
     public $last_pull;
 
     /**
+     * The recipient of the notification
+     *
+     * @var \App\Models\User|null
+     */
+    public $recipient;
+
+    /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct( Repository $repository, Site $site )
+    public function __construct( Repository $repository, Site $site, User $recipient = null )
     {
         // Get original production site.
         $this->repository = $repository;
         $this->site = $site;
         $this->status = RepoStatus::WORKING->value;
+        $this->recipient = auth()->user();
     }
 
 
@@ -124,7 +134,11 @@ class SshAndGitPull implements ShouldQueue
         if (!$this->site) 
         {
             $this->status_text = 'No site connected to this repo.';
-            GripNotifications::getCustomFailure($this->status_text);
+            Notification::make()
+                ->title('No site connected to this repo.')
+                ->danger()
+                ->body( $this->status_text ) 
+                ->sendToDatabase($this->recipient);
             return false;
         }
         
@@ -237,7 +251,12 @@ class SshAndGitPull implements ShouldQueue
             $this->last_pull = Carbon::now();
             $this->saveToDb();
             // dispatch user notification.
-            // GripNotifications::getGitPulledSuccess();
+            Notification::make()
+                ->title('Git pull success.')
+                ->success()
+                ->body( $this->status_text ) 
+                ->sendToDatabase($this->recipient);
+
         }
         else
         {

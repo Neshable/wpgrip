@@ -83,6 +83,7 @@ class SyncFinalTweaks implements ShouldQueue
             // Update last synced here
             $this->staging_site->last_sync = Carbon::now();
             $this->staging_site->save();
+            
             // Send database notification.
             GripNotifications::getStagingSyncComplete( $this->site->user_id );
             

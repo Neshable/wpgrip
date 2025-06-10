@@ -27,6 +27,6 @@
         "clipboard": "^2.0.11",
         "highlight.js": "^11.9.0",
         "lighthouse": "^12.2.1",
-        "puppeteer": "^23.3.0"
+        "puppeteer": "^23.11.1"
     }
 }

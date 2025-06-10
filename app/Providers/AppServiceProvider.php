@@ -58,6 +58,8 @@ class AppServiceProvider extends ServiceProvider
             Js::make('components-script', __DIR__.'/../../resources/js/components.js'),
         ]);
 
+        DatabaseNotifications::pollingInterval('20s');
+
         
         // DatabaseNotifications::trigger('filament/notifications/database-notifications-trigger');
     }
