@@ -154,7 +154,6 @@ class ViewSite extends ViewRecord
                 Jobs\MakeScreenshot::dispatch( $this->record );
                 break;
             default:
-            dd($action);
         }
         
     }

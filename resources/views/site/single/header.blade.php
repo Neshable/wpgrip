@@ -151,6 +151,10 @@ $tenant = Filament\Facades\Filament::getTenant();
                             <x-filament::dropdown.list.item wire:click="mountTableAction('sync', '{{  $site_model->id }}')">
                                 Sync
                             </x-filament::dropdown.list.item>
+
+                            <x-filament::dropdown.list.item wire:click="mountTableAction('screenshot', '{{  $site_model }}')">
+                                New Screenshot
+                            </x-filament::dropdown.list.item>
                             
                             <x-filament::dropdown.list.item 
                             tag="a"

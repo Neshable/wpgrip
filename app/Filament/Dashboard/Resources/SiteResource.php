@@ -23,6 +23,7 @@ use App\Enums\BoardType;
 use Illuminate\Support\Facades\Auth;
 
 use App\Jobs\Site\SyncSiteStats;
+use App\Jobs\Site\TakeHomeScreenshot;
 use Filament\Notifications\Notification;
 
 use Illuminate\Support\HtmlString;
@@ -252,7 +253,13 @@ class SiteResource extends Resource
                     ->tooltip('Open the trello board')
                     ->url(fn (Site $record): ?string => $record->board_url)
                     ->openUrlInNewTab(),
-               
+                Tables\Actions\Action::make('screenshot')
+                    ->label('New Screenshot')
+                    ->icon('heroicon-o-camera')
+                    ->tooltip('Take a new screenshot of this site')
+                    ->action(function ( Site $record) {
+                        TakeHomeScreenshot::dispatchSync($record);
+                    }),
                 Tables\Actions\Action::make('sync')
                     ->action(function ( Site $record) {
                         SyncSiteStats::dispatchSync($record);
