@@ -45,7 +45,7 @@ class UptimeListener
             SlackNotifications::sendUptimeFailed( $event->monitor );
         }
         // Handle the uptime log.
-       // $this->handleUptimeLog( $event->monitor );
+       $this->handleUptimeLog( $event->monitor );
         
     }
 

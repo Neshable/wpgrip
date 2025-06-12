@@ -17,7 +17,6 @@ use Carbon\Carbon;
 
 use App\Jobs\Tests\PageSpeed;
 
-
 class Monitors extends ViewRecord
 {
     protected static string $resource = SiteResource::class;
@@ -32,6 +31,8 @@ class Monitors extends ViewRecord
     {
         
     }
+
+  
 
     public function getHeader(): ?View
     {

@@ -6,7 +6,7 @@
             icon="heroicon-o-key"
             color="gray"
             label="SSH Key"
-            tooltip="Get API Key"
+            tooltip="Get SSH Key"
             size="xl"
         />
     </x-slot>

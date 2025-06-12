@@ -12,6 +12,8 @@
         
     @if (  $monitor )
 
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
     <x-filament::section icon="heroicon-s-wrench" icon-color="{{ $monitor->certificate_status == 'valid' ? 'success' : 'warning'}}"> 
         
         <x-slot name="heading">
@@ -60,6 +62,12 @@
             The website is currently down. Reason: {{ $monitor->uptime_check_failure_reason }}.  
         @endif
     </x-filament::section>
+
+    </div>
+
+    <div>
+        @livewire(\App\Filament\Dashboard\Resources\SiteResource\Widgets\UptimeChart::class)
+    </div>
 
 
 

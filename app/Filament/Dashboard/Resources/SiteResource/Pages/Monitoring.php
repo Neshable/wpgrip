@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Artisan;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Illuminate\Contracts\View\View;
 
-
+use App\Filament\Dashboard\Resources\SiteResource\Widgets\UptimeChart;
 
 class Monitoring extends ViewRecord
 {
@@ -53,10 +53,20 @@ class Monitoring extends ViewRecord
  
     }
 
-
-    // public function render(): View
+    // public function getHeaderWidgets(): array
     // {
-    //     return view('filament.sites.view-site');
+    //     return [
+    //         UptimeChart::class,
+    //     ];
     // }
+
+      
+    protected function getWidgets(): array
+    {
+        return [
+            UptimeChart::class,
+        ];
+    }
+
 
 }
