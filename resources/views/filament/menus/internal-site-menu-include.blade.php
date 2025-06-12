@@ -64,7 +64,7 @@ Performance
 Monitors
 </x-filament::tabs.item>
 
-<x-filament::tabs.item
+{{-- <x-filament::tabs.item
     :href="route( 'filament.dashboard.resources.sites.security', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )" 
     tag="a"
     :wire:navigate
@@ -72,7 +72,7 @@ Monitors
     :active="request()->getRequestUri() === \URL::route('filament.dashboard.resources.sites.security', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid ], false)"
     >
     Security
-</x-filament::tabs.item>
+</x-filament::tabs.item> --}}
 
 <x-filament::tabs.item
     :href="route( 'filament.dashboard.resources.sites.repositories', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )" 
