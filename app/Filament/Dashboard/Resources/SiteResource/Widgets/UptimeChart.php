@@ -143,15 +143,15 @@ class UptimeChart extends ChartWidget
          return RawJs::make(<<<JS
              {
                 responsive: true,
-                // maintainAspectRatio: false,
+                maintainAspectRatio: false,
                 plugins: {
                     title: {
-                        display: true,
+                        display: false,
                         text: 'Daily Uptime Status - Last 28 Days'
                     },
                     legend: {
                         display: true,
-                        position: 'top'
+                        position: 'bottom'
                     },
                     tooltip: {
                             callbacks: {
@@ -171,7 +171,10 @@ class UptimeChart extends ChartWidget
                     x: {
                         stacked: true,
                         grid: {
-                            display: false
+                            display: true,
+                            color: '#e5e7eb',
+                            gap: 2,
+
                         }
                     },
                      y: {
