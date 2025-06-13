@@ -8,7 +8,8 @@ class PageSpeedInsightsService {
 
 	public static function fetchInsights( $url, $strategy = 'mobile' ) {
 		$apiKey = env( 'GOOGLE_API_PAGESPEED' );
-		$apiUrl = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
+		// $apiUrl = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
+        $apiUrl = 'https://pagespeedonline.googleapis.com/pagespeedonline/v5/runPagespeed';
 
 		// Specify the categories you want to include in the API request
 		// https://developers.google.com/speed/docs/insights/rest/v5/pagespeedapi/runpagespeed#Category
