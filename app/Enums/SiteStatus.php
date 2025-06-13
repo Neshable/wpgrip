@@ -12,6 +12,7 @@ enum SiteStatus: string implements HasLabel
     case SecurityScan = 'security_scan';
     case Warning = 'warning';
     case Normal = 'normal';
+    case Working = 'working';
 
     public function getLabel(): ?string
     {
@@ -24,6 +25,7 @@ enum SiteStatus: string implements HasLabel
             self::UpdatingPlugin => 'Updating some plugins',
             self::CreatingBackup => 'Backup in progress',
             self::SecurityScan => 'Security check in progress',
+            self::Working => 'Working',
         };
     }
 }

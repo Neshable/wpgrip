@@ -25,6 +25,7 @@ use Filament\Tables\Actions\CreateAction;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Collection;
 
 use Filament\Notifications\Notification;
 
@@ -74,13 +75,7 @@ class ListRepoSites extends Component implements HasForms, HasTable
                 ->sortable(),
             Tables\Columns\TextColumn::make('pivot.status')
                 ->label('Status')
-                ->badge()
-                ->color(fn (string $state): string => match ($state) {
-                    'error' => 'danger',
-                    'success' => 'success',
-                    'working' => 'warning',
-                    default => 'gray',
-                }),
+                ->view('filament.tables.columns.status-with-loader'),
             Tables\Columns\TextColumn::make('status_text')
                 ->label('Last Status Log')
                 ->sortable()
@@ -108,7 +103,7 @@ class ListRepoSites extends Component implements HasForms, HasTable
                 //
             ])
             ->heading('Connected sites')
-            ->description('List of all sites where the repo is used.')
+            ->description('List of all sites where the repository is connected to. You can connect more sites to the same repository.')
             ->headerActions([
                 CreateAction::make('addsite')
                     // ->model( Repository::class )
@@ -235,10 +230,43 @@ class ListRepoSites extends Component implements HasForms, HasTable
                         } ),
                 ]),
             ])
+            
             ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make('bulk_detach')
+                        ->label('Remove')
+                        ->requiresConfirmation()
+                        ->action(function (Collection $records) {
+                            $records->each(function ($site) {
+                                $this->repo_model->sites()->detach($site->site_id);
+                            });
+                            
+                            Notification::make()
+                                ->title('Sites detached.')
+                                ->success()
+                                ->send();
+                        }),
+                    Tables\Actions\BulkAction::make('bulk_deploy')
+                        ->label('Deploy')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Deploy repositories?')
+                        ->modalDescription('Are you sure you\'d like to sync these repositories?')
+                        ->modalSubmitActionLabel('Yes, deploy now')
+                        ->action(function (Collection $records) {
+                            $records->each(function ($site) {
+                          
+                                // Update the pivot status to WORKING
+                                $this->repo_model->sites()
+                                    ->updateExistingPivot($site->id, [
+                                        'status' => \App\Enums\RepoStatus::WORKING->value
+                                    ]);
+                                
+                                SshAndGitPull::dispatch($this->repo_model, $site);
+                            });
+                        }),
+                       
+                ]),
             ])
             ->emptyStateHeading('No sites found')
             ->emptyStateDescription('You haven\'t added any sites yet.')

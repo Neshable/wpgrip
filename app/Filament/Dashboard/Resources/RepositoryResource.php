@@ -115,7 +115,7 @@ class RepositoryResource extends Resource
                 Tables\Columns\TextColumn::make('remote')
                     ->label('Remote')
                     ->searchable()
-                    // ->description(fn (Repository $record): string => $record->site->url ? 'Site: ' . $record->site->url : 'Not connected' )
+                    ->copyable()
                     ->sortable(),
                     Tables\Columns\TextColumn::make('provider')
                     ->badge()
@@ -159,6 +159,15 @@ class RepositoryResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('view_repository')
+                    ->label('Repo Source')
+                    ->icon('heroicon-o-link')
+                    ->url(fn ($record) => match($record->provider) {
+                        'github' => str_replace(['git@github.com:', '.git'], ['https://github.com/', ''], $record->remote),
+                        'bitbucket' => str_replace(['git@bitbucket.org:', '.git'], ['https://bitbucket.org/', ''], $record->remote),
+                        default => null,
+                    })
+                    ->openUrlInNewTab(),
             ])
             ->defaultPaginationPageOption(25)
             ->bulkActions([

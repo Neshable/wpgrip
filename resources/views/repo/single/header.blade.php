@@ -45,6 +45,20 @@
                
                 {{-- @if(auth()->user()->can('update Repository')) --}}
                 <x-filament::button
+                    :href="match($this->getRecord()->provider) {
+                        'github' => str_replace(['git@github.com:', '.git'], ['https://github.com/', ''], $this->getRecord()->remote),
+                        'bitbucket' => str_replace(['git@bitbucket.org:', '.git'], ['https://bitbucket.org/', ''], $this->getRecord()->remote),
+                        default => '#',
+                    }"
+                    tag="a"
+                    color="gray"
+                    icon="heroicon-m-link"
+                    target="_blank"
+                >
+                    Repo Source
+                </x-filament::button>
+
+                <x-filament::button
                     :href="route( 'filament.dashboard.resources.repositories.edit', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )" 
                     tag="a"
                     color="gray"
