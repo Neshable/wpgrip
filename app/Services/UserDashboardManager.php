@@ -20,7 +20,7 @@ class UserDashboardManager
         $tenant = $user->tenants()->orderByPivot('is_default', 'desc')->first();
 
         if ($tenant !== null) {
-            return route('filament.dashboard.pages.dashboard', ['tenant' => $tenant]);
+            return route('filament.dashboard.resources.sites.index', ['tenant' => $tenant]);
         }
 
         return route('get-started');

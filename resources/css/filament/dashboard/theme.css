@@ -1,10 +1,12 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
 body.fi-panel-dashboard {
-    background: #f3f4f6;
+    /* background: #f5f7fa; */
+    background: #f5f7fa;
+    
     
     .fi-sidebar {
-        background: #f3f4f6;
+        background: #f5f7fa;
         max-width: 220px;
         .fi-sidebar-item-icon,
         .fi-sidebar-group-icon  {
