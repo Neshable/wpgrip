@@ -85,6 +85,8 @@ class TakeScreenshot {
         }
 
         $browsershot_obj = Browsershot::url( $this->url )
+        ->dismissDialogs()
+        ->disableJavascript()
         ->setNodeBinary('/usr/bin/node')
         ->setNpmBinary('/usr/bin/npm');
 
@@ -96,6 +98,7 @@ class TakeScreenshot {
             $path,
             $browsershot_obj
                 ->windowSize( $this->width , $this->height )
+                
                 ->waitUntilNetworkIdle()
                 ->screenshot()
         );
