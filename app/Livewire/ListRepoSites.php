@@ -56,6 +56,8 @@ class ListRepoSites extends Component implements HasForms, HasTable
             // ->query(Repository::query())
             ->relationship( fn (): BelongsToMany => $this->repo_model->sites() )
             ->paginated(false)
+            ->poll('20s')
+            ->deferLoading()
             ->columns([
             Tables\Columns\ImageColumn::make('')
                 ->width(35)
@@ -249,6 +251,7 @@ class ListRepoSites extends Component implements HasForms, HasTable
                     Tables\Actions\BulkAction::make('bulk_deploy')
                         ->label('Deploy')
                         ->color('success')
+                        ->icon('heroicon-o-arrow-up-on-square-stack')
                         ->requiresConfirmation()
                         ->modalHeading('Deploy repositories?')
                         ->modalDescription('Are you sure you\'d like to sync these repositories?')
