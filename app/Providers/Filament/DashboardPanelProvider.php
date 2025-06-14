@@ -50,7 +50,7 @@ class DashboardPanelProvider extends PanelProvider
             ->spaUrlExceptions([
                 '*/admin/*',
             ])
-            ->darkMode(false)
+            ->darkMode(true)
             ->unsavedChangesAlerts()
             ->maxContentWidth('screen-4xl')
             // ->sidebarFullyCollapsibleOnDesktop()

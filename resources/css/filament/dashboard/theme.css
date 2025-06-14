@@ -14,12 +14,38 @@ body.fi-panel-dashboard {
             height: 1.2rem;
         }
     }
+    
     .fi-sidebar-header {
         background: #222937;
     }
     .fi-topbar {
         nav {
             background: #222937;
+        }
+    }
+}
+
+/* Dark mode styles */
+.dark body.fi-panel-dashboard {
+    background: #1b1c1d; /* Dark slate background */
+    
+    .fi-sidebar {
+        background: #282a2c; /* Dark sidebar background */
+        
+        .fi-sidebar-item-icon,
+        .fi-sidebar-group-icon {
+            width: 1.2rem;
+            height: 1.2rem;
+        }
+    }
+    
+    .fi-sidebar-header {
+        background: #1b1c1d; /* Darker header background */
+    }
+    
+    .fi-topbar {
+        nav {
+            background: #1b1c1d; /* Dark topbar background */
         }
     }
 }
