@@ -66,7 +66,7 @@ class ListPlugins extends Component implements HasForms, HasTable
             })
             ->deferLoading()
             ->columns([
-                ViewColumn::make('')->view('filament.tables.columns.plugin-image'),
+                // ViewColumn::make('')->view('filament.tables.columns.plugin-image'),
                 // ViewColumn::make('Plugin')->view('filament.tables.columns.plugin-info'),
                 // ViewColumn::make('Description')->view('filament.tables.columns.plugin-description'),    
                 

@@ -82,8 +82,8 @@ class ListThemes extends Component implements HasForms, HasTable
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'inactive' => 'gray',
-                        'dropin' => 'warning',
                         'active' => 'success',
+                        default => 'gray',
                     }),
                 ViewColumn::make('version')->view('filament.tables.columns.plugin-version'),
                 // TextColumn::make('version')
