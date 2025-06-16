@@ -45,7 +45,11 @@ class ServerResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('ip')
-                    ->required(),
+                    ->required()
+                    ->unique(Server::class, 'ip', ignoreRecord: true)
+                    ->validationMessages([
+                        'unique' => 'A server with this IP address already exists.',
+                    ]),
                 Forms\Components\TextInput::make('private_ip')
                     ->label('Private IP'),
                 Forms\Components\TextInput::make('ssh_port')

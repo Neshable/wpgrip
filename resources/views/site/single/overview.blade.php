@@ -8,12 +8,12 @@
 
         $fields = [
             'Name' => isset($this->getRecord()->name) ? $this->getRecord()->name : 'Website Overview',
-            'Last sync' => isset($this->getRecord()->updated_at) ? $this->getRecord()->updated_at : 'n/a',
+            'Last sync' => isset($this->getRecord()->updated_at) ? $this->getRecord()->updated_at->diffForHumans() : 'Never synced',
             'WordPress Version' => $this->getRecord()->wp_ver,
-            'PHP Version' => $this->getRecord()->php_ver,
-            'Directory Size' => $this->getRecord()->getFormatedDBSize() ?? 'n/a',
+            'PHP Version' => $this->getRecord()->php_ver,  
             'Database Prefix' => $this->getRecord()->db_prefix ?? 'n/a',
             'Database Size' => $this->getRecord()->getDBSize() ?? 'n/a',
+            'Directory Size' => $this->getRecord()->getFormatedDBSize() ?? 'n/a',
         ];
 
         $additional_fields = [
@@ -23,6 +23,7 @@
             'Site URL' => $this->getRecord()->url,
             'Client name' => isset($this->getRecord()->client) ? $this->getRecord()->client->name : 'Client',
             'Server IP' => $this->getRecord()->server->ip,
+            'Server Path' => $this->getRecord()->dir_path,
             'Server Name' => $this->getRecord()->server->name,
             'Server Provider' => $this->getRecord()->server->provider,
         ];
@@ -214,7 +215,7 @@
                 Storage allocation across database tables
             </p>
         </div>
-        <div>
+        <div class="max-h-[500px] overflow-y-auto">
             @if ($this->getRecord()->sitemeta->db_tables)
                 @foreach (json_decode($this->getRecord()->sitemeta->db_tables) as $table)
                     @include('site.listing.simple', [

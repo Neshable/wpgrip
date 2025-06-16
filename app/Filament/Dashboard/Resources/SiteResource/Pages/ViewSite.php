@@ -14,6 +14,8 @@ use App\Jobs\Site\GetAllPlugins;
 
 use App\Jobs\RemoteDBBackup;
 use App\Jobs\CheckDBStructure;
+use App\Jobs\Site\TakeHomeScreenshot;
+use App\Jobs\Site\SyncSiteStats;
 use App\Jobs;
 
 use Filament\Notifications\Notification; 
@@ -100,13 +102,26 @@ class ViewSite extends ViewRecord
     //      return Product::query()->where('id',1);
     // }
 
-    public function triggerSync(): Action
+    public function triggerSync()
     {
-        return Action::make('deletes')
-            ->requiresConfirmation()
-            ->action(function (array $arguments) {
-                dd(123);
-            });
+
+        SyncSiteStats::dispatch($this->record);
+
+        return Notification::make()
+                ->title('Syncing...')
+                ->success()
+                ->body('Syncing website...') 
+                ->send();
+    }
+
+    public function triggerScreenshot()
+    {
+        TakeHomeScreenshot::dispatchSync($this->record);
+
+        return Notification::make()
+                ->title('New screenshot taken.')
+                ->success()
+                ->send();
     }
     
     public function triggerAction( string $action = 'default' ) 

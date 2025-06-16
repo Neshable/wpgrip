@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->foreignId('site_id')->nullable()->constrained()->onDelete('cascade');
-            $table->text('db_tables')->nullable();
+            $table->longtext('db_tables')->nullable();
             $table->integer('db_size')->nullable();
             $table->float('core_version')->nullable();
             $table->boolean('is_vulnerable')->default(false);
