@@ -7,6 +7,7 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\FileUpload;
 
 
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -56,6 +57,14 @@ class TenantSettings extends Component implements HasForms
                     ->label(__('Workspace Name'))
                     ->helperText(__('Edit the name of your workspace'))
                     ->required(),
+                    // Add small avatar upload
+                    FileUpload::make('avatar')
+                        ->label(__('Workspace Avatar'))
+                        ->uploadingMessage('Uploading avatar...')
+                        ->helperText(__('Upload a small avatar for your workspace'))
+                        ->image()
+                        ->imageEditor()
+                        ->imageEditorAspectRatios([1, 1])
 
                 ]),
                 

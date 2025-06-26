@@ -20,5 +20,13 @@
     </div>
     
 
-    <a href="{{ $getRecord()->url ?? '#' }}" class="text-sm text-gray-500 dark:text-gray-400">{{ $getRecord()->url ?? 'n/a' }}</a>
+    <a target="_blank" href="{{ $getRecord()->url ?? '#' }}" class="text-sm text-gray-500 dark:text-gray-400 hover:underline ">
+        
+        <x-filament::icon
+            icon="heroicon-m-arrow-top-right-on-square"
+            class="h-4 w-4 inline-block text-gray-400 dark:text-gray-500"
+        />
+        {{ $getRecord()->url ?? 'n/a' }}
+    
+    </a>
 </div>

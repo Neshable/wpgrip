@@ -215,7 +215,7 @@
                 Storage allocation across database tables
             </p>
         </div>
-        <div class="max-h-[500px] overflow-y-auto">
+        <div class="max-h-[500px] overflow-y-scroll">
             @if ($this->getRecord()->sitemeta->db_tables)
                 @foreach (json_decode($this->getRecord()->sitemeta->db_tables) as $table)
                     @include('site.listing.simple', [

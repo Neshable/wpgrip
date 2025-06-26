@@ -27,7 +27,7 @@
             content: '{{ $monitor ? ($monitor->uptime_status == 'up' ? 'Website is up and running.' : 'Website is down.') : 'Uptime monitor'}}',
             theme: $store.theme,
         }"
-        icon="heroicon-m-arrow-trending-up"
+        icon="{{ $monitor ? ($monitor->uptime_status == 'up' ? 'heroicon-m-arrow-trending-up' : 'heroicon-m-arrow-trending-down') : 'heroicon-m-arrow-trending-up'}}"
         class="h-5 w-5 {{ $monitor ? ($monitor->uptime_status == 'up' ? 'text-green-600 dark:text-green-400' : 'text-danger-600 dark:text-danger-400') : 'text-gray-500 dark:text-gray-400'}}"
     />
     {{--
