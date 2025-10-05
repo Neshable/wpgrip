@@ -86,18 +86,18 @@ class WebhookController extends Controller
 	public function handleWebhook( Request $request, $unique_token ) 
     {
 		// Get the IP address of the incoming request
-		$requestIp = $request->ip();
+		$request_ip = $request->ip();
         // Check if the request IP falls within any allowed CIDR ranges
-        $isAllowed = false;
-        foreach ($allowedIps as $cidr) {
-            if ($this->ipInRange($requestIp, $cidr)) {
-                $isAllowed = true;
+        $is_allowed = false;
+        foreach ($this->allowedIPs() as $cidr) {
+            if ($this->ipInRange($request_ip, $cidr)) {
+                $is_allowed = true;
                 break;
             }
         }
 
-        if (!$isAllowed) {
-            Log::warning("Unauthorized IP address: {$requestIp}");
+        if (!$is_allowed) {
+            Log::warning("Unauthorized IP address: {$request_ip}");
             return response()->json(['message' => 'Unauthorized IP address'], 403);
         }
 
@@ -109,49 +109,37 @@ class WebhookController extends Controller
 			return response()->json( array( 'message' => 'Repository not found' ), 404 );
 		}
 
-		// Retrieve the secret token from the repository
-		$secret = $repository->secret;
+        $provider = $repository->provider;
+        $payload = $request->json()->all();
+        $branch_name = null;
 
-		// Get the provider
-		$provider = $repository->provider;
+        if ($provider === 'bitbucket') {
+            $branch_name = $payload['push']['changes'][0]['new']['name'] ?? null;
+        } elseif ($provider === 'github') {
+            // Example ref: "refs/heads/main"
+            $ref = $payload['ref'] ?? null;
+            if ($ref && str_starts_with($ref, 'refs/heads/')) {
+                $branch_name = substr($ref, strlen('refs/heads/'));
+            }
+        }
 
-		// Check the provider and validate the webhook signature if a secret is set
-		if ( $secret ) 
-        {
-			if ( $provider === 'bitbucket' ) 
-            {
-				// Bitbucket-specific signature verification
-				$bitbucketSignature = $request->header( 'X-Hub-Signature' );
-				$expectedSignature  = 'sha256=' . hash_hmac( 'sha256', $request->getContent(), $secret );
-
-				if ( ! hash_equals( $expectedSignature, $bitbucketSignature ) ) {
-					Log::warning( "Bitbucket webhook signature mismatch for repository ID {$repository->id}. Expected: {$expectedSignature}, Given: {$bitbucketSignature}" );
-					abort( 403, 'Invalid Bitbucket signature' );
-				}
-			} 
-            elseif ( $provider === 'github' ) 
-            {
-				// GitHub-specific signature verification
-				$githubSignature   = $request->header( 'X-Hub-Signature-256' );
-				$expectedSignature = 'sha256=' . hash_hmac( 'sha256', $request->getContent(), $secret );
-
-				if ( ! hash_equals( $expectedSignature, $githubSignature ) ) 
-                {
-					Log::warning( "GitHub webhook signature mismatch for repository ID {$repository->id}. Expected: {$expectedSignature}, Given: {$githubSignature}" );
-					abort( 403, 'Invalid GitHub signature' );
-				}
-			}
-		} else {
-			Log::info( "No secret set for repository ID {$repository->id}, skipping signature verification." );
-		}
+        if (!$branch_name) {
+            Log::info("Could not determine branch from webhook for repository ID {$repository->id}");
+            return response()->json( array( 'message' => 'Could not determine branch from webhook.' ), 400 );
+        }
 
 		// Handle the webhook payload (Bitbucket or GitHub)
-		if ( $repository->sites() ) 
+		if ( $repository->sites ) 
         {
-			foreach ( $repository->sites() as $single_site ) 
+			foreach ( $repository->sites as $single_site ) 
             {
-				// If the signature is valid, process the webhook payload
-				SshAndGitPull::dispatch( $repository, $single_site );
+                $site_branch = $single_site->pivot->branch;
+
+                if( $single_site->auto_deploy && $site_branch === $branch_name)
+                {
+				    // If the signature is valid, process the webhook payload
+				    SshAndGitPull::dispatch( $repository, $single_site, null, 'webhook' );
+                }
 			}
 		}
 

@@ -89,17 +89,25 @@ class SshAndGitPull implements ShouldQueue
     public $recipient;
 
     /**
+     * The type of the deployment
+     *
+     * @var string
+     */
+    public $deployment_type;
+
+    /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct( Repository $repository, Site $site, User $recipient = null )
+    public function __construct( Repository $repository, Site $site, User $recipient = null, string $deployment_type = 'manual' )
     {
         // Get original production site.
         $this->repository = $repository;
         $this->site = $site;
         $this->status = RepoStatus::WORKING->value;
         $this->recipient = auth()->user();
+        $this->deployment_type = $deployment_type;
     }
 
 
@@ -459,7 +467,8 @@ class SshAndGitPull implements ShouldQueue
                     'message' => $commit_response[0]->subject,
                     'site_id' => $this->pivot->site_id,
                     'repository_id' => $this->repository->id,
-                    'success' => 1
+                    'success' => 1,
+                    'type' => $this->deployment_type
                 ]
             );
            

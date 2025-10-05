@@ -55,8 +55,14 @@ class ListDeployments extends Component implements HasForms, HasTable
                 IconColumn::make('success')
                 ->label('Status')
                 ->boolean(),
+                
+                TextColumn::make('created_at')->dateTime()->since()->label('Date')->dateTimeTooltip(),
                 TextColumn::make('site.name'),
                 TextColumn::make('branch')->icon('icon-git'),
+                TextColumn::make('type')->label('Type')->badge()->color(fn (string $state): string => match ($state) {
+                    'manual' => 'primary',
+                    'webhook' => 'primary',
+                }),
                 TextColumn::make('commit')
                     ->copyable()
                     ->limit(7),
@@ -66,7 +72,6 @@ class ListDeployments extends Component implements HasForms, HasTable
                 
                 TextColumn::make('committer')->label('Comitter'),
                 
-                TextColumn::make('created_at')->dateTime()->since()->label('Date')->dateTimeTooltip(),
                 
                 // TextColumn::make('message'),
             ])

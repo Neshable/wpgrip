@@ -25,7 +25,7 @@
                 </x-slot>
 
         
-                Add this URL to your git webhooks to enable automatic deployments when you push your changes to your current branch. However if you need more control, you can look at Deployment Script section.
+                Add this URL to your git webhooks to enable automatic deployments when you push your changes to your current branch.
                 
                 <x-filament::input.wrapper class="mt-3" disabled>
                     <x-filament::input

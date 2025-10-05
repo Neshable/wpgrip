@@ -75,6 +75,7 @@ class ListRepoSites extends Component implements HasForms, HasTable
                 })
                 ->html()
                 ->sortable(),
+  
             Tables\Columns\TextColumn::make('pivot.status')
                 ->label('Status')
                 ->view('filament.tables.columns.status-with-loader'),
@@ -84,7 +85,7 @@ class ListRepoSites extends Component implements HasForms, HasTable
                 ->wrap()
                 ->limit(50),
             Tables\Columns\ToggleColumn::make('auto_deploy')
-                ->label('Auto Deploy')
+                ->label('Push to Deploy')
                 // ->updateState(function ($state) {
                 //     dd($state);
                 // })
