@@ -99,9 +99,8 @@ class SlackNotifications {
         ]);
     }
 
-    public static function sendUptimeFailed( Monitor $monitor )
+    public static function sendUptimeFailed( Monitor $monitor, int $attempt = 1 )
     {
-    
         $site_id = $monitor->site_id;
         if ( $site_id ) {
             $site = Site::findOrFail( $site_id );
@@ -109,17 +108,28 @@ class SlackNotifications {
                 // Find the tenant and send them notificaiton.
                 $tenant = $site->tenant;
                 if ( $tenant && $tenant->enable_slack && !empty( $tenant->slack_webhook )  ) {
-                    SlackAlert::to( $tenant->slack_webhook )->blocks([
-                        self::addBlock( 'header', ":red_circle: Website is down!" ),
-                        self::addBlock( 'section', "Reason for failure: " . $monitor->uptime_check_failure_reason ),
+                    $attemptText = '';
+                    if ( $attempt === 1 ) {
+                        $attemptText = 'First failed check.';
+                    } elseif ( $attempt === 2 ) {
+                        $attemptText = 'Second failed check in a row.';
+                    } elseif ( $attempt === 3 ) {
+                        $attemptText = 'Third failed check in a row. Likely not a false positive; please investigate. Notifications will be snoozed until the monitor recovers.';
+                    }
+
+                    $blocks = [
+                        self::addBlock( 'header', ":red_circle: Website appears to be down!" ),
+                        self::addBlock( 'section', "Website " . $monitor->url . " is not responding." ),
+                        self::addBlock( 'section', "Reason: " . $monitor->uptime_check_failure_reason ),
+                        self::addBlock( 'section', $attemptText ),
                         self::addBlock( 'divider' ),
-                        self::addBlock( 'section', "Website " . $monitor->url . " is down." ),   
-                        self::addBlock( 'divider' ),
-                    ]);
+                    ];
+
+                    SlackAlert::to( $tenant->slack_webhook )->blocks( $blocks );
                 }
             }
         }
-    
+
     }
 
     // public static function sendPHPErrorsFound( Site $site, $count = 0, $type = 'fatal' )
