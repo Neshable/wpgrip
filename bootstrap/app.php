@@ -40,12 +40,12 @@ return Illuminate\Foundation\Application::configure(basePath: dirname(__DIR__))
         // $schedule->job(new CheckAllVulnerabilities)->dailyAt('14:00');
 
         // Domain specific - expiry date, blacklists...
-    $schedule->job(new BulkDomainExpiry)->weekly();
+        $schedule->job(new BulkDomainExpiry)->weekly();
        
-        // Performance checks - @todo test with large amount of sites
+        // Performance checks googles lighthouse - @todo test with large amount of sites
         $schedule->job(new ScheduleTests)->dailyAt('01:00')->onOneServer();
         
-        // Schedule::exec('node /home/forge/script.js')->daily();
+        // sSchedule::exec('node /home/forge/script.js')->daily();
     })
     ->withExceptions(function (Exceptions $exceptions) {
 

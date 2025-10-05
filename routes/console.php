@@ -16,9 +16,10 @@ use Illuminate\Support\Facades\Schedule;
 // The runInBackground method may only be used when scheduling tasks via the command and exec methods.
 
 
-Schedule::command('app:generate-sitemap')->everyOddHour();
+// Schedule::command('app:generate-sitemap')->everyOddHour();
 
 Schedule::command('app:metrics-beat')->dailyAt('00:01');
+
 Schedule::command('monitor:check-uptime')->everyMinute()->runInBackground();
 Schedule::command('monitor:check-certificate')->everyMinute()->runInBackground();
 
@@ -27,7 +28,9 @@ Schedule::command('delete:expired-records')->daily()->runInBackground();
 
 
 Schedule::command('app:local-subscription-expiring-soon-reminder')->dailyAt('00:01');
-
 Schedule::command('app:cleanup-local-subscription-statuses')->hourly();
-
 Schedule::command('app:sync-seat-based-subscription-quantities')->hourly();
+
+// Laravel General Commands
+// Flush the failed jobs queue
+Schedule::command('queue:flush')->daily();

@@ -37,13 +37,14 @@ class UptimeListener
      */
     public function handleUptimeCheckFailed( UptimeCheckFailed $event ): void
     {
-        $limit = 10;
+        $limit = 3;
 
         // Limit the times you see this notification, otherwise it will loop forever.
         if ( $event->monitor->uptime_check_times_failed_in_a_row && $event->monitor->uptime_check_times_failed_in_a_row < $limit )
         {
             SlackNotifications::sendUptimeFailed( $event->monitor );
         }
+
         // Handle the uptime log.
        $this->handleUptimeLog( $event->monitor );
         

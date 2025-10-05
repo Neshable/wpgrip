@@ -111,7 +111,7 @@ class SlackNotifications {
                 if ( $tenant && $tenant->enable_slack && !empty( $tenant->slack_webhook )  ) {
                     SlackAlert::to( $tenant->slack_webhook )->blocks([
                         self::addBlock( 'header', ":red_circle: Website is down!" ),
-                        self::addBlock( 'section', $monitor->uptime_check_failure_reason ),
+                        self::addBlock( 'section', "Reason for failure: " . $monitor->uptime_check_failure_reason ),
                         self::addBlock( 'divider' ),
                         self::addBlock( 'section', "Website " . $monitor->url . " is down." ),   
                         self::addBlock( 'divider' ),
