@@ -4,6 +4,8 @@ namespace App\Services\External;
 
 use Illuminate\Support\Facades\Http;
 
+use Illuminate\Support\Facades\Log;
+
 class PageSpeedInsightsService {
 
 	public static function fetchInsights( $url, $strategy = 'mobile' ) {
@@ -15,27 +17,40 @@ class PageSpeedInsightsService {
 		// https://developers.google.com/speed/docs/insights/rest/v5/pagespeedapi/runpagespeed#Category
 		$categories = array( 'PERFORMANCE', 'ACCESSIBILITY', 'BEST_PRACTICES', 'SEO' );
 
-		$response = Http::timeout( 200 )->get(
-			$apiUrl,
-			array(
-				'url'      => $url,
-				'strategy' => $strategy,
-				'category' => $categories,
-				'key'      => $apiKey,
-			)
-		);
+		try {
+			$response = Http::timeout( 200 )->get(
+				$apiUrl,
+				array(
+					'url'      => $url,
+					'strategy' => $strategy,
+					'category' => $categories,
+					'key'      => $apiKey,
+				)
+			);
 
-		if ( $response->failed() ) {
-			throw new \Exception( 'Google PageSpeed Insights API request failed.' );
+			if ( $response->failed() ) {
+				throw new \Exception( 'Google PageSpeed Insights API request failed: ' . $response->body() );
+			}
+
+			return self::parseResponse( $response->json() );
+
+		} catch (\Exception $e) {
+			Log::error( 'PageSpeed Insights Error: ' . $e->getMessage(), [
+				'url' => $url,
+				'strategy' => $strategy
+			]);
+			return [];
 		}
-
-		return self::parseResponse( $response->json() );
 	}
 
 	public static function parseResponse( $data ) 
     {
 		
         $metrics = array();
+
+        if ( !is_array($data) ) {
+            return $metrics;
+        }
 
 		if ( isset( $data['lighthouseResult'] ) ) 
         {

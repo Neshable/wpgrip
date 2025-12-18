@@ -75,7 +75,7 @@ class PageSpeed implements ShouldQueue
         {
             $insights = PageSpeedInsightsService::fetchInsights( $this->site->url, $this->strategy );
          
-            if ( $insights && is_array( $insights ) )
+            if ( $insights && is_array( $insights ) && !empty($insights) )
             {
                 PerformanceData::create([
                     'site_id' => $this->site->id,
@@ -83,8 +83,10 @@ class PageSpeed implements ShouldQueue
                     ...$insights
                 ]);
 
-                $this->site->sitemeta->lighthouse_last_sync = Carbon::now();
-                $this->site->sitemeta->save();
+                if ($this->site->sitemeta) {
+                    $this->site->sitemeta->lighthouse_last_sync = Carbon::now();
+                    $this->site->sitemeta->save();
+                }
 
                 // Send notification
             }

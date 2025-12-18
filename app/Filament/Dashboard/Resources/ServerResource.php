@@ -43,24 +43,30 @@ class ServerResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->helperText('A friendly name to identify your server easily.'),
                 Forms\Components\TextInput::make('ip')
                     ->required()
                     ->unique(Server::class, 'ip', ignoreRecord: true)
                     ->validationMessages([
                         'unique' => 'A server with this IP address already exists.',
-                    ]),
+                    ])
+                    ->helperText('The public IP address of your server.'),
                 Forms\Components\TextInput::make('private_ip')
-                    ->label('Private IP'),
+                    ->label('Private IP')
+                    ->helperText('The private IP address of your server (optional).'),
                 Forms\Components\TextInput::make('ssh_port')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->helperText('The SSH port used to connect to your server (default is 22).'),
                 Forms\Components\Select::make('provider')
                     ->options(HostingProvider::class)
-                    ->searchable(),
+                    ->searchable()
+                    ->helperText('Select the hosting provider for this server.'),
                 Forms\Components\Select::make('type')
                     ->options(ServerType::class)
                     ->searchable()
+                    ->helperText('Choose the server type (e.g., Web Server, Database Server).'),
 
                 // Field::make('ip_address')->ip()
                 // Field::make('ip_address')->ipv4()
