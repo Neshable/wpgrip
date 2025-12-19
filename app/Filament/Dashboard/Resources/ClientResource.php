@@ -46,22 +46,44 @@ class ClientResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('email'),
-                Tables\Columns\TextColumn::make('country'),
-                Tables\Columns\TextColumn::make('sites_count')->counts('sites')->badge()->label('Sites'),
+                Tables\Columns\Layout\Stack::make([
+                    Tables\Columns\TextColumn::make('name')
+                        ->searchable()
+                        ->weight(\Filament\Support\Enums\FontWeight::Bold)
+                        ->icon('heroicon-m-user')
+                        ->size(Tables\Columns\TextColumn\TextColumnSize::Large),
+                    
+                    Tables\Columns\TextColumn::make('email')
+                        ->icon('heroicon-m-envelope')
+                        ->color('gray')
+                        ->copyable(),
+                        
+                    Tables\Columns\TextColumn::make('country')
+                        ->icon('heroicon-m-globe-alt')
+                        ->color('gray'),
 
+                    Tables\Columns\TextColumn::make('sites_count')
+                        ->counts('sites')
+                        ->badge()
+                        ->color('primary')
+                        ->formatStateUsing(fn ($state) => $state . ' Connected Sites'),
+                ])->space(3),
+            ])
+            ->contentGrid([
+                'md' => 2,
+                'xl' => 3,
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ])
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make()->label('Add client'),

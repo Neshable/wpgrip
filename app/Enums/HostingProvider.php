@@ -4,8 +4,9 @@ namespace App\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Contracts\HasColor;
  
-enum HostingProvider: string implements HasLabel,HasIcon
+enum HostingProvider: string implements HasLabel, HasIcon, HasColor
 {
     case Hostinger = 'hostinger';
     case SiteGround = 'siteground';
@@ -51,6 +52,8 @@ enum HostingProvider: string implements HasLabel,HasIcon
             self::GoogleCloud => 'google',
             self::HetznerCloud => 'hetzner',
             self::DigitalOcean => 'digitalocean',
+            self::Hostinger => 'hostinger',
+            self::GoDaddy => 'godaddy',
             default => 'ubuntu'
         };
     }

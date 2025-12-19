@@ -26,6 +26,7 @@ use App\Jobs\GetServerStats;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
+use Illuminate\Support\HtmlString;
 
 use Filament\Tables\Actions\Action;
 
@@ -95,9 +96,27 @@ class ServerResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Friendly Name')
                     ->searchable()
-                    ->sortable(), 
-                Tables\Columns\TextColumn::make('provider')
-                    ->badge(),
+                    ->sortable()
+                    ->html()
+                    ->formatStateUsing(function ($state, Server $record) {
+                        $iconName = $record->provider?->getIcon() ?? 'ubuntu';
+                        $extension = 'svg';
+
+                        if ($record->provider === HostingProvider::SiteGround) {
+                            $iconName = 'siteground';
+                            $extension = 'png';
+                        }
+
+                        return new HtmlString(
+                            '<div class="flex mr-4 gap-2 items-center">'.
+                            ' <img src="'.asset('images/hosting-providers/'.$iconName.'.'.$extension).'" class="h-6 w-6" style="min-width: 1.5rem;" alt="'.$record->provider?->getLabel().'" title="'.$record->provider?->getLabel().'"> '
+                            .$state
+                            .'</div>'
+                        );
+                    })
+                    ->tooltip(fn (Server $record): ?string => $record->provider?->getLabel()),
+                // Tables\Columns\TextColumn::make('provider')
+                //     ->badge(),
                 Tables\Columns\TextColumn::make('ip')
                     ->copyable()
                     ->copyMessage('IP copied to clipboard')
@@ -169,24 +188,41 @@ class ServerResource extends Resource
         return $infolist
             ->schema([
                 Section::make('Server Overview')
-                ->description('')
-                ->schema([
-                    Infolists\Components\TextEntry::make('name')->label('Friendly Name'),
-                    Infolists\Components\TextEntry::make('provider')->badge(),
-                    Infolists\Components\TextEntry::make('ip')
-                        ->copyable()
-                        ->copyMessage('IP copied to clipboard')
-                        ->label('Public IP')
-                        ->icon('heroicon-m-clipboard-document'),
-                    Infolists\Components\TextEntry::make('private_ip')
-                        ->copyable()
-                        ->copyMessage('Private IP copied to clipboard')
-                        ->copyMessageDuration(1500)
-                        ->label('Private IP')
-                        ->icon('heroicon-m-clipboard-document'),
-                    Infolists\Components\TextEntry::make('ssh_port')->label('SSH Port'),
+                    ->icon('heroicon-o-server')
+                    ->schema([
+                        Infolists\Components\Grid::make(3)
+                            ->schema([
+                                Infolists\Components\Group::make([
+                                    Infolists\Components\TextEntry::make('name')
+                                        ->label('Friendly Name')
+                                        ->weight(\Filament\Support\Enums\FontWeight::Bold)
+                                        ->icon('heroicon-m-server'),
+                                    Infolists\Components\TextEntry::make('provider')
+                                        ->badge(),
+                                ]),
 
-                ])->columns(2)
+                                Infolists\Components\Group::make([
+                                    Infolists\Components\TextEntry::make('ip')
+                                        ->label('Public IP')
+                                        ->icon('heroicon-m-globe-alt')
+                                        ->copyable()
+                                        ->copyMessage('IP copied to clipboard'),
+                                    Infolists\Components\TextEntry::make('private_ip')
+                                        ->label('Private IP')
+                                        ->icon('heroicon-m-lock-closed')
+                                        ->placeholder('N/A')
+                                        ->copyable()
+                                        ->copyMessage('Private IP copied to clipboard'),
+                                ]),
+
+                                Infolists\Components\Group::make([
+                                    Infolists\Components\TextEntry::make('ssh_port')
+                                        ->label('SSH Port')
+                                        ->icon('heroicon-m-command-line')
+                                        ->fontFamily(\Filament\Support\Enums\FontFamily::Mono),
+                                ]),
+                            ]),
+                    ]),
             ]);
 
     

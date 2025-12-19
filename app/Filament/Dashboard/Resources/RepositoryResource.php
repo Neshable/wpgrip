@@ -97,42 +97,38 @@ class RepositoryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Name')
-                    // ->description(fn (Repository $record): string => $record->site->url ? 'Site: ' . $record->site->url : 'Not connected' )
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('type')
-                    ->label('Type')
+                Tables\Columns\IconColumn::make('type')
+                    ->label('')
                     ->icon(fn (string $state): string => match ($state) {
                         'plugin' => 'icon-plugins',
                         'theme' => 'icon-wordpress',
                         'other' => 'icon-wordpress',
                         default => 'icon-wordpress'
                     })
-                    // ->description(fn (Repository $record): string => $record->site->url ? 'Site: ' . $record->site->url : 'Not connected' )
+                    ->tooltip(fn (string $state): string => ucfirst($state))
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('remote')
-                    ->label('Remote')
-                    ->searchable()
-                    ->copyable()
-                    ->sortable(),
-                    Tables\Columns\TextColumn::make('provider')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'bitbucket' => 'info',  // Bitbucket blue
-                        'github' => 'gray',     // GitHub gray
-                        default => 'primary'    // WordPress blue
-                    })
+                Tables\Columns\IconColumn::make('provider')
+                    ->label('')
                     ->icon(fn (string $state): string => match ($state) {
                         'bitbucket' => 'icon-bitbucket',
                         'github' => 'icon-github',
                         default => 'icon-wordpress'
-                    }),
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'bitbucket' => 'info',
+                        'github' => 'gray',
+                        default => 'primary'
+                    })
+                    ->tooltip(fn (string $state): string => ucfirst($state))
+                    ->sortable(),
 
-                // Tables\Columns\TextColumn::make('remote')
-                //     ->description(fn (Repository $record): string => $record->branch ? 'On branch: ' . $record->branch : 'No branch selected')
-                //     ->searchable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Repository')
+                    ->description(fn (Repository $record): string => $record->remote)
+                    ->searchable(['name', 'remote'])
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('sites_count')
                     ->badge()
                     ->label('Connected Sites')

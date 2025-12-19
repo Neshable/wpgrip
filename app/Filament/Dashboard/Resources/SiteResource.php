@@ -321,13 +321,11 @@ class SiteResource extends Resource
                 ->circular()
                 ->size(20)
                 ->defaultImageUrl(fn (Site $record): string => url('https://s2.googleusercontent.com/s2/favicons?domain=' . $record->url)),
-            
+
                 Tables\Columns\ViewColumn::make('name')
                 ->searchable()
                 ->view('filament.tables.columns.sitename'),
-                Tables\Columns\ViewColumn::make('status')
-                ->label(false)
-                ->view('filament.tables.columns.siteinfo'),
+     
             Tables\Columns\TextColumn::make('server.name')
                 ->label('Server/Hosting')
                 ->searchable()
@@ -337,9 +335,11 @@ class SiteResource extends Resource
             Tables\Columns\ViewColumn::make('stack')
                 ->label('Stack')
                 ->view('filament.tables.columns.stack'),
-            Tables\Columns\ViewColumn::make('performance')->view('filament.tables.columns.sitespeed'),
+            //Tables\Columns\ViewColumn::make('performance')->view('filament.tables.columns.sitespeed'),
             
-   
+            Tables\Columns\ViewColumn::make('status')
+            ->label('Status')
+            ->view('filament.tables.columns.siteinfo'),
 
             // Tables\Columns\TextColumn::make('server.provider')
             //     ->label('Hosted')

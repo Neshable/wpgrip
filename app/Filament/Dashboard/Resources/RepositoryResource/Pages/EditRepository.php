@@ -48,6 +48,25 @@ class EditRepository extends EditRecord
                         ->maxLength(255),
                     ]),
 
+                Section::make('Webhook Deployment')
+                    ->description('Add this URL to your git webhooks to enable automatic deployments when you push your changes to your current branch.')
+                    ->schema([
+                        Forms\Components\TextInput::make('webhook_url')
+                            ->label('Webhook URL')
+                            ->afterStateHydrated(function (Forms\Components\TextInput $component, $record) {
+                                $component->state('https://app.wpgrip.com/webhook/git/' . $record->webhook);
+                            })
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->suffixAction(
+                                Forms\Components\Actions\Action::make('copy')
+                                    ->icon('heroicon-m-clipboard')
+                                    ->action(function ($livewire, $state) {
+                                        $livewire->js('window.navigator.clipboard.writeText("'.$state.'"); $tooltip("Copied to clipboard", { timeout: 1500 });');
+                                    })
+                            ),
+                    ]),
+
 
             ]);
     }
