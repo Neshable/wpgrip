@@ -106,7 +106,7 @@ class SshAndGitPull implements ShouldQueue
         $this->repository = $repository;
         $this->site = $site;
         $this->status = RepoStatus::WORKING->value;
-        $this->recipient = auth()->user();
+        $this->recipient = auth()->check() ? auth()->user() : null;
         $this->deployment_type = $deployment_type;
     }
 
@@ -365,8 +365,13 @@ class SshAndGitPull implements ShouldQueue
         $url = str_replace(":", "/", $this->repository->remote ); // convert ':' to '/'
         $parts = parse_url("ssh://" . $url); 
 
+        // Add the host key to known_hosts to avoid interactive confirmation
+        if (isset($parts['host'])) {
+            $connection->exec('ssh-keyscan -H ' . $parts['host'] . ' >> ~/.ssh/known_hosts');
+        }
+
         // Full part.
-        $output = $connection->exec('cd ' . dirname( $this->getAbsolutePathToDeploy() ) . ' && ssh -T ' . $parts['user'] . "@" . $parts['host'] );
+        $output = $connection->exec('cd ' . dirname( $this->getAbsolutePathToDeploy() ) . ' && ssh -T ' . $parts['user'] . "@" . ($parts['host'] ?? '') );
    
         if ( preg_match('/Permission denied/', $output) || !$connection->getExitStatusBool() ) 
         {
@@ -455,7 +460,7 @@ class SshAndGitPull implements ShouldQueue
        
         $last_commits = 'cd ' . $this->getAbsolutePathToDeploy() . ' && ' . $this->get_latest_git_commit();
         
-        $commit_response = json_decode( $connection->exec( $last_commits ) );
+        $commit_response = json_decode( (string) $connection->exec( $last_commits ) );
 
         if ( $commit_response && is_array(  $commit_response  ) )
         {
