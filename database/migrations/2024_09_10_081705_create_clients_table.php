@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('country');
-            $table->string('notes');
+            $table->text('notes')->nullable();
             $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
             $table->date('deleted_at')->nullable(); // for soft-deletes
             $table->timestamps();

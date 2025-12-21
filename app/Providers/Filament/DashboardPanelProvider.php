@@ -58,7 +58,11 @@ class DashboardPanelProvider extends PanelProvider
                 MenuItem::make()
                     ->label(__('Admin Panel'))
                     ->visible(
-                        fn () => auth()->user()->isAdmin()
+                        function () {
+                            /** @var \App\Models\User $user */
+                            $user = auth()->user();
+                            return $user && $user->isAdmin();
+                        }
                     )
                     ->url(fn () => route('filament.admin.pages.dashboard'))
                     ->icon('heroicon-s-cog-8-tooth'),
@@ -78,6 +82,7 @@ class DashboardPanelProvider extends PanelProvider
                             $tenantPermissionManager = app(TenantPermissionManager::class);
 
                             $tenant = Filament::getTenant();
+                            /** @var \App\Models\User $user */
                             $user = auth()->user();
 
                             // Tenant was created by the current user.
@@ -100,15 +105,24 @@ class DashboardPanelProvider extends PanelProvider
                         function () {
                             $tenantPermissionManager = app(TenantPermissionManager::class);
 
+                            $tenant = Filament::getTenant();
+                            /** @var \App\Models\User $user */
+                            $user = auth()->user();
+
+                            // Tenant was created by the current user.
+                            if ($tenant->created_by == $user->id && !$user->isSubscribed() ) {
+                                return false;
+                            }
+
                             return $tenantPermissionManager->tenantUserHasPermissionTo(
-                                Filament::getTenant(),
-                                auth()->user(),
+                                $tenant,
+                                $user,
                                 TenancyPermissionConstants::PERMISSION_UPDATE_SUBSCRIPTIONS
                             );
                         }
                     )
                     ->icon('heroicon-s-cog-8-tooth')
-                    ->url(fn () => TenantSettings::getUrl()),
+                    ->url(fn () => SubscriptionResource::getUrl()),
                 MenuItem::make()
                     ->label(__('2-Factor Authentication'))
                     ->visible(
@@ -223,10 +237,12 @@ class DashboardPanelProvider extends PanelProvider
                     ->visible(
                         function () {
                             $tenantPermissionManager = app(TenantPermissionManager::class);
+                            /** @var \App\Models\User $user */
+                            $user = auth()->user();
 
                             return $tenantPermissionManager->tenantUserHasPermissionTo(
                                 Filament::getTenant(),
-                                auth()->user(),
+                                $user,
                                 TenancyPermissionConstants::PERMISSION_UPDATE_TENANT_SETTINGS
                             );
                         }
@@ -239,10 +255,12 @@ class DashboardPanelProvider extends PanelProvider
                     ->visible(
                         function () {
                             $tenantPermissionManager = app(TenantPermissionManager::class);
+                            /** @var \App\Models\User $user */
+                            $user = auth()->user();
 
                             return $tenantPermissionManager->tenantUserHasPermissionTo(
                                 Filament::getTenant(),
-                                auth()->user(),
+                                $user,
                                 TenancyPermissionConstants::PERMISSION_UPDATE_TENANT_SETTINGS
                             );
                         }
