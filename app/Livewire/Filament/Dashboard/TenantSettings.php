@@ -39,6 +39,7 @@ class TenantSettings extends Component implements HasForms
         $tenant = Filament::getTenant();
         $this->form->fill([
             'tenant_name' => $tenant->name,
+            'avatar' => $tenant->avatar,
             'enable_slack' => $tenant->enable_slack,
             'slack_webhook' => $tenant->slack_webhook,
             'enable_email' => $tenant->enable_email,
@@ -63,6 +64,9 @@ class TenantSettings extends Component implements HasForms
                         ->uploadingMessage('Uploading avatar...')
                         ->helperText(__('Upload a small avatar for your workspace'))
                         ->image()
+                        ->avatar()
+                        ->disk('public')
+                        ->directory('tenant-avatars')
                         ->imageEditor()
                         ->imageEditorAspectRatios([1, 1])
 

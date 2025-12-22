@@ -8,11 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Filament\Models\Contracts\HasAvatar;
+use Illuminate\Support\Facades\Storage;
 
 use App\Services\SSH\CreateUserSSHKeyPair;
 use Illuminate\Support\Facades\Crypt;
 
-class Tenant extends Model
+class Tenant extends Model implements HasAvatar
 {
     use HasFactory;
 
@@ -25,6 +27,7 @@ class Tenant extends Model
         'enable_email',
         'email',
         'created_by',
+        'avatar',
     ];
 
     protected static function boot()
@@ -189,5 +192,10 @@ class Tenant extends Model
     public function getTenantPath(): string
     {
         return 'tenants/' . $this->uuid;
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->avatar ? Storage::url($this->avatar) : null;
     }
 }

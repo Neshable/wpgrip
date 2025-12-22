@@ -283,13 +283,19 @@ class TenantManager
 
     public function updateTenantData(Tenant $tenant, array $data ): bool
     {
-        return $tenant->update([
+        $updateData = [
             'name' => $data['tenant_name'],
             'enable_slack' =>  isset( $data['enable_slack']) ? $data['enable_slack'] : false,
             'slack_webhook' => isset( $data['slack_webhook'] ) ? $data['slack_webhook'] : '',
             'enable_email' => isset( $data['enable_email']) ? $data['enable_email'] : false,
             'email' =>  isset($data['email']) ? $data['email'] : '',
-        ]);
+        ];
+
+        if (array_key_exists('avatar', $data)) {
+            $updateData['avatar'] = $data['avatar'];
+        }
+
+        return $tenant->update($updateData);
     }
 
     private function doTenantSubscriptionsAllowAddingUser(Tenant $tenant): bool
