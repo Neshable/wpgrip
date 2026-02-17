@@ -111,11 +111,43 @@ class WPCliService {
         {
             case 'wprocket':
                 return 'wp rocket clean --confirm';
-                break;
+            case 'object':
+                return 'wp cache flush';
+            case 'beaver':
+                return 'wp beaver clearcache';
+            case 'autoptimize':
+                return 'wp autoptimize clear';
+            case 'cache_enabler':
+                return 'wp cache-enabler clear';
+            case 'fastest_cache':
+                return 'wp fastest-cache clear all';
+            case 'w3_total_cache':
+                return 'wp w3-total-cache flush all';
+            case 'supercache':
+                return 'wp super-cache flush';
             default:
                 return '';
-                break;
         }
+    }
+
+    public static function verifyCoreChecksums()
+    {
+        return 'wp core verify-checksums';
+    }
+
+    public static function checkDatabase()
+    {
+        return 'wp db check';
+    }
+
+    public static function listUsers()
+    {
+        return 'wp user list --fields=ID,user_login,user_email,roles --format=table';
+    }
+
+    public static function flushRewrites()
+    {
+        return 'wp rewrite flush --hard';
     }
  
 }

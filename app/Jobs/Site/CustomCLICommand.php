@@ -79,7 +79,7 @@ class CustomCLICommand implements ShouldQueue
             if ( $success )
             {
                 GripNotifications::commandSuccess();
-                return true;
+                return $output !== false ? (string) $output : '';
             }
    
             GripNotifications::commandFail();

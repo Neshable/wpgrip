@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /d/Projects/wpgrip log --oneline -10)",
+      "Bash(grep:*)"
+    ]
+  }
+}
