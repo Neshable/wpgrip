@@ -24,7 +24,7 @@ class RepositoryListener
      */
     public function handle(GitPullSuccess $event): void
     {
-        SlackNotifications::sendGitPullSuccess( $event->repository );
+        SlackNotifications::sendGitPullSuccess( $event->repository, $event->site, $event->deployment_type );
     }
 
     /**
@@ -32,6 +32,6 @@ class RepositoryListener
      */
     public function handleGitPullSuccessful( GitPullSuccess $event ): void
     {
-        SlackNotifications::sendGitPullSuccess( $event->repository );
+        SlackNotifications::sendGitPullSuccess( $event->repository, $event->site, $event->deployment_type );
     }
 }

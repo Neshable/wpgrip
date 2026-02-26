@@ -21,7 +21,6 @@ class Repository extends Model
         'path',
         'provider',
         'remote',
-        'secret',
         'branch'
     ];
 

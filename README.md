@@ -1,6 +1,6 @@
 
 
-## WPGrip
+## WPGrip — v2.3.4
 
 **Laravel**: ^11.23  
 **PHP**: >= 8.2  
@@ -13,6 +13,7 @@ WPGrip is a Laravel-based platform (TALL stack + Filament) providing a full-feat
 - Payments integration scaffolding (Stripe, Paddle, LemonSqueezy via provider data tables)
 - Filament Admin 3.x with ready-made resources and widgets
 - Sites management (sites, repositories, plugins, themes, performance data, snapshots, backups, monitors)
+- Git deployment system with push-to-deploy webhooks (GitHub & Bitbucket), deployment logs, and commit revert
 - Uptime monitoring and certificate checks (Spatie Uptime Monitor)
 - Multi-tenancy primitives (tenants, tenant users, invitations)
 - Security and analytics (vulnerabilities DB sync, metrics)
@@ -179,7 +180,7 @@ php artisan test
 ---
 
 ## Useful Artisan Commands
-- `php artisan delete:expired-records` – schedules deletion of old snapshots/records
+- `php artisan delete:expired-records` – deletes expired snapshots and prunes deployment logs (keeps last 50 per site-repository connection)
 - Queue maintenance: `php artisan queue:flush` (scheduled daily)
 
 ---

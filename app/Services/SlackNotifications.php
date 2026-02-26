@@ -41,31 +41,40 @@ class SlackNotifications {
 
     }
 
-    public static function sendGitPullSuccess( Repository $repository )
+    public static function sendGitPullSuccess( Repository $repository, ?Site $site = null, string $deployment_type = 'manual' )
     {
         $tenant = $repository->tenant;
-        
-        if ( $tenant && $tenant->enable_slack && !empty( $tenant->slack_webhook )  ) {
+
+        if ( $tenant && $tenant->enable_slack && !empty( $tenant->slack_webhook ) ) {
+            $typeEmoji  = $deployment_type === 'webhook' ? ':arrows_counterclockwise:' : ':bust_in_silhouette:';
+            $typeLabel  = $deployment_type === 'webhook' ? 'Webhook (auto-deploy)' : 'Manual';
+            $siteLabel  = $site ? $site->name . ' — ' . $site->url : 'Unknown site';
+
+            $fields = [
+                [
+                    "type" => "mrkdwn",
+                    "text" => "*Repository:*\n" . $repository->name
+                ],
+                [
+                    "type" => "mrkdwn",
+                    "text" => "*Site:*\n" . $siteLabel
+                ],
+                [
+                    "type" => "mrkdwn",
+                    "text" => "*Triggered by:*\n" . $typeEmoji . ' ' . $typeLabel
+                ],
+            ];
+
             SlackAlert::to( $tenant->slack_webhook )->blocks([
-                self::addBlock( 'header', ":white_check_mark: Repository successfully fetched" ),
-                self::addBlock( 'section', "Repository successfully synced  " ),
+                self::addBlock( 'header', ":white_check_mark: Deployment successful" ),
                 self::addBlock( 'divider' ),
-                self::addBlock( 'section', "Repository - " . $repository->name ),
-               
                 [
                     "type" => "section",
-                    "fields" => [
-                        [
-                            "type" => "mrkdwn",
-                            "text" => "*On branch:*\n" . $repository->branch
-                        ]
-                    ]
-                ],  
+                    "fields" => $fields,
+                ],
                 self::addBlock( 'divider' ),
-                self::addBlock( 'section', "|----|" ),
             ]);
         }
-        
     }
 
     public static function sendBackupSuccess( Backup $backup )

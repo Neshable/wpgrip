@@ -23,8 +23,9 @@ class GitPullSuccess
      */
     public function __construct(
         public Repository $repository,
+        public ?Site $site = null,
+        public string $deployment_type = 'manual',
     ) {
-       
     }
 
 

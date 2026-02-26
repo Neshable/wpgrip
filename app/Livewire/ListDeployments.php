@@ -59,9 +59,11 @@ class ListDeployments extends Component implements HasForms, HasTable
                 TextColumn::make('created_at')->dateTime()->since()->label('Date')->dateTimeTooltip(),
                 TextColumn::make('site.name'),
                 TextColumn::make('branch')->icon('icon-git'),
-                TextColumn::make('type')->label('Type')->badge()->color(fn (string $state): string => match ($state) {
-                    'manual' => 'primary',
-                    'webhook' => 'primary',
+                TextColumn::make('type')->label('Type')->badge()->color(fn (?string $state): string => match ($state) {
+                    'webhook' => 'success',
+                    'revert'  => 'warning',
+                    'manual'  => 'info',
+                    default   => 'gray',
                 }),
                 TextColumn::make('commit')
                     ->copyable()
@@ -99,6 +101,11 @@ class ListDeployments extends Component implements HasForms, HasTable
             ->description('History of all your past deployments.')
             ->emptyStateHeading('No deployments found')
             ->emptyStateDescription('You haven\'t done any deployments yet.')
+            ->recordClasses(fn (Deployment $record): string => match ($record->type) {
+                'webhook' => 'bg-green-50 dark:bg-green-950/30',
+                'revert'  => 'bg-amber-50 dark:bg-amber-950/30',
+                default   => '',
+            })
             ->bulkActions([
                 BulkAction::make('delete')
                     ->requiresConfirmation()

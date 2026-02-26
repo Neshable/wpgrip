@@ -5,9 +5,15 @@
 ### Added
 - **Revert Commit** action on connected sites — choose from last 5 deployed commits or enter a custom hash to hard-reset the server deployment
 - Deployment logs are now capped at 50 per site-repository connection, pruned automatically by the daily cron
+- Slack deployment notifications now include site name, URL, and trigger type (webhook vs manual)
 
 ### Fixed
 - Webhook auto-deploy never triggered — `auto_deploy` was read from the wrong model instead of the pivot table
+- Deployment log `type` column showed blank due to unhandled `null` in match expression
+
+### Changed
+- Deployment log rows are now color-coded: green for webhook, amber for revert
+- `Repository::$fillable` — removed unused `secret` field
 
 ---
 
