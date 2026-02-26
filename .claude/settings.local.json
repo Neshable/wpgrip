@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(git -C /d/Projects/wpgrip log --oneline -10)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(git -C /d/Projects/wpgrip log --oneline -20)",
+      "Bash(wc -l /d/Projects/wpgrip/app/**/*.php)",
+      "Bash(git -C /d/Projects/wpgrip status)",
+      "Bash(git -C /d/Projects/wpgrip branch -a)"
     ]
   }
 }

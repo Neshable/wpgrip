@@ -32,6 +32,9 @@ use Filament\Notifications\Notification;
 use App\Jobs\Git\SshAndGitPull;
 use App\Jobs\Git\SshAndChangeBranch;
 use App\Jobs\Git\SshAndGitStatus;
+use App\Jobs\Git\SshAndGitRevert;
+use App\Models\Deployment;
+use Illuminate\Support\Str;
 
 use Filament\Infolists\Components\Actions;
 use Filament\Tables\Actions\Action;
@@ -214,6 +217,47 @@ class ListRepoSites extends Component implements HasForms, HasTable
                         
                         SshAndChangeBranch::dispatch( $this->repo_model, $site, $data['branch'] );
                     }),
+                    Action::make('revert_commit')
+                        ->label('Revert Commit')
+                        ->color('warning')
+                        ->icon('heroicon-o-arrow-uturn-left')
+                        ->modalHeading('Revert to a previous commit')
+                        ->modalDescription('This will hard-reset the deployed code on the server to the selected commit. The remote repository is not affected.')
+                        ->modalSubmitActionLabel('Revert')
+                        ->form([
+                            Forms\Components\Select::make('commit_hash')
+                                ->label('Select commit to revert to')
+                                ->options(function (Site $record) {
+                                    $options = [];
+                                    $deployments = Deployment::where('pivot_id', $record->pivot->id)
+                                        ->orderBy('created_at', 'desc')
+                                        ->limit(5)
+                                        ->get();
+                                    foreach ($deployments as $d) {
+                                        $label = substr($d->commit, 0, 8) . ' – ' . Str::limit($d->message, 40) . ' (' . $d->created_at->diffForHumans() . ')';
+                                        $options[$d->commit] = $label;
+                                    }
+                                    $options['custom'] = 'Custom commit hash…';
+                                    return $options;
+                                })
+                                ->live()
+                                ->required(),
+                            Forms\Components\TextInput::make('custom_commit_hash')
+                                ->label('Custom commit hash')
+                                ->placeholder('Full or short commit hash (e.g. abc1234)')
+                                ->visible(fn ($get) => $get('commit_hash') === 'custom'),
+                        ])
+                        ->action(function (array $data, Site $site) {
+                            $hash = $data['commit_hash'] === 'custom'
+                                ? trim($data['custom_commit_hash'])
+                                : $data['commit_hash'];
+
+                            $this->repo_model->sites()->updateExistingPivot($site->id, [
+                                'status' => \App\Enums\RepoStatus::WORKING->value,
+                            ]);
+
+                            SshAndGitRevert::dispatch($this->repo_model, $site, $hash);
+                        }),
                     Action::make('detach')
                         ->label('Remove')
                         ->color('danger')
@@ -225,7 +269,7 @@ class ListRepoSites extends Component implements HasForms, HasTable
                         ->action(function ( Site $site ) {
                             // Detach the record from the pivot table.
                             $this->repo_model->sites()->detach( $site->site_id );
-                            
+
                             Notification::make()
                                 ->title('Site detached.')
                                 ->success()

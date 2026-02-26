@@ -15,7 +15,7 @@ class SubscriptionLimitChecker
         'site' => [
             'basic' => 5,
             'pro' => 20,
-            'ultimate' => 50,
+            'ultimate' => 60,
         ],
         'repository' => [
             'basic' => 10,

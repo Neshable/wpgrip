@@ -135,7 +135,7 @@ class WebhookController extends Controller
             {
                 $site_branch = $single_site->pivot->branch;
 
-                if( $single_site->auto_deploy && $site_branch === $branch_name)
+                if( $single_site->pivot->auto_deploy && $site_branch === $branch_name)
                 {
 				    // If the signature is valid, process the webhook payload
 				    SshAndGitPull::dispatch( $repository, $single_site, null, 'webhook' );

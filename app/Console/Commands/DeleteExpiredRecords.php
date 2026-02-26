@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Snapshot;
+use App\Models\Deployment;
 use Illuminate\Support\Facades\Bus;
 use App\Jobs\Backup\DeleteOldSnapshots;
 
@@ -39,7 +40,24 @@ class DeleteExpiredRecords extends Command
             //  ])->onQueue('longrunning')->dispatch();
          }
  
-        // Additional models with different types of deletion logic can also be added here
+        // Prune deployment logs: keep only the 50 most recent per site-repository connection
+        $pivotIds = Deployment::whereNotNull('pivot_id')
+            ->select('pivot_id')
+            ->groupBy('pivot_id')
+            ->havingRaw('COUNT(*) > 50')
+            ->pluck('pivot_id');
+
+        foreach ($pivotIds as $pivotId) {
+            $idsToKeep = Deployment::where('pivot_id', $pivotId)
+                ->orderBy('created_at', 'desc')
+                ->limit(50)
+                ->pluck('id');
+
+            Deployment::where('pivot_id', $pivotId)
+                ->whereNotIn('id', $idsToKeep)
+                ->delete();
+        }
+
         $this->info('Expired records have been scheduled for deletion.');
     }
 }
