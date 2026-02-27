@@ -8,6 +8,9 @@ use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Log;
 use Anthropic\Laravel\Facades\Anthropic;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\HtmlString;
 
 class AiAssistant extends ViewRecord
 {
@@ -38,22 +41,161 @@ class AiAssistant extends ViewRecord
         return view('site.single.header');
     }
 
+    public function mount(int|string $record): void
+    {
+        parent::mount($record);
+
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::HEAD_END,
+            fn (): HtmlString => new HtmlString($this->aiStyles()),
+            scopes: [static::class],
+        );
+
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::SCRIPTS_AFTER,
+            fn (): HtmlString => new HtmlString($this->aiScript()),
+            scopes: [static::class],
+        );
+    }
+
+    private function aiScript(): string
+    {
+        return <<<'JS'
+        <script>
+        function aiChat() {
+            return {
+                messages: [],
+                draft: '',
+                loading: false,
+                suggestions: [
+                    'List all plugins with pending updates',
+                    'What PHP version is running?',
+                    'Show the last 30 lines of the error log',
+                    'Check wp-config.php for debug or security issues',
+                    'How big is the database?',
+                ],
+
+                init(rootEl) {
+                    // Load seed data from the hidden div
+                    const seed = document.getElementById('ai-chat-seed');
+                    if (seed) {
+                        try { this.messages = JSON.parse(seed.dataset.messages || '[]'); }
+                        catch(e) { this.messages = []; }
+                    }
+
+                    this.$nextTick(() => this.scrollToBottom());
+
+                    this.$wire.$on('messageAdded', ({ role, content, html }) => {
+                        this.loading = false;
+                        this.messages.push({ role, content, html });
+                        this.$nextTick(() => this.scrollToBottom());
+                    });
+
+                    this.$watch('$wire.messages', (val) => {
+                        if (Array.isArray(val) && val.length === 0) {
+                            this.messages = [];
+                            this.loading  = false;
+                        }
+                    });
+                },
+
+                handleKeydown(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.submit();
+                    }
+                },
+
+                submit() {
+                    const text = this.draft.trim();
+                    if (!text || this.loading) return;
+                    this.messages.push({ role: 'user', content: text, html: '' });
+                    this.draft   = '';
+                    this.loading = true;
+                    this.$nextTick(() => {
+                        if (this.$refs.input) this.$refs.input.style.height = 'auto';
+                        this.scrollToBottom();
+                    });
+                    this.$wire.sendMessage(text).catch(() => { this.loading = false; });
+                },
+
+                fillSuggestion(s) {
+                    this.draft = s;
+                    this.$nextTick(() => this.$refs.input && this.$refs.input.focus());
+                },
+
+                clearChat() {
+                    this.messages = [];
+                    this.loading  = false;
+                    this.$wire.clearChat();
+                },
+
+                nl2br(str) {
+                    return String(str)
+                        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                        .replace(/\n/g, '<br>');
+                },
+
+                autoResize(el) {
+                    el.style.height = 'auto';
+                    el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+                },
+
+                scrollToBottom() {
+                    const el = this.$refs.msgList;
+                    if (el) el.scrollTop = el.scrollHeight;
+                },
+            };
+        }
+        </script>
+        JS;
+    }
+
+    private static function aiStyles(): string
+    {
+        return <<<'CSS'
+        <style>
+        @keyframes ai-bounce {
+            0%, 80%, 100% { transform: translateY(0); opacity: .4; }
+            40%           { transform: translateY(-6px); opacity: 1; }
+        }
+        @keyframes ai-fadein {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .ai-dot { animation: ai-bounce 1.2s infinite ease-in-out; }
+        .ai-dot:nth-child(1) { animation-delay: 0s; }
+        .ai-dot:nth-child(2) { animation-delay: .2s; }
+        .ai-dot:nth-child(3) { animation-delay: .4s; }
+        .ai-msg { animation: ai-fadein .22s ease-out both; }
+        .ai-bubble p             { margin: 0 0 .5rem; }
+        .ai-bubble p:last-child  { margin-bottom: 0; }
+        .ai-bubble pre           { background: #1e1e2e; color: #cdd6f4; border-radius: .5rem; padding: .75rem 1rem; overflow-x: auto; font-size: .78rem; margin: .4rem 0; }
+        .ai-bubble code          { font-size: .78rem; }
+        .ai-bubble ul, .ai-bubble ol { margin: .25rem 0 .5rem 1.2rem; }
+        .ai-bubble li            { margin-bottom: .15rem; }
+        </style>
+        CSS;
+    }
+
     // -------------------------------------------------------------------------
     // Chat
     // -------------------------------------------------------------------------
 
-    public function sendMessage(): void
+    /**
+     * Called by Alpine with the message text already trimmed.
+     * Appends to server-side history, calls Anthropic, dispatches event back to Alpine.
+     */
+    public function sendMessage(string $text): void
     {
-        $text = trim($this->userMessage);
+        $text = trim($text);
         if (empty($text)) {
             return;
         }
 
-        $this->aiError     = '';
-        $this->loading     = true;
-        $this->userMessage = '';
+        $this->aiError = '';
 
-        // Append user message
+        // Keep server-side history in sync (Alpine already showed the user bubble)
         $this->messages[] = ['role' => 'user', 'content' => $text];
 
         try {
@@ -61,12 +203,18 @@ class AiAssistant extends ViewRecord
         } catch (\Throwable $e) {
             Log::error('AI Assistant error: ' . $e->getMessage());
             $this->aiError = 'AI request failed: ' . $e->getMessage();
-            $this->loading = false;
+            $this->dispatch('aiError', message: $e->getMessage());
             return;
         }
 
         $this->messages[] = ['role' => 'assistant', 'content' => $reply];
-        $this->loading    = false;
+
+        // Render markdown server-side so Alpine just injects HTML
+        $html = (string) \Illuminate\Support\Str::of($reply)
+            ->markdown(['html_input' => 'escape', 'allow_unsafe_links' => false]);
+
+        // Tell Alpine to append the bubble and stop the loading indicator
+        $this->dispatch('messageAdded', role: 'assistant', content: $reply, html: $html);
     }
 
     // -------------------------------------------------------------------------
