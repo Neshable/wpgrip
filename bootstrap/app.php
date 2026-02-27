@@ -35,6 +35,8 @@ return Illuminate\Foundation\Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withSchedule(function (Schedule $schedule) {
+        // Shelley cleanup
+        $schedule->command('shelley:cleanup')->everyThirtyMinutes();
         // Do a sync for all sites.
         $schedule->job(new SyncAllSitesStats)->daily();
         $schedule->job(new GetVulnerabilityDatabase)->dailyAt('13:00')->onOneServer();

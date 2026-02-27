@@ -24,16 +24,20 @@ use App\Http\Controllers\WebhookController;
 |
 */
 
-// Redirect home to dashboard.
-Route::get('/', function ( UserDashboardManager $dashboardManager ) {
-    return redirect($dashboardManager->getUserDashboardUrl(Auth::user()));
-})->name('home')->middleware('auth');
+// Home page - public
+Route::get('/', function () {
+    return view('home');
+})->name('home');
 
 
 
-// Route::get('/pricing', function () {
-//      return view('pages.pricing');   
-//  })->name('pricing')->middleware('auth');
+Route::get('/pricing', function () {
+    return view('pages.pricing');
+})->name('pricing');
+
+Route::get('/features', function () {
+    return view('pages.features');
+})->name('features');
 
 // Normal dashboard
 Route::get('/dashboard', function (UserDashboardManager $dashboardManager) {
@@ -169,13 +173,13 @@ Route::get('/subscription/change-plan-thank-you', [
 //     'category',
 // ])->name('blog.category');
 
-// Route::get('/terms-of-service', function () {
-//     return view('pages.terms-of-service');
-// })->name('terms-of-service')->middleware('sitemapped');
+Route::get('/terms-of-service', function () {
+    return view('pages.terms-of-service');
+})->name('terms-of-service');
 
-// Route::get('/privacy-policy', function () {
-//     return view('pages.privacy-policy');
-// })->name('privacy-policy')->middleware('sitemapped');
+Route::get('/privacy-policy', function () {
+    return view('pages.privacy-policy');
+})->name('privacy-policy');
 
 // Product checkout routes
 

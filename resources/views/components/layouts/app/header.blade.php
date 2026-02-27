@@ -1,35 +1,65 @@
-<nav class="relative bg-primary-500 text-white border-gray-200 dark:bg-gray-900">
-    <livewire:announcement.view />
-    <div class="navbar max-w-screen-xl items-center mx-auto">
-        <div class="navbar-start">
-            <div class="dropdown">
-                <div tabindex="0" role="button" class="btn btn-ghost lg:hidden me-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
-                </div>
-                <ul tabindex="0" class="menu menu-lg dropdown-content bg-white mt-3 z-[1] p-2 border w-52">
-                    <x-layouts.app.navigation-links></x-layouts.app.navigation-links>
-                </ul>
-            </div>
-            <a href="/" class="flex justify-center items-center">
-                <img src="{{asset(config('app.logo.dark') )}}" class="h-10" alt="Logo" />
-            </a>
-        </div>
-        {{-- <div class="navbar-center hidden lg:flex">
-            <x-nav>
-                <x-layouts.app.navigation-links></x-layouts.app.navigation-links>
-            </x-nav>
-        </div> --}}
-        <div class="navbar-end">
+<header
+    class="fixed inset-x-0 top-0 z-50 border-b border-b-transparent transition-all duration-300"
+    x-data="{
+        showBorder: window.pageYOffset >= 24,
+        mobileOpen: false,
+        init() { this.evaluateScroll() },
+        evaluateScroll() { this.showBorder = window.pageYOffset >= 24 },
+    }"
+    x-on:scroll.window.passive="evaluateScroll"
+    :class="showBorder ? 'border-b-white/10 bg-neutral-950/80 backdrop-blur-md shadow-[0_4px_60px_0_rgba(0,0,0,0.9)]' : 'bg-transparent'">
+
+    <div class="max-w-screen-xl mx-auto px-6 flex items-center justify-between h-16">
+        {{-- Logo --}}
+        <a href="/" class="flex items-center gap-3">
+            <img src="{{ asset(config('app.logo.dark')) }}" class="h-8" alt="{{ config('app.name') }}" />
+        </a>
+
+        {{-- Desktop Nav Center --}}
+        <nav class="hidden md:flex items-center gap-8">
+            <a href="{{ route('features') }}" class="text-sm font-light text-neutral-400 hover:text-white transition-colors duration-200">Features</a>
+            <a href="{{ route('pricing') }}" class="text-sm font-light text-neutral-400 hover:text-white transition-colors duration-200">Pricing</a>
+            <a href="{{ route('roadmap') }}" class="text-sm font-light text-neutral-400 hover:text-white transition-colors duration-200">Roadmap</a>
             @auth
-                <x-layouts.app.user-menu></x-layouts.app.user-menu>
+                <a href="{{ route('dashboard') }}" class="text-sm font-medium text-white hover:text-blue-400 transition-colors duration-200">Dashboard</a>
+            @endauth
+        </nav>
+
+        {{-- Desktop Nav End --}}
+        <div class="hidden md:flex items-center gap-2">
+            @auth
+                <x-layouts.app.user-menu />
             @else
-                {{-- <x-link class="hidden md:block" href="{{route('login')}}">{{ __('Login') }}</x-link>
-                <x-button-link.secondary elementType="a"  class="self-center !py-2" href="#plans">{{ __('Get started') }}</x-button-link.secondary> --}}
+                <a href="{{ route('login') }}" class="inline-flex items-center justify-center h-9 px-4 rounded-md border border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white text-sm transition-colors">
+                    Sign in
+                </a>
+                <a href="/register" class="inline-flex items-center justify-center h-9 px-4 rounded-md border border-blue-500 bg-blue-600 text-blue-100 hover:bg-blue-500 text-sm font-medium transition-colors">
+                    Start for free
+                </a>
             @endauth
         </div>
+
+        {{-- Mobile hamburger --}}
+        <button class="md:hidden text-neutral-400 hover:text-white p-2" @click="mobileOpen = !mobileOpen" aria-label="Toggle menu">
+            <svg x-show="!mobileOpen" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <svg x-show="mobileOpen" x-cloak class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
     </div>
-</nav>
 
-
-
-
+    {{-- Mobile menu --}}
+    <div x-show="mobileOpen" x-cloak x-transition:enter="transition duration-150 ease-out" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="md:hidden border-t border-white/10 bg-neutral-950/95 backdrop-blur-md">
+        <nav class="flex flex-col p-4 gap-1">
+            <a href="{{ route('features') }}" class="px-3 py-3 text-neutral-400 hover:text-white text-sm">Features</a>
+            <a href="{{ route('pricing') }}" class="px-3 py-3 text-neutral-400 hover:text-white text-sm">Pricing</a>
+            <a href="{{ route('roadmap') }}" class="px-3 py-3 text-neutral-400 hover:text-white text-sm">Roadmap</a>
+            @auth
+                <a href="{{ route('dashboard') }}" class="px-3 py-3 text-white text-sm font-medium">Dashboard</a>
+            @else
+                <div class="mt-4 flex flex-col gap-3 pt-4 border-t border-white/10">
+                    <a href="{{ route('login') }}" class="inline-flex justify-center items-center h-10 rounded-md border border-white/10 bg-white/5 text-neutral-300 text-sm">Sign in</a>
+                    <a href="/register" class="inline-flex justify-center items-center h-10 rounded-md border border-blue-500 bg-blue-600 text-blue-100 text-sm font-medium">Start for free</a>
+                </div>
+            @endauth
+        </nav>
+    </div>
+</header>

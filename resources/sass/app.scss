@@ -222,3 +222,11 @@
     }
 }
 
+
+/* Public marketing page styles */
+@keyframes beams {
+    0%   { background-position: 50% 50%, 50% 50%; }
+    100% { background-position: 350% 50%, 350% 50%; }
+}
+
+[x-cloak] { display: none !important; }

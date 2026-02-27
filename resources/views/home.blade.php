@@ -1,515 +1,418 @@
 <x-layouts.app>
-    <x-slot name="title">
-        {{ __('WPGRIP ') }}
-    </x-slot>
+<x-slot name="title">WordPress Site Management — All Your Sites, One Control Panel</x-slot>
 
-    <x-section.hero class="w-full mb-8 md:mb-72 bg-gradient-to-b from-gray-50 to-white">
+{{-- ===================== HERO ===================== --}}
+<section class="relative w-full overflow-hidden bg-neutral-950" x-data="{ ready: false }" x-init="setTimeout(() => ready = true, 100)">
 
-        <div class="mx-auto text-center h-160 md:h-180 px-4">
-            <x-pill class="text-black font-bold bg-primary-50">
-                Tailor-Made for Developers. No Plugins. No Complications.
-            </x-pill>
+    {{-- Radial glow --}}
+    <div class="pointer-events-none absolute inset-0" style="background: radial-gradient(55% 50% at 50% 60%, rgba(30,64,175,0.18) 0%, transparent 80%);"></div>
 
-            <x-heading.h1 class="mt-4 font-bold">
-                All Your WordPress Sites.
-                <br class="hidden sm:block">
-                One Control Panel.
-            </x-heading.h1>
-
-            <p class="text-black m-3">
-                Gain complete control with an encrypted SSH connection and streamlined experience.<br>
-                Manage plugins, track performance, and keep your sites secure — all from one powerful dashboard.
-            </p>
-
-            <div class="flex flex-wrap gap-4 justify-center flex-col md:flex-row mt-6">
-
-                <x-button-link.primary href="/register" class="self-center !py-3" elementType="a">
-                    {{ __('Start Your Free Trial') }}
-                </x-button-link.primary>
-                <x-button-link.primary-outline href="/pricing"
-                    class=" bg-transparent self-center !py-3 border-primary-500">
-                    {{ __('Check Pricing') }}
-                </x-button-link.primary-outline>
-
-            </div>
-
-            <svg class="hidden lg:block absolute right-full transform translate-x-1/2 translate-y-12" width="404"
-                height="784" fill="none" viewBox="0 0 404 784" aria-hidden="true">
-                <defs>
-                    <pattern id="64e643ad-2176-4f86-b3d7-f2c5da3b6a6d" x="0" y="0" width="20" height="20"
-                        patternUnits="userSpaceOnUse">
-                        <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor">
-                        </rect>
-                    </pattern>
-                </defs>
-                <rect width="404" height="784" fill="url(#64e643ad-2176-4f86-b3d7-f2c5da3b6a6d)"></rect>
-            </svg>
-
-            {{-- <x-effect.glow></x-effect.glow> --}}
-
-
-            <div class="mx-auto md:max-w-3xl lg:max-w-5xl">
-                <img class="drop-shadow-2xl mt-8 transition rounded-2xl"
-                    src="{{ URL::asset('/images/features/wphusk_dashboard.jpg') }}" />
-            </div>
-
-        </div>
-    </x-section.hero>
-
-
-
-    <div class="py-16 bg-gray-50 overflow-hidden lg:py-24">
-        <div class="relative max-w-xl mx-auto px-4 sm:px-6 lg:px-8 lg:max-w-7xl">
-            <svg class="hidden lg:block absolute left-full transform -translate-x-1/2 -translate-y-1/4" width="404"
-                height="784" fill="none" viewBox="0 0 404 784" aria-hidden="true">
-                <defs>
-                    <pattern id="b1e6e422-73f8-40a6-b5d9-c8586e37e0e7" x="0" y="0" width="20" height="20"
-                        patternUnits="userSpaceOnUse">
-                        <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor">
-                        </rect>
-                    </pattern>
-                </defs>
-                <rect width="404" height="784" fill="url(#b1e6e422-73f8-40a6-b5d9-c8586e37e0e7)"></rect>
-            </svg>
-
-            <div class="relative">
-
-                <x-heading.h2 class="mt-2 text-3xl text-center font-extrabold">
-                    Different Tool. Modern Approach.
-                </x-heading.h2>
-
-                <p class="mt-4 max-w-3xl mx-auto text-center text-xl text-gray-500">
-                    Most WordPress management tools require installing multiple plugins that can slow down your site and
-                    introduce new security risks. Our solution is different. By connecting directly via SSH and using
-                    WP-CLI commands, we eliminate the need for extra plugins, giving you complete control without added
-                    vulnerabilities. This means faster performance, enhanced security, and a direct, efficient way to
-                    manage all your WordPress sites — perfect for developers and agencies.
-                </p>
-            </div>
-
-
-            <x-section.columns class="max-w-none md:max-w-6xl pt-16 items-center" id="features">
-                <x-section.column>
-                    <div>
-                        <x-heading.h2>
-                            GIT Deployments
-                        </x-heading.h2>
-                    </div>
-
-                    <p class="mt-4">
-                        Add and manage multiple plugin or theme reposoitories and share them across your sites.
-                        Manually deploy at any time of day or night with confidence, or use automated webhooks
-                        to trigger the deployments on new commit.
-                    </p>
-
-
-                </x-section.column>
-
-                <x-section.column>
-                    <img src="{{ URL::asset('/images/features/git.svg') }}" dir="right"></img>
-                </x-section.column>
-
-            </x-section.columns>
-
-            <x-section.columns class="max-w-none md:max-w-6xl  flex-wrap-reverse">
-                <x-section.column>
-                    <img src="{{ URL::asset('/images/features/performance.svg') }}"></img>
-                </x-section.column>
-
-                <x-section.column>
-                    <div>
-                        <x-heading.h2>
-                            Performance Efficiency
-                        </x-heading.h2>
-                    </div>
-
-                    <p class="mt-4">
-                        Experience lightning-fast WordPress site management with WP-CLI executed over secure SSH
-                        connections. WPGrip provides 2x faster efficiency compared to traditional methods, ensuring your
-                        sites run seamlessly without adding any strain to your WordPress frontend.
-                    </p>
-                </x-section.column>
-
-            </x-section.columns>
-
-            <x-section.columns class="max-w-none md:max-w-6xl mt-6">
-                <x-section.column>
-                    <div x-intersect="$el.classList.add('slide-in-top')">
-                        <x-heading.h2>
-                            No Plugins Needed
-                        </x-heading.h2>
-                    </div>
-
-                    <p class="mt-4">
-                        Start managing your WordPress sites right away without the hassle of installing extra plugins.
-                        With WPGrip, you get a unique SSH key that you simply add to your hosting—giving you instant,
-                        secure control and reducing ongoing maintenance headaches. It's easy, fast, and puts you in
-                        control from day one.
-                    </p>
-                </x-section.column>
-
-                <x-section.column>
-                    <img src="{{ URL::asset('/images/features/security.svg') }}" />
-                </x-section.column>
-
-            </x-section.columns>
-
-            <svg class="hidden lg:block absolute right-full transform translate-x-1/2 translate-y-12" width="404"
-                height="784" fill="none" viewBox="0 0 404 784" aria-hidden="true">
-                <defs>
-                    <pattern id="64e643ad-2176-4f86-b3d7-f2c5da3b6a6d" x="0" y="0" width="20" height="20"
-                        patternUnits="userSpaceOnUse">
-                        <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor">
-                        </rect>
-                    </pattern>
-                </defs>
-                <rect width="404" height="784" fill="url(#64e643ad-2176-4f86-b3d7-f2c5da3b6a6d)"></rect>
-            </svg>
-
-
-        </div>
-
+    {{-- Animated beam lines --}}
+    <div class="pointer-events-none absolute inset-0 overflow-hidden opacity-30">
+        <div class="absolute inset-0" style="
+            background-image:
+                repeating-linear-gradient(100deg, #1e3a8a 0%, #1e3a8a 2%, rgba(30,58,138,0.4) 4%, transparent 8%, transparent 12%, rgba(30,58,138,0.3) 14%, #1e3a8a 16%),
+                repeating-linear-gradient(100deg, #3b82f6 0%, #3b82f6 1%, rgba(59,130,246,0.5) 2%, #1d4ed8 3%, #1d4ed8 4%, rgba(59,130,246,0.5) 4.5%, #3b82f6 5%);
+            background-size: 300% 200%, 200% 200%;
+            animation: beams 25s linear infinite;
+        "></div>
     </div>
 
-    <div class="bg-white">
-        <div
-            class="max-w-7xl mx-auto items-center py-16 px-4 sm:px-6 lg:py-24 lg:px-8 lg:grid lg:grid-cols-3 lg:gap-x-32 align-center">
-            <div>
-                <x-heading.h6 class="text-primary-500 tracking-wide uppercase">
-                    Introducing
-                </x-heading.h6>
-                <x-heading.h2 class="mt-2 text-3xl font-extrabold">
-                    Our core features
-                </x-heading.h2>
-                <p class="mt-4 text-lg text-gray-500">
-                    Every plan has access to all our core features.
-                </p>
-            </div>
+    <div class="relative max-w-screen-xl mx-auto px-6 flex flex-col items-center text-center pt-40 pb-12">
 
-
-            <div class="mt-4 sm:mt-8 md:mt-10 md:grid md:grid-cols-2 md:gap-x-8 xl:mt-0 lg:col-span-2">
-                <ul class="divide-y divide-gray-200 -mt-4">
-                    @php
-                        $items = [
-                            'Uptime Monitoring',
-                            'SSL Monitoring',
-                            'Domain Monitoring',
-                            'Vulnerabilities Monitoring',
-                            'Performance Monitoring',
-                            'History Stats',
-                        ];
-
-                    @endphp
-
-                    @foreach ($items as $item)
-                        <li class="py-4 flex">
-                            <svg aria-hidden="true" class="flex-shrink-0 h-6 w-6 text-green-500" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2"></path>
-                            </svg>
-                            <span class="ml-3 text-base text-gray-500">
-                                {{ $item }}
-                            </span>
-                        </li>
-                    @endforeach
-                </ul>
-                <ul class="border-t border-gray-200 divide-y divide-gray-200 md:border-t-0 md:-mt-4">
-                    @php
-                        $items2 = [
-                            'Powerful administration',
-                            'Fine-Tuned AI Insights',
-                            'One-Click Updates',
-                            'Git Deployments',
-                            'DB Cloud Backups',
-                            'Client & Server management',
-                        ];
-                    @endphp
-
-                    @foreach ($items2 as $item)
-                        <li class="py-4 flex">
-                            <svg aria-hidden="true" class="flex-shrink-0 h-6 w-6 text-green-500" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2"></path>
-                            </svg>
-                            <span class="ml-3 text-base text-gray-500">
-                                {{ $item }}
-                            </span>
-                        </li>
-                    @endforeach
-
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    {{-- CTA AI --}}
-    <div class="bg-gradient-to-br from-blue-700 to-blue-900 relative">
-        <x-section.columns class="max-w-none items-center md:max-w-6xl mt-6">
-            <x-section.column>
-                <div>
-                    <x-pill class="text-black font-bold mb-8 bg-primary-50">
-                        Smarter Site Management. Clear Suggestions.
-                    </x-pill>
-
-                    <x-heading.h2 class="text-white mt-6">
-                        WPGriP AI Assistant
-                    </x-heading.h2>
-                </div>
-
-                <p class="mt-4 text-white">
-                    WPGrip offers you an AI model specifically tuned for WordPress. Unsure if a plugin could cause
-                    problems? Ask our AI. Need a boost for your PageSpeed score? Let AI guide you. Get smart insights
-                    from your site data and make informed decisions quickly—your AI assistant is here 24/7 to support
-                    you.
-                </p>
-
-            </x-section.column>
-
-            <x-section.column>
-                <img src="{{ URL::asset('/images/features/ai-white.svg') }}" class="rounded-2xl" />
-            </x-section.column>
-
-        </x-section.columns>
-
-
-
-    </div>
-
-    {{-- Tabs --}}
-    <div class="py-16 bg-gray-50 overflow-hidden lg:py-32">
-
-        <div class="relative max-w-xl mx-auto px-4 sm:px-6 lg:px-8 lg:max-w-7xl">
-            <svg class="hidden lg:block absolute left-full transform -translate-x-1/2 -translate-y-1/4" width="404"
-                height="784" fill="none" viewBox="0 0 404 784" aria-hidden="true">
-                <defs>
-                    <pattern id="b1e6e422-73f8-40a6-b5d9-c8586e37e0e7" x="0" y="0" width="20" height="20"
-                        patternUnits="userSpaceOnUse">
-                        <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor">
-                        </rect>
-                    </pattern>
-                </defs>
-                <rect width="404" height="784" fill="url(#b1e6e422-73f8-40a6-b5d9-c8586e37e0e7)"></rect>
-            </svg>
-
-            <div class="relative">
-                <x-heading.h2 class="mt-2 text-3xl text-center font-extrabold">
-                    Powerful Features
-                </x-heading.h2>
-            </div>
-
-            <x-tab-slider class="mt-6 md:max-w-6xl">
-                <x-slot name="tabNames">
-                    <x-tab-slider.tab-name controls="tab-1" active="true">Vulnerabilities</x-tab-slider.tab-name>
-                    <x-tab-slider.tab-name controls="tab-2">Team Collaboration</x-tab-slider.tab-name>
-                    <x-tab-slider.tab-name controls="tab-3">Performance</x-tab-slider.tab-name>
-                    <x-tab-slider.tab-name controls="tab-4">Backups</x-tab-slider.tab-name>
-                    <x-tab-slider.tab-name controls="tab-5">Deployments</x-tab-slider.tab-name>
-                    <x-tab-slider.tab-name controls="tab-6">Monitoring</x-tab-slider.tab-name>
-                </x-slot>
-
-                <x-tab-slider.tab-content class="text-center mt-8" id="tab-1">
-                    <x-heading.h3 class="mt-6">
-                        Vulnerability Detection
-                    </x-heading.h3>
-                    <p class="mt-2 text-gray-950">
-                        WPGrip has a continuously updated vulnerability database for plugins, themes, and WordPress
-                        core. Our
-                        system detects if any of your sites are running vulnerable versions, allowing you to act quickly
-                        to
-                        secure your WordPress ecosystem. This proactive approach helps to mitigate risks and keep your
-                        websites
-                        safe from potential exploits.
-                    </p>
-                </x-tab-slider.tab-content>
-
-                <x-tab-slider.tab-content class="text-center mt-8" id="tab-2">
-                    <x-heading.h3 class="mt-6">
-                        Team Collaboration
-                    </x-heading.h3>
-                    <p class="mt-2 text-gray-950">Invite team members to your workspace and collaborate effortlessly.
-                        WPGrip also
-                        makes it
-                        possible to be invited to other workspaces, making it easy to manage multiple projects and
-                        teams. The
-                        platform allows you to organize servers and link them to specific websites, ensuring smooth
-                        operations
-                        and efficient teamwork. Whether you're a solo developer or part of a larger agency, WPGrip keeps
-                        everyone on the same page, making site management more streamlined.</p>
-                </x-tab-slider.tab-content>
-
-                <x-tab-slider.tab-content class="text-center mt-8" id="tab-3">
-                    <x-heading.h3 class="mt-6">
-                        Backups
-                    </x-heading.h3>
-                    <p class="mt-2 text-gray-950">WPGrip supports encrypted cloud backups that keep your databases
-                        secure. With
-                        easy
-                        scheduling options, you can automate the process and restore backups whenever needed, ensuring
-                        your data
-                        is always protected and easily recoverable.</p>
-                </x-tab-slider.tab-content>
-
-                <x-tab-slider.tab-content class="text-center mt-8" id="tab-4">
-                    <x-heading.h3 class="mt-6">
-                        Performance Monitoring
-                    </x-heading.h3>
-                    <p class="mt-2 text-gray-950">WPGrip monitors Google PageSpeed scores for both mobile and desktop,
-                        offering
-                        real-time
-                        insights into your site’s performance. Historical data is saved so you can track trends and make
-                        adjustments to enhance user experience over time. This feature ensures that your sites are
-                        always
-                        optimized and performing at their peak.</p>
-                </x-tab-slider.tab-content>
-
-                <x-tab-slider.tab-content id="tab-5">
-                    <x-heading.h3 class="mt-6">
-                        Direct Management & Deployments
-                    </x-heading.h3>
-                    <p class="mt-2 text-gray-950">WPGrip makes plugin, theme, and core management straightforward
-                        through WP-CLI
-                        commands.
-                        Whether you need to install, update, or deactivate, WPGrip’s direct command line access makes
-                        the
-                        process simple and efficient. For deployment, the platform allows seamless integration with
-                        GitHub or
-                        Bitbucket. You can automate your workflow with webhooks, set up automatic or manual deployments
-                        for
-                        individual components, and effortlessly roll back to previous versions if required. WPGrip gives
-                        you the
-                        freedom and control to update your sites in the way that works best for you.</p>
-
-                    <div class="flex gap-3 pt-1 flex-wrap">
-                        @svg('colored/github', 'h-12 w-12 py-2 px-2 border border-primary-50 rounded-lg')
-                        @svg('colored/gitlab', 'h-12 w-12 py-2 px-2 border border-primary-50 rounded-lg')
-                        @svg('colored/bitbucket', 'h-12 w-12 py-2 px-2 border border-primary-50 rounded-lg')
-                    </div>
-                </x-tab-slider.tab-content>
-
-                <x-tab-slider.tab-content class="text-center mt-8" id="tab-6">
-                    <x-heading.h3 class="mt-3">
-                        Monitoring & Alerts
-                    </x-heading.h3>
-                    <p class="mt-2">WPGrip’s monitoring tools provide instant insights into your website's health.
-                        With daily
-                        regression tests, WPGrip keeps a vigilant eye on any changes that could affect your sites'
-                        stability.
-                        The platform also provides uptime monitoring and tracks SSL certificate status to ensure your
-                        sites
-                        remain accessible and secure. When an issue is detected, you receive immediate notifications
-                        through
-                        email or Slack, so you can act fast. Additionally, WPGrip allows you to monitor up to 3 custom
-                        URLs per
-                        site, offering comprehensive oversight of every important aspect of your WordPress ecosystem.
-                    </p>
-                </x-tab-slider.tab-content>
-            </x-tab-slider>
-
-
-
+        <div class="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-300 text-xs font-medium tracking-wide uppercase">
+            <span class="inline-block h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+            No plugins. No complications.
         </div>
 
-    </div>
+        <h1 class="text-5xl md:text-7xl font-medium tracking-tight text-white text-balance leading-[1.08] max-w-3xl">
+            All Your WordPress Sites.<br>
+            <span class="text-blue-400">One Control Panel.</span>
+        </h1>
 
-
-    <div class="relative">
-        <div class="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8 z-10 relative">
-            <x-heading.h2 class="mt-2 text-3xl text-center font-extrabold">
-                Got a Question?
-            </x-heading.h2>
-
-
-            <div class="mt-6  border-blue-600 border-opacity-25 pt-10">
-                <x-accordion class="mt-4 p-8">
-
-                    <x-accordion.item active="false" name="what-is-wpgrip">
-                        <x-slot name="title">What is WPGrip?</x-slot>
-                        WPGrip is an all-in-one WordPress management platform that lets you control all your sites from
-                        a single, secure dashboard.
-                    </x-accordion.item>
-
-                    <x-accordion.item active="false" name="how-does-it-work">
-                        <x-slot name="title">How does it work?</x-slot>
-                        WPGrip connects directly to your hosting via SSH, executing WP-CLI commands for maximum
-                        control. No plugins are required, making it lightweight and secure.
-                    </x-accordion.item>
-
-                    <x-accordion.item active="false" name="hosting-support">
-                        <x-slot name="title">What type of hosting providers does it support?</x-slot>
-                        WPGrip supports any hosting provider that allows SSH access and has WP-CLI installed, which
-                        covers almost 99% of the current hosting companies.
-                    </x-accordion.item>
-
-                    <x-accordion.item active="false" name="server-support">
-                        <x-slot name="title">Are custom servers supported?</x-slot>
-                        Not only are custom servers supported, but we actually recommend using a VPS. You need to have a
-                        Linux user that is the owner of the WordPress folder and can run any command inside.
-                    </x-accordion.item>
-
-                    <x-accordion.item active="false" name="requirements">
-                        <x-slot name="title">What are the requirements?</x-slot>
-                        To use WPGrip, your server must allow SSH connections and have WP-CLI available for the SSH
-                        user.
-                    </x-accordion.item>
-
-                    <x-accordion.item active="false" name="security">
-                        <x-slot name="title"> How does WPGrip enhance security?</x-slot>
-                        By eliminating the need for third-party plugins, WPgrip reduces vulnerabilities often introduced
-                        by plugins. Our direct SSH encrypted connections ensure a secure and efficient management
-                        experience.
-                    </x-accordion.item>
-
-                    <x-accordion.item active="false" name="alternative">
-                        <x-slot name="title">What features can I use without SSH access?</x-slot>
-                        Your experience will be fairly limited, but you can still use our monitoring tools to check your
-                        uptime, SSL status, domain expiry, and performance.
-
-                    </x-accordion.item>
-                </x-accordion>
-            </div>
-        </div>
-    </div>
-
-    {{-- <div class="bg-blue-50">
-        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-24 lg:px-8 lg:flex lg:items-center lg:justify-between">
-            <h2 class="text-3xl font-extrabold tracking-tight text-blue-900 sm:text-4xl">
-                <span class="block">Have to migrate?</span>
-                <span class="block text-blue-600">Configure for free.</span>
-            </h2>
-            <div class="mt-8 flex lg:flex-shrink-0 lg:mt-0">
-                <div class="inline-flex rounded-md shadow">
-                    <a href="https://move.ploi.app/register" class="bg-blue-600 border border-transparent rounded-md py-3 px-5 inline-flex items-center justify-center text-base font-medium text-white hover:bg-blue-700">
-                        Get started
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div> --}}
-
-    <x-section.outro>
-        <x-heading.h6 class="text-primary-50 text-center">
-            Ready to dive in?
-        </x-heading.h6>
-        <x-heading.h2 class="text-primary-50 text-center">
-            Start your free trial today
-        </x-heading.h2>
-
-
-        <p class="max-w-3xl text-primary-50 text-center mx-auto mt-4">
-            Get access to our all-in-one dashboard today. With features like uptime and SSL monitoring, performance
-            insights, git deployments, and powerful AI-driven insights, our platform offers everything you need for
-            seamless management.
+        <p class="mt-6 text-lg md:text-xl text-neutral-400 font-light max-w-xl text-balance leading-relaxed">
+            Manage every WordPress site through a single encrypted SSH connection.
+            No agents. No plugins. No attack surface. Just pure, direct control.
         </p>
 
-        <div class="mt-10 text-center">
-
-            <x-button-link.secondary href="/register">
-                Start Free Trial
-            </x-button-link.secondary>
+        <div class="mt-10 flex flex-col sm:flex-row items-center gap-3">
+            <a href="/register" class="inline-flex items-center justify-center h-11 px-6 rounded-lg border border-blue-500 bg-blue-600 text-blue-50 hover:bg-blue-500 font-medium text-sm transition-all duration-200 shadow-lg shadow-blue-900/40">
+                Start your free trial
+            </a>
+            <a href="{{ route('pricing') }}" class="inline-flex items-center justify-center h-11 px-6 rounded-lg border border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white text-sm transition-all duration-200">
+                See pricing
+            </a>
         </div>
-    </x-section.outro>
+
+        {{-- Dashboard preview --}}
+        <div class="mt-16 w-full max-w-5xl rounded-xl border border-white/10 bg-white/5 p-1.5 shadow-2xl shadow-black/60" style="mask-image: linear-gradient(to bottom, black 60%, transparent 100%)">
+            <div class="rounded-lg border border-neutral-700 overflow-hidden bg-neutral-900">
+                <img src="{{ URL::asset('/images/features/wphusk_dashboard.jpg') }}" alt="WPGrip Dashboard" class="w-full" />
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- ===================== TRUST BAR ===================== --}}
+<section class="border-y border-white/5 bg-neutral-900/40 py-6">
+    <div class="max-w-screen-xl mx-auto px-6">
+        <p class="text-center text-xs text-neutral-500 uppercase tracking-widest mb-6">Built for developers and agencies who care about security</p>
+        <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16">
+            @foreach([
+                ['label' => 'SSH Encrypted', 'icon' => '🔐'],
+                ['label' => 'Zero Plugins Required', 'icon' => '⚡'],
+                ['label' => 'WP-CLI Powered', 'icon' => '🖥️'],
+                ['label' => 'Real-Time Monitoring', 'icon' => '📡'],
+                ['label' => 'Git Deployments', 'icon' => '🚀'],
+                ['label' => 'AI Insights', 'icon' => '🤖'],
+            ] as $item)
+                <div class="flex items-center gap-2 text-neutral-400 text-sm">
+                    <span>{{ $item['icon'] }}</span>
+                    <span>{{ $item['label'] }}</span>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ===================== CORE VALUE PROP ===================== --}}
+<section class="py-24 bg-neutral-950">
+    <div class="max-w-screen-xl mx-auto px-6">
+        <div class="max-w-2xl mb-16">
+            <div class="inline-flex items-center justify-center px-3 py-1 rounded-md border border-emerald-900 bg-emerald-950 text-emerald-300 text-xs font-medium font-mono mb-6">Philosophy</div>
+            <h2 class="text-4xl md:text-5xl font-medium tracking-tight text-white text-balance leading-tight">
+                Manage WordPress sites<br>the way they should be managed
+            </h2>
+            <p class="mt-4 text-lg text-neutral-400 font-light leading-relaxed">
+                Every other tool installs plugins on your sites — creating update dependencies, security surface area,
+                and performance overhead on your visitors' experience. WPGrip connects directly via SSH and WP-CLI.
+                Your sites stay lean. Your data stays yours.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            @php
+            $cards = [
+                [
+                    'tag' => 'Performance',
+                    'title' => '2× faster than plugin-based tools',
+                    'desc' => 'WP-CLI over SSH executes commands directly on your server — no HTTP round-trips, no plugin overhead, no shared memory constraints.',
+                    'color' => 'emerald',
+                ],
+                [
+                    'tag' => 'Security',
+                    'title' => 'Zero attack surface added to your sites',
+                    'desc' => 'An SSH key in your authorized_keys file is all WPGrip needs. No admin credentials stored, no REST API exposed, no third-party code running on your WordPress.',
+                    'color' => 'blue',
+                ],
+                [
+                    'tag' => 'Control',
+                    'title' => 'Full access. Real commands.',
+                    'desc' => 'Run any WP-CLI command, inspect files, check logs, manage databases — from one dashboard, across all your sites simultaneously.',
+                    'color' => 'violet',
+                ],
+            ];
+            @endphp
+            @foreach($cards as $card)
+            <div class="rounded-xl border border-white/5 bg-white/[0.02] p-6 flex flex-col gap-4 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-300">
+                @php
+                $colors = [
+                    'emerald' => 'border-emerald-900 bg-emerald-950 text-emerald-300',
+                    'blue' => 'border-blue-900 bg-blue-950 text-blue-300',
+                    'violet' => 'border-violet-900 bg-violet-950 text-violet-300',
+                ];
+                @endphp
+                <div class="inline-flex w-fit items-center px-2.5 py-1 rounded-md border text-xs font-mono {{ $colors[$card['color']] }}">{{ $card['tag'] }}</div>
+                <h3 class="text-lg font-medium text-white leading-snug">{{ $card['title'] }}</h3>
+                <p class="text-sm text-neutral-400 font-light leading-relaxed">{{ $card['desc'] }}</p>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ===================== FEATURE SECTIONS ===================== --}}
+
+{{-- Feature 1: Monitoring --}}
+<section class="py-24 border-t border-white/5" style="background: linear-gradient(180deg, #0a0a0a 0%, #0f1117 100%)">
+    <div class="max-w-screen-xl mx-auto px-6">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <div class="inline-flex items-center px-2.5 py-1 rounded-md border border-blue-900 bg-blue-950 text-blue-300 text-xs font-mono mb-6">Monitoring</div>
+                <h2 class="text-3xl md:text-4xl font-medium text-white tracking-tight text-balance leading-tight">
+                    Know the moment something goes wrong
+                </h2>
+                <p class="mt-4 text-base text-neutral-400 font-light leading-relaxed">
+                    Uptime checks, SSL expiry alerts, domain expiry warnings, PageSpeed regression detection —
+                    all running 24/7 across every site in your portfolio. When something breaks, you hear about
+                    it before your client does.
+                </p>
+                <ul class="mt-8 space-y-3">
+                    @foreach(['Uptime monitoring with instant alerts', 'SSL certificate expiry warnings', 'Domain expiry tracking', 'Google PageSpeed mobile & desktop scores', 'Vulnerability scanning for plugins & themes', 'Daily regression testing'] as $f)
+                    <li class="flex items-start gap-3 text-sm text-neutral-300">
+                        <svg class="h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        {{ $f }}
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+            {{-- Mock monitoring card --}}
+            <div class="rounded-xl border border-white/10 bg-neutral-900 p-6 space-y-3">
+                @foreach([
+                    ['name' => 'client-site.com', 'status' => 'Operational', 'uptime' => '99.98%', 'color' => 'emerald'],
+                    ['name' => 'agency-portfolio.net', 'status' => 'Operational', 'uptime' => '100%', 'color' => 'emerald'],
+                    ['name' => 'shop.example.com', 'status' => 'SSL Warning', 'uptime' => '99.71%', 'color' => 'amber'],
+                    ['name' => 'staging.project.io', 'status' => 'Operational', 'uptime' => '99.90%', 'color' => 'emerald'],
+                    ['name' => 'legacy-blog.org', 'status' => 'Down', 'uptime' => '94.20%', 'color' => 'rose'],
+                ] as $site)
+                @php
+                $dot = ['emerald' => 'bg-emerald-500', 'amber' => 'bg-amber-400', 'rose' => 'bg-rose-500'][$site['color']];
+                $text = ['emerald' => 'text-emerald-400', 'amber' => 'text-amber-400', 'rose' => 'text-rose-400'][$site['color']];
+                @endphp
+                <div class="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] px-4 py-3 hover:bg-white/[0.05] transition-colors">
+                    <div class="flex items-center gap-3">
+                        <span class="h-2 w-2 rounded-full {{ $dot }}"></span>
+                        <span class="text-sm text-neutral-200 font-mono">{{ $site['name'] }}</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="text-xs font-mono text-neutral-500">{{ $site['uptime'] }}</span>
+                        <span class="text-xs {{ $text }}">{{ $site['status'] }}</span>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- Feature 2: Git Deployments --}}
+<section class="py-24 border-t border-white/5 bg-neutral-950">
+    <div class="max-w-screen-xl mx-auto px-6">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            {{-- Mock deploy card --}}
+            <div class="rounded-xl border border-white/10 bg-neutral-900 overflow-hidden">
+                <div class="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-neutral-800/50">
+                    <span class="h-3 w-3 rounded-full bg-rose-400"></span>
+                    <span class="h-3 w-3 rounded-full bg-amber-400"></span>
+                    <span class="h-3 w-3 rounded-full bg-emerald-400"></span>
+                    <span class="ml-3 text-xs text-neutral-500 font-mono">git push origin main</span>
+                </div>
+                <div class="p-6 font-mono text-xs space-y-2">
+                    <div class="text-neutral-500">→ Webhook received from GitHub</div>
+                    <div class="text-blue-400">→ Pulling latest commit <span class="text-neutral-300">a3f9c12</span></div>
+                    <div class="text-neutral-400">→ Running composer install...</div>
+                    <div class="text-neutral-400">→ Running npm run build...</div>
+                    <div class="text-neutral-400">→ Clearing Laravel cache...</div>
+                    <div class="text-emerald-400">✓ Deployed to client-site.com in 18s</div>
+                    <div class="mt-4 pt-4 border-t border-white/5">
+                        <div class="text-neutral-500 mb-2">Connected repositories</div>
+                        @foreach([
+                            ['repo' => 'github/acme/theme', 'branch' => 'main', 'sites' => 3],
+                            ['repo' => 'gitlab/agency/plugin', 'branch' => 'production', 'sites' => 7],
+                            ['repo' => 'bitbucket/client/wp', 'branch' => 'main', 'sites' => 1],
+                        ] as $r)
+                        <div class="flex justify-between items-center py-2 border-b border-white/5 last:border-0">
+                            <span class="text-neutral-300">{{ $r['repo'] }}</span>
+                            <div class="flex items-center gap-3">
+                                <span class="text-neutral-500">{{ $r['branch'] }}</span>
+                                <span class="text-xs text-neutral-600">{{ $r['sites'] }} site{{ $r['sites'] > 1 ? 's' : '' }}</span>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="inline-flex items-center px-2.5 py-1 rounded-md border border-violet-900 bg-violet-950 text-violet-300 text-xs font-mono mb-6">Git Deployments</div>
+                <h2 class="text-3xl md:text-4xl font-medium text-white tracking-tight text-balance leading-tight">
+                    Push to deploy. Across every site.
+                </h2>
+                <p class="mt-4 text-base text-neutral-400 font-light leading-relaxed">
+                    Connect GitHub, GitLab, or Bitbucket repositories to any of your sites.
+                    Deploy manually with one click, or wire up webhooks to trigger automatic
+                    deployments on every push. Share one repo across dozens of sites.
+                </p>
+                <ul class="mt-8 space-y-3">
+                    @foreach(['GitHub, GitLab & Bitbucket supported', 'Webhook-triggered auto deployments', 'One repo shared across multiple sites', 'Manual deploy with instant feedback', 'Rollback to any previous commit'] as $f)
+                    <li class="flex items-start gap-3 text-sm text-neutral-300">
+                        <svg class="h-5 w-5 text-violet-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        {{ $f }}
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- Feature 3: AI Assistant --}}
+<section class="py-24 border-t border-white/5" style="background: linear-gradient(180deg, #0a0a0a 0%, #0d1220 100%)">
+    <div class="max-w-screen-xl mx-auto px-6">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <div class="inline-flex items-center px-2.5 py-1 rounded-md border border-blue-900 bg-blue-950 text-blue-300 text-xs font-mono mb-6">AI Assistant</div>
+                <h2 class="text-3xl md:text-4xl font-medium text-white tracking-tight text-balance leading-tight">
+                    Your expert WordPress consultant. Always on.
+                </h2>
+                <p class="mt-4 text-base text-neutral-400 font-light leading-relaxed">
+                    WPGrip's AI assistant knows your site — its WordPress version, active plugins, server config,
+                    and performance scores. Ask it anything. It'll diagnose issues, recommend fixes,
+                    and even run WP-CLI commands to investigate and resolve problems.
+                </p>
+                <ul class="mt-8 space-y-3">
+                    @foreach(['Understands your full site context', 'Diagnoses plugin conflicts & vulnerabilities', 'PageSpeed optimisation recommendations', 'Can run SSH commands to investigate issues', 'Available 24/7 across all your sites'] as $f)
+                    <li class="flex items-start gap-3 text-sm text-neutral-300">
+                        <svg class="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        {{ $f }}
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+            {{-- Mock AI chat card --}}
+            <div class="rounded-xl border border-white/10 bg-neutral-900 overflow-hidden">
+                <div class="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-neutral-800/50">
+                    <div class="h-2 w-2 rounded-full bg-blue-400 animate-pulse"></div>
+                    <span class="text-xs text-neutral-400 font-medium">WPGrip AI — client-site.com</span>
+                </div>
+                <div class="p-5 space-y-4">
+                    <div class="flex gap-3">
+                        <div class="flex-shrink-0 h-7 w-7 rounded-full bg-neutral-700 flex items-center justify-center text-xs text-neutral-300">U</div>
+                        <div class="bg-white/5 rounded-xl rounded-tl-sm px-4 py-3 text-sm text-neutral-300 leading-relaxed">
+                            Why is my PageSpeed score dropping on mobile?
+                        </div>
+                    </div>
+                    <div class="flex gap-3 justify-end">
+                        <div class="bg-blue-600/20 border border-blue-500/20 rounded-xl rounded-tr-sm px-4 py-3 text-sm text-blue-100 leading-relaxed max-w-xs">
+                            I can see your score dropped from 78 to 61 over the past 7 days. The Yoast SEO update (v21.9) added 48kB of undeferred JS. I recommend deferring <code class="text-blue-300">seo-schema.js</code> or rolling back to v21.8. Want me to check the file?
+                        </div>
+                        <div class="flex-shrink-0 h-7 w-7 rounded-full bg-blue-600 flex items-center justify-center">
+                            <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="flex-shrink-0 h-7 w-7 rounded-full bg-neutral-700 flex items-center justify-center text-xs text-neutral-300">U</div>
+                        <div class="bg-white/5 rounded-xl rounded-tl-sm px-4 py-3 text-sm text-neutral-300 leading-relaxed">
+                            Yes, check the file size.
+                        </div>
+                    </div>
+                    <div class="flex gap-3 justify-end">
+                        <div class="bg-blue-600/20 border border-blue-500/20 rounded-xl rounded-tr-sm px-4 py-3 text-sm text-blue-100 leading-relaxed max-w-xs">
+                            <div class="text-xs text-blue-400 font-mono mb-2">$ wc -c wp-content/plugins/wordpress-seo/seo-schema.js</div>
+                            <div class="font-mono text-xs text-neutral-300">49,152 bytes</div>
+                            <div class="mt-2">Confirmed — 48kB unminified. Rolling back is the safest fix. Should I create a deployment task?
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0 h-7 w-7 rounded-full bg-blue-600 flex items-center justify-center">
+                            <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-4 pb-4">
+                    <div class="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2">
+                        <span class="text-sm text-neutral-600 flex-1">Ask anything about your site...</span>
+                        <svg class="h-4 w-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 9l3 3-3 3m-6 0h9"/></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- ===================== FEATURE GRID ===================== --}}
+<section class="py-24 border-t border-white/5 bg-neutral-950">
+    <div class="max-w-screen-xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center px-2.5 py-1 rounded-md border border-neutral-700 bg-neutral-900 text-neutral-300 text-xs font-mono mb-6">All Features</div>
+            <h2 class="text-3xl md:text-4xl font-medium text-white tracking-tight">Everything you need. Nothing you don't.</h2>
+            <p class="mt-4 text-neutral-400 font-light max-w-xl mx-auto">Every plan includes the full feature set. No feature paywalls, no artificial limits on what you can do.</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            @php
+            $features = [
+                ['icon' => '📡', 'title' => 'Uptime Monitoring', 'desc' => 'Get alerted the moment a site goes down — before your client notices.'],
+                ['icon' => '🔒', 'title' => 'SSL & Domain Tracking', 'desc' => 'Never let a certificate or domain expire again. Automated warnings weeks in advance.'],
+                ['icon' => '⚡', 'title' => 'Performance Scores', 'desc' => 'Track Google PageSpeed for mobile and desktop with full history.'],
+                ['icon' => '🛡️', 'title' => 'Vulnerability Scanning', 'desc' => 'Continuously updated database detects vulnerable plugins, themes, and WP core.'],
+                ['icon' => '🤖', 'title' => 'AI Assistant', 'desc' => 'Context-aware AI that understands your site and can run commands to investigate.'],
+                ['icon' => '🚀', 'title' => 'Git Deployments', 'desc' => 'Connect GitHub, GitLab, Bitbucket. Deploy on push or on demand.'],
+                ['icon' => '🗄️', 'title' => 'Database Backups', 'desc' => 'Encrypted cloud backups on your schedule. Restore with one click.'],
+                ['icon' => '👥', 'title' => 'Team Collaboration', 'desc' => 'Invite team members and manage access across workspaces.'],
+                ['icon' => '🔄', 'title' => 'One-Click Updates', 'desc' => 'Update plugins, themes, and WP core across all sites simultaneously.'],
+            ];
+            @endphp
+            @foreach($features as $f)
+            <div class="rounded-xl border border-white/5 bg-white/[0.02] p-6 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-200">
+                <div class="text-2xl mb-4">{{ $f['icon'] }}</div>
+                <h3 class="text-sm font-medium text-white mb-2">{{ $f['title'] }}</h3>
+                <p class="text-sm text-neutral-500 font-light leading-relaxed">{{ $f['desc'] }}</p>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ===================== FAQ ===================== --}}
+<section class="py-24 border-t border-white/5" style="background: linear-gradient(180deg, #0a0a0a 0%, #0f0f0f 100%)">
+    <div class="max-w-3xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-medium text-white tracking-tight">Common questions</h2>
+        </div>
+        <div class="space-y-3">
+            @php
+            $faqs = [
+                ['q' => 'Does WPGrip require me to install a plugin on my WordPress sites?', 'a' => 'No — and that\'s the whole point. WPGrip connects via SSH using a unique key you add to your server. No WordPress plugins, no REST API credentials, no third-party code running on your site.'],
+                ['q' => 'What hosting providers does WPGrip support?', 'a' => 'Any hosting provider that allows SSH access and has WP-CLI installed — which covers virtually all VPS, cloud, and managed hosting environments. We especially recommend VPS setups where you have root-level SSH control.'],
+                ['q' => 'What are the minimum requirements?', 'a' => 'Your server needs to allow SSH connections and have WP-CLI available for the SSH user. That\'s it. No specific WordPress version requirements, no server software constraints.'],
+                ['q' => 'Can I manage sites across different hosting providers?', 'a' => 'Absolutely. WPGrip is hosting-agnostic. You can manage sites on DigitalOcean, AWS, Hetzner, Kinsta, WP Engine, Cloudways — or any mix of providers — all in one dashboard.'],
+                ['q' => 'How does WPGrip keep my credentials secure?', 'a' => 'WPGrip uses SSH key-based authentication — your server passwords are never stored. All connections are encrypted. Your SSH private keys are encrypted at rest in our database.'],
+                ['q' => 'Can I use WPGrip without SSH access?', 'a' => 'You can still use monitoring features — uptime, SSL status, domain expiry, and PageSpeed tracking — without SSH. But the management features (plugin updates, deployments, AI assistant, backups) require SSH.'],
+            ];
+            @endphp
+            @foreach($faqs as $i => $faq)
+            <div x-data="{ open: {{ $i === 0 ? 'true' : 'false' }} }" class="rounded-xl border border-white/5" :class="open ? 'border-white/10 bg-white/[0.03]' : 'hover:border-white/8 hover:bg-white/[0.02]'">
+                <button @click="open = !open" class="w-full flex items-center justify-between px-6 py-5 text-left gap-4">
+                    <span class="text-sm md:text-base font-medium leading-snug" :class="open ? 'text-white' : 'text-neutral-400'">{{ $faq['q'] }}</span>
+                    <span class="flex-shrink-0 h-5 w-5 rounded-full border border-white/20 flex items-center justify-center">
+                        <svg class="h-3 w-3 text-neutral-400 transition-transform duration-200" :class="open ? 'rotate-45' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    </span>
+                </button>
+                <div x-show="open" x-collapse class="px-6 pb-5">
+                    <p class="text-sm text-neutral-400 font-light leading-relaxed">{{ $faq['a'] }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ===================== CTA ===================== --}}
+<section class="relative overflow-hidden border-t border-white/10 bg-neutral-950">
+    <div class="pointer-events-none absolute inset-0" style="background: radial-gradient(60% 50% at 50% 100%, rgba(30,64,175,0.15) 0%, transparent 80%);"></div>
+    <div class="relative max-w-2xl mx-auto px-6 py-32 text-center">
+        <div class="inline-flex mb-2 mx-auto border border-white/10 bg-[#101010] rounded-none">
+            <div class="flex h-8 items-center gap-2 px-4 border-b border-white/5">
+                <span class="h-2 w-2 rounded-full bg-rose-400"></span>
+                <span class="h-2 w-2 rounded-full bg-amber-400"></span>
+                <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+            </div>
+        </div>
+        <div class="border border-white/10 bg-[#101010] px-8 py-12">
+            <h2 class="text-3xl md:text-4xl font-medium text-white tracking-tight text-balance">
+                Take control of your WordPress portfolio
+            </h2>
+            <p class="mt-3 text-lg text-neutral-400 font-light">Start for free. No credit card required.</p>
+            <div class="mt-10 flex flex-col sm:flex-row justify-center gap-3">
+                <a href="/register" class="inline-flex items-center justify-center h-11 px-6 rounded-lg border border-blue-500 bg-blue-600 text-blue-50 hover:bg-blue-500 font-medium text-sm transition-all duration-200 shadow-lg shadow-blue-900/40">
+                    Get started for free
+                </a>
+                <a href="{{ route('pricing') }}" class="inline-flex items-center justify-center h-11 px-6 rounded-lg border border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white text-sm transition-all duration-200">
+                    View pricing
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
 
 
 </x-layouts.app>

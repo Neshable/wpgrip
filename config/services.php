@@ -106,3 +106,10 @@ return [
     ],
 
 ];
+
+// appended
+return array_merge(require __DIR__ . '/services.php.base', [
+    'anthropic' => [
+        'key' => env('ANTHROPIC_API_KEY'),
+    ],
+]);
