@@ -1,42 +1,30 @@
+<x-layouts.focus-center :backButton="false">
 
+    <div class="flex min-h-[80vh] items-center justify-center px-4 py-12">
+        <div class="w-full max-w-md text-center">
 
-<x-layouts.focus-center class="md:!max-w-6xl mx-auto overflow-x-hidden relative" :backButton="false">
-
-    <x-effect.gradient class="!-start-1/3 -top-50 !w-2/4"/>
-    <x-effect.gradient class="!-end-1/3 -top-72 !w-2/4"/>
-
-    <div class="mx-auto md:max-w-6xl text-center mt-8">
-        <div class="mx-4">
-            
-            
-
-            <x-heading.h2 class="!text-2xl md:!text-3xl !font-semibold mb-4">
-                Done, you're all set!
-            </x-heading.h2>
-
-          
-            <p class="mt-4">
-                {{__('New to WPGrip?')}} <a class="text-primary-500 font-bold" href="{{ route('register') }}">{{__('Create an account')}}</a>
-            </p>
-
-            <div class="card text-center mx-auto md:max-w-xl mt-8 bg-base-100 shadow-xl p-4 md:p-8">
-                <p>
-                    
-                    Your account is now ready to go. Dive in and start exploring WPGrip's powerful features. We're thrilled to have you with us.
-
-                    <x-button-link.primary class="inline-block !w-full mt-6" href="{{ route('home') }}">
-                        {{ __('Continue') }}
-                    </x-button-link.primary>
-                </p>
+            {{-- success icon --}}
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-6">
+                <svg class="w-7 h-7 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
             </div>
 
-            <p class=" text-xs mt-4">
-                Need help getting started? Visit our support page or check out our quick-start guide!
+            <h1 class="text-3xl font-bold text-white tracking-tight mb-3">You're all set!</h1>
+            <p class="text-neutral-400 text-sm mb-8">
+                Your account is ready to go. Dive in and start exploring WPGrip's powerful features.
             </p>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-2xl p-8">
+                <p class="text-neutral-300 text-sm mb-6">We're thrilled to have you with us. Everything is set up and waiting for you.</p>
+
+                <a href="{{ route('home') }}"
+                   class="inline-block w-full py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold text-center transition-colors shadow-lg shadow-blue-900/30">
+                    Continue
+                </a>
+            </div>
+
+            <p class="text-xs text-neutral-600 mt-6">Need help getting started? Visit our support page or check out our quick-start guide.</p>
 
         </div>
     </div>
 
 </x-layouts.focus-center>
-
-

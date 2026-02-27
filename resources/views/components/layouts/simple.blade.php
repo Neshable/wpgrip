@@ -3,12 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('components.layouts.partials.head')
 </head>
-<body class="text-primary-900" x-data>
+<body class="bg-neutral-950 text-neutral-300" x-data>
     <div id="app">
         <x-layouts.app.header />
 
