@@ -1,103 +1,34 @@
 @props([
     'popular' => false,
     'link' => '',
+    'name' => '',
+    'price' => '',
+    'interval' => '',
+    'description' => '',
 ])
-{{-- 
-<div {{$attributes->merge(['class' => 'relative px-5 py-10 flex flex-col gap-4 mx-auto text-center border-2 border-primary-500 rounded-2xl transition'])}}>
+
+<div {{ $attributes->merge(['class' => 'relative flex flex-col gap-5 rounded-xl border p-8 transition-all duration-200 ' . ($popular ? 'border-blue-500/50 bg-blue-950/20 shadow-[0_0_40px_rgba(37,99,235,0.12)]' : 'border-white/10 bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/20')]) }}>
+
     @if ($popular)
-    <div class="absolute border-0 top-0 -mt-3 left-1/2 transform -translate-x-1/2 bg-primary-500 text-primary-50 mx-auto rounded z-0 text-xs px-2 py-1">
+    <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-blue-500 bg-blue-600 text-white text-xs font-medium">
+        <span class="h-1.5 w-1.5 rounded-full bg-blue-200"></span>
         {{ __('Most popular') }}
     </div>
     @endif
 
-    <x-heading.h3>
-        {{ $plan->product->name }}
-    </x-heading.h3>
-
-    <div class="flex flex-col gap-1">
-        @if($plan->prices[0]->price > 0)
-            <div class="text-4xl">
-                @money($plan->prices[0]->price, $plan->prices[0]->currency->code)
-            </div>
-            <div class="text-neutral-400 text-sm">
-                @if($plan->type === \App\Constants\PlanType::SEAT_BASED->value)
-                    <span class="text-sm">{{__('Per seat')}}</span>
-                @endif
-                / {{$plan->interval_count > 1 ? $plan->interval_count : '' }} {{ __($plan->interval->name) }}
-            </div>
-        @endif
-
-        @if($plan->prices[0]->type === \App\Constants\PlanPriceType::USAGE_BASED_PER_UNIT->value)
-            <div class="text-sm mt-2">
-                + @money($plan->prices[0]->price_per_unit, $plan->prices[0]->currency->code) / {{ __($plan->meter->name) }}
-            </div>
-        @elseif($plan->prices[0]->type === \App\Constants\PlanPriceType::USAGE_BASED_TIERED_GRADUATED->value
-                || $plan->prices[0]->type === \App\Constants\PlanPriceType::USAGE_BASED_TIERED_VOLUME->value)
-            <div class="mt-2">
-                @php $start = 0; $startingPhrase = __('From'); @endphp
-                @foreach($plan->prices[0]->tiers as $tier)
-                    <div class="flex justify-center items-center gap-4 mt-3">
-                        <span class="font-medium text-xs ">{{$startingPhrase}}</span>
-                        <span class="flex flex-col">
-                            <span class="text-xl">{{ $start }} - {{ $tier[\App\Constants\PlanPriceTierConstants::UNTIL_UNIT] }}</span>
-                            <span class="text-neutral-400 text-xs">{{ __(strtolower(str()->plural($plan->meter->name))) }}</span>
-                        </span>
-                        →
-                        <span class="flex flex-col">
-                            <span class=" text-sm">@money($tier[\App\Constants\PlanPriceTierConstants::PER_UNIT], $plan->prices[0]->currency->code) / {{ __($plan->meter->name) }}</span>
-                            @if ($tier[\App\Constants\PlanPriceTierConstants::FLAT_FEE] > 0)
-                            <span class="text-neutral-400 text-xs">+ @money($tier['flat_fee'], $plan->prices[0]->currency->code)</span>
-                            @endif
-                        </span>
-                    </div>
-                    @php $start = intval($tier[\App\Constants\PlanPriceTierConstants::UNTIL_UNIT]) + 1; @endphp
-
-                    @if($plan->prices[0]->type === \App\Constants\PlanPriceType::USAGE_BASED_TIERED_GRADUATED->value)
-                        @php $startingPhrase = __('Next'); @endphp
-                    @endif
-                @endforeach
-            </div>
-        @endif
-
-    </div>
-
-    <div class="py-4">
-        <ul class="flex flex-col items-center gap-4">
-            @if($plan->product->features)
-                @foreach($plan->product->features as $feature)
-                    <x-features.li-item>{{$feature['feature']}}</x-features.li-item>
-                @endforeach
-            @endif
-        </ul>
-    </div>
-
-    <x-button-link.primary href="{{route('checkout.subscription', $plan->slug)}}">
-        {{ __('Buy') }} {{ $plan->product->name }}
-    </x-button-link.primary>
-</div> --}}
-
-{{-- <div {{$attributes->merge(['class' => 'relative px-8 py-10 xl:py-16 flex flex-col gap-4 mx-auto text-center bg-gray-100 rounded-2xl transition' . ($popular ? ' bg-gradient-to-br from-blue-700 to-blue-900 relative text-white lg:-mt-8 lg:mb-8' : '')])}}>
-    @if ($popular)
-    <div class="absolute border-0 top-0 -mt-3 left-1/2 transform -translate-x-1/2 bg-white text-black mx-auto rounded z-0 text-xs px-2 py-1">
-        {{ __('Most popular') }}
-    </div>
-    @endif
     <div>
-        <x-heading.h3 class="block font-bold text-2xl {{ $popular ? 'text-white' : ''}}">
-            {{ $name }}
-        </x-heading.h3>
-
-        <span class="flex items-center gap-x-7 font-bold text-[60px]">
-            {{ $price }}
-            <span class="text-base">{{ $interval }}</span>
-        </span>
+        <div class="text-sm font-medium text-neutral-400 mb-2">{{ $name }}</div>
+        <div class="flex items-end gap-2">
+            <span class="text-4xl font-semibold text-white tracking-tight">{{ $price }}</span>
+            <span class="text-sm text-neutral-500 mb-1.5">{{ $interval }}</span>
+        </div>
     </div>
 
-    <div class="flex flex-col gap-y-4">
+    <div class="flex flex-col gap-3 flex-1">
         {{ $description }}
     </div>
 
-    <x-button-link.primary class="mt-8 {{ $popular ? '!bg-black' : ''}}" href="{{ Auth::check() ? $link : '/register'}}">
-        Start a free trial
-    </x-button-link.primary>
-</div> --}}
+    <a href="{{ Auth::check() ? $link : '/register' }}" class="mt-2 inline-flex items-center justify-center h-10 w-full rounded-lg border text-sm font-medium transition-all duration-200 {{ $popular ? 'border-blue-500 bg-blue-600 text-white hover:bg-blue-500' : 'border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white' }}">
+        {{ __('Start free trial') }}
+    </a>
+</div>

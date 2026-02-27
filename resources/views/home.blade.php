@@ -2,21 +2,19 @@
 <x-slot name="title">WordPress Site Management — All Your Sites, One Control Panel</x-slot>
 
 {{-- ===================== HERO ===================== --}}
-<section class="relative w-full overflow-hidden bg-neutral-950" x-data="{ ready: false }" x-init="setTimeout(() => ready = true, 100)">
+<section class="relative w-full overflow-hidden bg-neutral-950">
 
-    {{-- Radial glow --}}
-    <div class="pointer-events-none absolute inset-0" style="background: radial-gradient(55% 50% at 50% 60%, rgba(30,64,175,0.18) 0%, transparent 80%);"></div>
+    {{-- Dot grid --}}
+    <div class="pointer-events-none absolute inset-0" style="background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px); background-size: 28px 28px;"></div>
 
-    {{-- Animated beam lines --}}
-    <div class="pointer-events-none absolute inset-0 overflow-hidden opacity-30">
-        <div class="absolute inset-0" style="
-            background-image:
-                repeating-linear-gradient(100deg, #1e3a8a 0%, #1e3a8a 2%, rgba(30,58,138,0.4) 4%, transparent 8%, transparent 12%, rgba(30,58,138,0.3) 14%, #1e3a8a 16%),
-                repeating-linear-gradient(100deg, #3b82f6 0%, #3b82f6 1%, rgba(59,130,246,0.5) 2%, #1d4ed8 3%, #1d4ed8 4%, rgba(59,130,246,0.5) 4.5%, #3b82f6 5%);
-            background-size: 300% 200%, 200% 200%;
-            animation: beams 25s linear infinite;
-        "></div>
-    </div>
+    {{-- Strong blue radial glow centred top --}}
+    <div class="pointer-events-none absolute inset-0" style="background: radial-gradient(ellipse 90% 65% at 50% -10%, rgba(37,99,235,0.35) 0%, rgba(37,99,235,0.10) 40%, transparent 70%);"></div>
+
+    {{-- Secondary purple tint on right --}}
+    <div class="pointer-events-none absolute inset-0" style="background: radial-gradient(ellipse 50% 50% at 80% 20%, rgba(124,58,237,0.12) 0%, transparent 60%);"></div>
+
+    {{-- Bottom fade to next section --}}
+    <div class="pointer-events-none absolute bottom-0 left-0 right-0 h-56" style="background: linear-gradient(to bottom, transparent, #0a0a0a);"></div>
 
     <div class="relative max-w-screen-xl mx-auto px-6 flex flex-col items-center text-center pt-40 pb-12">
 

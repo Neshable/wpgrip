@@ -1,224 +1,164 @@
 <x-layouts.app>
-    <x-slot name="title">
-        {{ __('WPGRIP ') }}
-    </x-slot>
+<x-slot name="title">Pricing — Simple, Transparent Plans</x-slot>
 
-    <x-section.hero class="w-full">
+{{-- HERO --}}
+<section class="relative w-full overflow-hidden bg-neutral-950">
+    <div class="pointer-events-none absolute inset-0" style="background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px); background-size: 28px 28px;"></div>
+    <div class="pointer-events-none absolute inset-0" style="background: radial-gradient(ellipse 90% 65% at 50% -10%, rgba(37,99,235,0.35) 0%, rgba(37,99,235,0.10) 40%, transparent 70%);"></div>
+    <div class="pointer-events-none absolute bottom-0 left-0 right-0 h-48" style="background: linear-gradient(to bottom, transparent, #0a0a0a);"></div>
 
-        <div class="mx-auto text-center px-4">
-            <x-heading.h1 class="mt-4 text-gray-900 font-bold">
-                Flexible Plans That Grow With You
-            </x-heading.h1>
-
-            <p class="text-gray-600 m-3">
-                Whether you're a freelancer or an agency, our plans are designed to fit your needs perfectly.
-            </p>
+    <div class="relative max-w-screen-xl mx-auto px-6 flex flex-col items-center text-center pt-40 pb-20">
+        <div class="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-300 text-xs font-medium tracking-wide uppercase">
+            <span class="h-1.5 w-1.5 rounded-full bg-blue-400"></span>
+            No hidden fees. Cancel anytime.
         </div>
-    </x-section.hero>
-
-
-    <div class="py-16 bg-white overflow-hidden lg:pt-24 lg:pb-8">
-        <x-plans.all calculate-saving-rates="true" preselected-interval="month"></x-plans.all>
+        <h1 class="text-5xl md:text-6xl font-semibold tracking-tight text-white text-balance leading-tight max-w-2xl">
+            Simple pricing.<br><span class="text-blue-400">Powerful features.</span>
+        </h1>
+        <p class="mt-6 text-lg text-neutral-400 font-light max-w-xl leading-relaxed">
+            Every plan includes the full feature set. No paywalls on core functionality.
+            Pay for what you need, scale when you're ready.
+        </p>
     </div>
+</section>
 
+{{-- PLANS --}}
+<section class="bg-[#0a0a0a] pt-4 pb-24">
+    <div class="max-w-screen-xl mx-auto px-6">
 
-    <div class="bg-white">
-        <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6  lg:px-8 lg:grid lg:grid-cols-3 lg:gap-x-32 align-center">
+        {{-- Dark wrapper for the plans component --}}
+        <div class="[&_.section-hero]:hidden
+                    [&_section]:bg-transparent
+                    [&_.card]:bg-neutral-900
+                    [&_h2]:text-white
+                    [&_h3]:text-white
+                    [&_p]:text-neutral-400">
+            <x-plans.all calculate-saving-rates="true" preselected-interval="month"></x-plans.all>
+        </div>
+    </div>
+</section>
+
+{{-- EVERYTHING INCLUDED --}}
+<section class="py-24 border-t border-white/5 bg-neutral-950">
+    <div class="max-w-screen-xl mx-auto px-6">
+        <div class="grid md:grid-cols-2 gap-16 items-start">
             <div>
-                <x-heading.h6 class="text-gray-600 tracking-wide uppercase">
-                    {{ __('A solid foundation') }}
-                </x-heading.h6>
-                <x-heading.h3 class="text-primary-900 mt-2 text-3xl">
-                    {{ __('Included in all plans') }}
-                </x-heading.h3>
-                <p class="mt-4 text-lg text-gray-500">
-                    It takes care of everything important to keep your site secure and under control.
+                <div class="inline-flex items-center px-2.5 py-1 rounded-md border border-emerald-900 bg-emerald-950 text-emerald-300 text-xs font-mono mb-6">Every Plan</div>
+                <h2 class="text-3xl md:text-4xl font-semibold text-white tracking-tight leading-tight">
+                    Everything included.<br>No feature paywalls.
+                </h2>
+                <p class="mt-4 text-base text-neutral-400 font-light leading-relaxed">
+                    We don't lock core features behind higher tiers. Every plan gives you access to the full
+                    WPGrip toolkit — monitoring, AI assistant, git deployments, backups, and more.
+                    The only difference is how many sites you manage.
+                </p>
+                <div class="mt-8 flex flex-col gap-3">
+                    <a href="/register" class="inline-flex items-center justify-center h-11 px-6 w-fit rounded-lg border border-blue-500 bg-blue-600 text-blue-50 hover:bg-blue-500 font-medium text-sm transition-all duration-200 shadow-lg shadow-blue-900/40">
+                        Start free trial
+                    </a>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                @php
+                $allFeatures = [
+                    ['icon' => '📡', 'label' => 'Uptime Monitoring'],
+                    ['icon' => '🔒', 'label' => 'SSL Tracking'],
+                    ['icon' => '🌐', 'label' => 'Domain Expiry Alerts'],
+                    ['icon' => '⚡', 'label' => 'PageSpeed Scores'],
+                    ['icon' => '🛡️', 'label' => 'Vulnerability Scanning'],
+                    ['icon' => '🤖', 'label' => 'AI Assistant'],
+                    ['icon' => '🚀', 'label' => 'Git Deployments'],
+                    ['icon' => '🗄️', 'label' => 'Database Backups'],
+                    ['icon' => '🔄', 'label' => 'One-Click Updates'],
+                    ['icon' => '👥', 'label' => 'Team Collaboration'],
+                    ['icon' => '📊', 'label' => 'Performance History'],
+                    ['icon' => '🔔', 'label' => 'Slack & Email Alerts'],
+                ];
+                @endphp
+                @foreach($allFeatures as $f)
+                <div class="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.02] px-4 py-3">
+                    <span class="text-lg">{{ $f['icon'] }}</span>
+                    <span class="text-sm text-neutral-300">{{ $f['label'] }}</span>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- COLLABORATION NOTE --}}
+<section class="py-16 border-t border-white/5" style="background: linear-gradient(180deg, #0a0a0a 0%, #0f0f0f 100%)">
+    <div class="max-w-3xl mx-auto px-6">
+        <div class="rounded-xl border border-blue-500/20 bg-blue-500/5 p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
+            <div class="text-3xl">👥</div>
+            <div class="flex-1">
+                <h3 class="text-lg font-medium text-white mb-2">Just collaborating?</h3>
+                <p class="text-sm text-neutral-400 font-light leading-relaxed">
+                    A free account is all you need. Other members can invite you to their workspaces — once they do,
+                    you’ll have full access to view and manage sites in that workspace.
+                    <strong class="text-neutral-200">You don’t need a paid plan to accept workspace invitations.</strong>
                 </p>
             </div>
+            <a href="/register" class="flex-shrink-0 inline-flex items-center justify-center h-10 px-5 rounded-lg border border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white text-sm transition-colors">
+                Register free
+            </a>
+        </div>
+    </div>
+</section>
 
-
-            <div class="mt-4 sm:mt-8 md:mt-10 md:grid md:grid-cols-2 md:gap-x-8 xl:mt-0 lg:col-span-2">
-                <ul class="divide-y divide-gray-200 -mt-4">
-                    @php
-                        $items = [
-                            'Uptime Monitoring',
-                            'SSL Monitoring',
-                            'Domain Monitoring',
-                            'Vulnerabilities Monitoring',
-                            'Performance Monitoring',
-                            'History Stats',
-                        ];
-                    @endphp
-
-                    @foreach ($items as $item)
-                        <li class="py-4 flex">
-                            <svg aria-hidden="true" class="flex-shrink-0 h-6 w-6 text-green-500" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2"></path>
-                            </svg>
-                            <span class="ml-3 text-base text-gray-500">
-                                {{ $item }}
-                            </span>
-                        </li>
-                    @endforeach
-                </ul>
-                <ul class="border-t border-gray-200 divide-y divide-gray-200 md:border-t-0 md:-mt-4">
-                    @php
-                        $items2 = [
-                            'Powerful administration',
-                            'Fine-Tuned AI Insights',
-                            'One-Click Updates',
-                            'Git Deployments',
-                            'DB Cloud Backups',
-                            'Client & Server management',
-                        ];
-                    @endphp
-
-                    @foreach ($items2 as $item)
-                        <li class="py-4 flex">
-                            <svg aria-hidden="true" class="flex-shrink-0 h-6 w-6 text-green-500" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2"></path>
-                            </svg>
-                            <span class="ml-3 text-base text-gray-500">
-                                {{ $item }}
-                            </span>
-                        </li>
-                    @endforeach
-
-                </ul>
+{{-- FAQ --}}
+<section class="py-24 border-t border-white/5 bg-neutral-950">
+    <div class="max-w-3xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-semibold text-white tracking-tight">Frequently asked questions</h2>
+        </div>
+        <div class="space-y-3">
+            @php
+            $faqs = [
+                ['q' => 'How long is the free trial?', 'a' => 'We offer a 5-day free trial with full access to all features. No credit card required to start.'],
+                ['q' => 'What happens when my trial ends?', 'a' => 'Your account moves to the free plan automatically. You\'ll be notified beforehand so you can choose a paid plan if you need to keep full access.'],
+                ['q' => 'Can I change my plan later?', 'a' => 'Yes — upgrade or downgrade at any time directly from your dashboard. Changes take effect immediately with prorated billing.'],
+                ['q' => 'Do you offer refunds?', 'a' => 'Yes. We offer a 30-day money-back guarantee on all annual subscriptions. If you\'re not happy, just ask.'],
+                ['q' => 'Which payment methods do you support?', 'a' => 'We accept all major credit cards and PayPal. All payments are processed securely.'],
+                ['q' => 'Is there a setup fee?', 'a' => 'None. You\'re up and running the moment you add an SSH key to your server — no additional costs.'],
+                ['q' => 'Are there annual plans available?', 'a' => 'Yes — annual plans are available at a discounted rate. You can switch between monthly and annual billing from your account settings.'],
+                ['q' => 'Can I manage sites across different hosting providers?', 'a' => 'Absolutely. WPGrip is hosting-agnostic — DigitalOcean, Hetzner, AWS, Kinsta, WP Engine, Cloudways, or any VPS with SSH access.'],
+            ];
+            @endphp
+            @foreach($faqs as $i => $faq)
+            <div x-data="{ open: {{ $i === 0 ? 'true' : 'false' }} }" class="rounded-xl border border-white/5" :class="open ? 'border-white/10 bg-white/[0.03]' : 'hover:border-white/8 hover:bg-white/[0.02]'">
+                <button @click="open = !open" class="w-full flex items-center justify-between px-6 py-5 text-left gap-4">
+                    <span class="text-sm md:text-base font-medium leading-snug" :class="open ? 'text-white' : 'text-neutral-400'">{{ $faq['q'] }}</span>
+                    <span class="flex-shrink-0 h-5 w-5 rounded-full border border-white/20 flex items-center justify-center">
+                        <svg class="h-3 w-3 text-neutral-400 transition-transform duration-200" :class="open ? 'rotate-45' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    </span>
+                </button>
+                <div x-show="open" x-collapse class="px-6 pb-5">
+                    <p class="text-sm text-neutral-400 font-light leading-relaxed">{{ $faq['a'] }}</p>
+                </div>
             </div>
+            @endforeach
         </div>
     </div>
+</section>
 
-    {{-- Enterprise --}}
-    {{-- <div class="mx-auto max-w-4xl mt-16">
-        <div class="divide-y divide-gray-200 rounded-lg bg-white shadow-lg shadow-black/5 ring-1 ring-black/5 dark:divide-gray-800 dark:bg-gray-700 dark:text-gray-300 dark:ring-gray-800 relative z-10 mb-6">
-            <ul class="divide-y divide-gray-200 dark:divide-gray-800">
-                <li class="flex items-center space-x-4 p-4 dark:border-gray-800"><!---->
-                    <div class="flex-1">
-                        <h3 class="text-gray-900 text-3xl font-semibold capitalize font-semibold mb-4">
-                            Enterprise Plan
-                        </h3>
-
-                        <p class="max-w-2xl text-sm text-gray-500 dark:text-gray-400">
-                            We can offer additional enterprise plan for businesses with large fleet of sites and/or compliance needs.
-                        </p>
-                    </div>
-                    <a class="inline-block cursor-pointer justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md bg-primary-600 hover:bg-primary-700 md:py-4 md:text-lg md:px-10 text-white rounded-md py-3 px-5 inline-flex bg-blue-600 hover:bg-blue-800 focus:ring-secondary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 self-center transition-all !py-3"
-                        href="/pricing">
-                        See all plans
-                    </a>
-
-
-                </li>
-                
-            </ul>
-
+{{-- CTA --}}
+<section class="relative overflow-hidden border-t border-white/10 bg-neutral-950">
+    <div class="pointer-events-none absolute inset-0" style="background: radial-gradient(60% 50% at 50% 100%, rgba(30,64,175,0.15) 0%, transparent 80%);"></div>
+    <div class="relative max-w-2xl mx-auto px-6 py-28 text-center">
+        <h2 class="text-3xl md:text-4xl font-semibold text-white tracking-tight text-balance">
+            Start managing smarter today
+        </h2>
+        <p class="mt-3 text-lg text-neutral-400 font-light">Free trial. No credit card. Cancel anytime.</p>
+        <div class="mt-10 flex flex-col sm:flex-row justify-center gap-3">
+            <a href="/register" class="inline-flex items-center justify-center h-11 px-6 rounded-lg border border-blue-500 bg-blue-600 text-blue-50 hover:bg-blue-500 font-medium text-sm transition-all duration-200 shadow-lg shadow-blue-900/40">
+                Get started for free
+            </a>
+            <a href="{{ route('features') }}" class="inline-flex items-center justify-center h-11 px-6 rounded-lg border border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white text-sm transition-all duration-200">
+                Explore features
+            </a>
         </div>
-
-    </div> --}}
-
-    <div class="mx-auto max-w-4xl mt-16">
-
-        <div
-            class="divide-y divide-gray-200 rounded-lg bg-white shadow-lg shadow-black/5 ring-1 ring-black/5 dark:divide-gray-800 dark:bg-gray-700 dark:text-gray-300 dark:ring-gray-800 relative z-10 mb-6">
-            <ul class="divide-y divide-gray-200 dark:divide-gray-800">
-                <li class="flex items-center space-x-4 p-4 dark:border-gray-800"><!---->
-
-                    <div class="flex-1">
-                        <x-heading.h3 class="font-semibold mb-4">
-                            Just collaborating?
-                        </x-heading.h3>
-                        <p class="max-w-2xl text-sm mb-4 text-gray-500 dark:text-gray-400">
-                            A free account is enough. Other members can invite you to their workspaces. Once they do,
-                            you'll be able to view the sites from the external workspace.
-                        </p>
-                        <p class="max-w-2xl text-sm text-gray-800 font-bold dark:text-gray-400">
-                            You don't need a paid plan to be invited to other workspaces.
-                        </p>
-                    </div><a disabled="false"
-                        class="inline-flex items-center justify-center text-sm font-medium transition-all ease-in-out duration-100 focus:outline-none focus:ring border rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:border-gray-400 focus:bg-white px-3 py-2 text-sm w-48"
-                        target="_self" href="/register">Register now</a>
-                </li>
-            </ul>
-
-        </div>
-
     </div>
-
-
-    <div class="text-center mt-24 mx-4" id="faq">
-        <x-heading.h2 class="text-primary-900">
-            Frequently Asked Questions
-        </x-heading.h2>
-        <p>{{ __('Here are the most common questions to help you with your decision.') }}</p>
-    </div>
-
-    {{-- FAQ --}}
-    <div class="max-w-none md:max-w-6xl mx-auto">
-        <x-accordion class="mt-4 p-8">
-
-            <x-accordion.item active="true" name="faqs">
-                <x-slot name="title">What is WPGrip?</x-slot>
-                <p>WPGrip is an all-in-one solution for managing multiple WordPress sites from a single dashboard. It
-                    offers tools for performance, security, and team management to make your workflow seamless.</p>
-            </x-accordion.item>
-
-            <x-accordion.item name="faqs">
-                <x-slot name="title">Can I change my plan?</x-slot>
-                <p>Yes, you can upgrade or downgrade your plan at any time directly from your dashboard. We make it easy
-                    to adapt as your needs change.</p>
-            </x-accordion.item>
-
-            <x-accordion.item name="faqs">
-                <x-slot name="title">How long is the free trial?</x-slot>
-                <p>We offer a 5-day free trial. This gives you plenty of time to explore all the features WPGrip has to
-                    offer.</p>
-            </x-accordion.item>
-
-            <x-accordion.item name="faqs">
-                <x-slot name="title">Do you offer refunds?</x-slot>
-                <p>Yes, we offer a 30-day money-back guarantee on all our annual subscriptions. If you're not satisfied,
-                    we've got you covered.</p>
-            </x-accordion.item>
-
-            <x-accordion.item name="faqs">
-                <x-slot name="title">Do you offer 24/7 support?</x-slot>
-                <p>No, we do not offer 24/7 support. However, we always aim to respond as quickly as possible to ensure
-                    you get the help you need.</p>
-            </x-accordion.item>
-
-            <x-accordion.item name="faqs">
-                <x-slot name="title">What happens after my free trial ends?</x-slot>
-                <p>Once your trial ends, your subscription will move to the free plan. You will be notified beforehand
-                    so you can choose the plan that works best for you.</p>
-            </x-accordion.item>
-
-
-            <x-accordion.item name="faqs">
-                <x-slot name="title">Which payment providers are supported?</x-slot>
-                <p>We support major credit cards and also offer payment via PayPal for your convenience.</p>
-            </x-accordion.item>
-
-            <x-accordion.item name="faqs">
-                <x-slot name="title">Can I pay through PayPal?</x-slot>
-                <p>Yes, PayPal is available as a payment option for all our plans.</p>
-            </x-accordion.item>
-
-            <x-accordion.item name="faqs">
-                <x-slot name="title">Is there a setup fee?</x-slot>
-                <p>No, there are no setup fees. You can get started immediately without any additional costs.</p>
-            </x-accordion.item>
-
-            <x-accordion.item name="faqs">
-                <x-slot name="title">What are the terms of subscription?</x-slot>
-                <p>All our plans are available on a yearly subscription basis without any minimum commitments. You can
-                    cancel your account at any time directly from the dashboard—no questions asked.</p>
-            </x-accordion.item>
-        </x-accordion>
-    </div>
+</section>
 
 </x-layouts.app>
