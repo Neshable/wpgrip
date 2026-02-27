@@ -18,6 +18,19 @@
 </x-filament::tabs.item>
 
 <x-filament::tabs.item 
+    :href="route( 'filament.dashboard.resources.sites.ai-assistant', [
+        'record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 
+        'tenant' => $tenant->uuid
+        ] )" 
+    :wire:navigate
+    tag="a"
+    icon="heroicon-m-sparkles"
+    :active="request()->getRequestUri() === \URL::route('filament.dashboard.resources.sites.ai-assistant', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid], false)"
+>
+    AI Assistant  
+</x-filament::tabs.item>
+
+<x-filament::tabs.item 
     :href="route( 'filament.dashboard.resources.sites.insights', [
         'record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 
         'tenant' => $tenant->uuid

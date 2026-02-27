@@ -482,6 +482,7 @@ class SiteResource extends Resource
             'performance' => Pages\Performance::route('/{record}/tests/performance'), 
             
             'tools' => Pages\Tools::route('/{record}/tools'), 
+            'ai-assistant' => Pages\AiAssistant::route('/{record}/ai-assistant'),
             'security' => Pages\Security::route('/{record}/security'), 
             // 'checksums' => Pages\SecurityGroup\Checksumss::route('/{record}/security/checksums'),
             'repos' => Pages\Git::route('/{record}/repos'),
