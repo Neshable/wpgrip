@@ -1,52 +1,69 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
-body.fi-panel-dashboard {
-    /* background: #f5f7fa; */
-    background: #f5f7fa;
-    
-    
-    .fi-sidebar {
-        background: #f5f7fa;
-        max-width: 220px;
-        .fi-sidebar-item-icon,
-        .fi-sidebar-group-icon  {
-            width: 1.2rem;
-            height: 1.2rem;
-        }
-    }
-    
-    .fi-sidebar-header {
-        background: #222937;
-    }
-    .fi-topbar {
-        nav {
-            background: #222937;
-        }
-    }
+/* ─── Shared topbar / sidebar-header background ─────────────────────────────
+   Matches the home page dark theme:
+   – base: #0a0a0a (neutral-950)
+   – dot grid via radial-gradient
+   – blue glow from top-left
+   – purple tint top-right
+──────────────────────────────────────────────────────────────────────────── */
+
+:root {
+    --wp-topbar-bg:
+        radial-gradient(ellipse 120% 300% at 0% 0%,  rgba(37,99,235,0.30) 0%, transparent 55%),
+        radial-gradient(ellipse 60%  160% at 100% 0%, rgba(124,58,237,0.18) 0%, transparent 50%),
+        radial-gradient(circle, rgba(255,255,255,0.10) 1px, transparent 1px),
+        #0a0a0a;
+    --wp-topbar-bg-size: auto, auto, 28px 28px, auto;
 }
 
-/* Dark mode styles */
-.dark body.fi-panel-dashboard {
-    background: #1b1c1d; /* Dark slate background */
-    
+body.fi-panel-dashboard {
+    background: #0f1015;
+
     .fi-sidebar {
-        background: #282a2c; /* Dark sidebar background */
-        
+        background: #0d0e12;
+        max-width: 220px;
+
         .fi-sidebar-item-icon,
         .fi-sidebar-group-icon {
             width: 1.2rem;
             height: 1.2rem;
         }
     }
-    
+
     .fi-sidebar-header {
-        background: #1b1c1d; /* Darker header background */
+        background:      var(--wp-topbar-bg);
+        background-size: var(--wp-topbar-bg-size);
+        border-bottom: 1px solid rgba(255,255,255,0.06);
     }
-    
-    .fi-topbar {
-        nav {
-            background: #1b1c1d; /* Dark topbar background */
-        }
+
+    .fi-topbar nav {
+        background:      var(--wp-topbar-bg);
+        background-size: var(--wp-topbar-bg-size);
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    }
+}
+
+/* Dark mode — same treatment (Filament forces .dark on <html>) */
+.dark body.fi-panel-dashboard {
+    background: #0f1015;
+
+    .fi-sidebar {
+        background: #0d0e12;
+    }
+
+    .fi-sidebar-header {
+        background:      var(--wp-topbar-bg);
+        background-size: var(--wp-topbar-bg-size);
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .fi-topbar nav {
+        background:      var(--wp-topbar-bg);
+        background-size: var(--wp-topbar-bg-size);
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        box-shadow: 0 4px 24px rgba(0,0,0,0.5);
     }
 }
 
