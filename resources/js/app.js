@@ -1,8 +1,13 @@
 import Alpine from 'alpinejs'
 import intersect from '@alpinejs/intersect'
+import collapse from '@alpinejs/collapse'
 
-// plugins have to be imported before Alpine is started
+// plugins have to be registered before Alpine.start()
 Alpine.plugin(intersect)
+Alpine.plugin(collapse)
+
+window.Alpine = Alpine
+Alpine.start()
 
 document.addEventListener('DOMContentLoaded', function () {
     assignTabSliderEvents();
