@@ -2,6 +2,38 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 import common from './tailwind.common.js'
 
 export default {
+    safelist: [
+        // Nav glass effect — Alpine :class dynamic strings not picked up by static scanner
+        'backdrop-blur-none',
+        'backdrop-blur-md',
+        'bg-gradient-to-b',
+        'from-transparent',
+        'to-transparent',
+        'from-neutral-950/90',
+        'to-neutral-950/60',
+        'from-neutral-950/0',
+        'to-neutral-950/0',
+        'border-b-transparent',
+        'border-b-white/[0.08]',
+        'shadow-none',
+        // Home page hero backgrounds
+        'bg-neutral-950',
+        'bg-neutral-900',
+        'bg-white/5',
+        'bg-white/10',
+        'bg-white/[0.02]',
+        'bg-white/[0.03]',
+        'bg-white/[0.04]',
+        'bg-white/[0.05]',
+        'border-white/5',
+        'border-white/8',
+        'border-white/10',
+        'border-white/20',
+        'hover:bg-white/[0.04]',
+        'hover:bg-white/[0.05]',
+        'hover:border-white/10',
+        'hover:border-white/20',
+    ],
     plugins: [require("daisyui")],
     daisyui: {
         themes: ["light"],
