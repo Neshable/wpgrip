@@ -245,7 +245,8 @@ SYSTEM;
             $lines[] = 'Name: ' . $site->server->name;
             $lines[] = 'IP: ' . $site->server->ip;
             $lines[] = 'Port: ' . ($site->server->port ?? 22);
-            $lines[] = 'Provider: ' . ($site->server->provider ?? 'n/a');
+            $provider = $site->server->provider;
+            $lines[] = 'Provider: ' . ($provider instanceof \BackedEnum ? $provider->value : ($provider ?? 'n/a'));
         }
 
         if ($site->client) {
