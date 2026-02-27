@@ -11,6 +11,7 @@ use Anthropic\Laravel\Facades\Anthropic;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 
 class AiAssistant extends ViewRecord
 {
@@ -85,18 +86,8 @@ class AiAssistant extends ViewRecord
 
                     this.$nextTick(() => this.scrollToBottom());
 
-                    this.$wire.$on('messageAdded', ({ role, content, html }) => {
-                        this.loading = false;
-                        this.messages.push({ role, content, html });
-                        this.$nextTick(() => this.scrollToBottom());
-                    });
-
-                    this.$watch('$wire.messages', (val) => {
-                        if (Array.isArray(val) && val.length === 0) {
-                            this.messages = [];
-                            this.loading  = false;
-                        }
-                    });
+                    // No $wire.$on listener here — replies come back via .then() in submit()
+                    // so there is no risk of the listener being registered twice on re-render.
                 },
 
                 handleKeydown(e) {
@@ -109,14 +100,29 @@ class AiAssistant extends ViewRecord
                 submit() {
                     const text = this.draft.trim();
                     if (!text || this.loading) return;
+
+                    // Optimistic: show user bubble immediately
                     this.messages.push({ role: 'user', content: text, html: '' });
                     this.draft   = '';
                     this.loading = true;
+
                     this.$nextTick(() => {
                         if (this.$refs.input) this.$refs.input.style.height = 'auto';
                         this.scrollToBottom();
                     });
-                    this.$wire.sendMessage(text).catch(() => { this.loading = false; });
+
+                    // Call Livewire — it returns { content, html } or { error }
+                    this.$wire.sendMessage(text)
+                        .then((result) => {
+                            this.loading = false;
+                            if (result && result.html) {
+                                this.messages.push({ role: 'assistant', content: result.content, html: result.html });
+                                this.$nextTick(() => this.scrollToBottom());
+                            } else if (result && result.error) {
+                                // error is already surfaced via $wire.aiError on the server side
+                            }
+                        })
+                        .catch(() => { this.loading = false; });
                 },
 
                 fillSuggestion(s) {
@@ -125,9 +131,9 @@ class AiAssistant extends ViewRecord
                 },
 
                 clearChat() {
+                    this.$wire.clearChat();
                     this.messages = [];
                     this.loading  = false;
-                    this.$wire.clearChat();
                 },
 
                 nl2br(str) {
@@ -183,19 +189,21 @@ class AiAssistant extends ViewRecord
     // -------------------------------------------------------------------------
 
     /**
-     * Called by Alpine with the message text already trimmed.
-     * Appends to server-side history, calls Anthropic, dispatches event back to Alpine.
+     * Called by Alpine with the message text.
+     * Returns ['content' => string, 'html' => string] on success,
+     * or ['error' => string] on failure.
+     * Alpine's .then() handler appends the reply bubble — no events needed.
      */
-    public function sendMessage(string $text): void
+    public function sendMessage(string $text): array
     {
         $text = trim($text);
         if (empty($text)) {
-            return;
+            return ['error' => 'Empty message.'];
         }
 
         $this->aiError = '';
 
-        // Keep server-side history in sync (Alpine already showed the user bubble)
+        // Keep server-side conversation history in sync
         $this->messages[] = ['role' => 'user', 'content' => $text];
 
         try {
@@ -203,18 +211,15 @@ class AiAssistant extends ViewRecord
         } catch (\Throwable $e) {
             Log::error('AI Assistant error: ' . $e->getMessage());
             $this->aiError = 'AI request failed: ' . $e->getMessage();
-            $this->dispatch('aiError', message: $e->getMessage());
-            return;
+            return ['error' => $e->getMessage()];
         }
 
         $this->messages[] = ['role' => 'assistant', 'content' => $reply];
 
-        // Render markdown server-side so Alpine just injects HTML
-        $html = (string) \Illuminate\Support\Str::of($reply)
+        $html = (string) Str::of($reply)
             ->markdown(['html_input' => 'escape', 'allow_unsafe_links' => false]);
 
-        // Tell Alpine to append the bubble and stop the loading indicator
-        $this->dispatch('messageAdded', role: 'assistant', content: $reply, html: $html);
+        return ['content' => $reply, 'html' => $html];
     }
 
     // -------------------------------------------------------------------------
