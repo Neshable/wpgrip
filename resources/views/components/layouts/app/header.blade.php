@@ -1,13 +1,16 @@
 <header
-    class="fixed inset-x-0 top-0 z-50 border-b border-b-transparent transition-all duration-300"
+    class="fixed inset-x-0 top-0 z-50 border-b border-b-transparent bg-gradient-to-b from-transparent to-transparent shadow-none backdrop-blur-none transition-all duration-500"
     x-data="{
-        showBorder: window.pageYOffset >= 24,
+        scrolled: window.pageYOffset >= 24,
         mobileOpen: false,
-        init() { this.evaluateScroll() },
-        evaluateScroll() { this.showBorder = window.pageYOffset >= 24 },
+        init() { this.evaluate() },
+        evaluate() { this.scrolled = window.pageYOffset >= 24 },
     }"
-    x-on:scroll.window.passive="evaluateScroll"
-    :class="showBorder ? 'border-b-white/10 bg-neutral-950/80 backdrop-blur-md shadow-[0_4px_60px_0_rgba(0,0,0,0.9)]' : 'bg-transparent'">
+    x-on:scroll.window.passive="evaluate"
+    :class="scrolled
+        ? 'border-b-white/[0.08] from-neutral-950/90 to-neutral-950/60 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.6)]'
+        : 'border-b-transparent from-neutral-950/0 to-neutral-950/0 backdrop-blur-none'"
+>
 
     <div class="max-w-screen-xl mx-auto px-6 flex items-center justify-between h-16">
         {{-- Logo --}}
