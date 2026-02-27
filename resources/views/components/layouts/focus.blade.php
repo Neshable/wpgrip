@@ -1,19 +1,32 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth h-full bg-neutral-950">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('components.layouts.partials.head')
 </head>
-<body class="bg-neutral-950 text-neutral-100 min-h-screen">
+<body class="bg-neutral-950 text-neutral-300 min-h-screen antialiased">
 
-    {{-- dot-grid + blue glow background --}}
-    <div class="fixed inset-0 -z-10 pointer-events-none">
-        <div class="absolute inset-0" style="background-image:radial-gradient(circle,rgba(255,255,255,0.10) 1px,transparent 1px);background-size:28px 28px;"></div>
-        <div class="absolute inset-0" style="background:radial-gradient(ellipse 100% 60% at 50% 0%,rgba(37,99,235,0.22) 0%,transparent 70%);"></div>
-        <svg class="absolute inset-0 w-full h-full opacity-[0.05]" xmlns="http://www.w3.org/2000/svg"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>
-    </div>
+    {{-- Noise texture overlay --}}
+    <svg class="pointer-events-none fixed inset-0 z-[99] h-screen mix-blend-overlay" style="opacity:0.06" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" preserveAspectRatio="none">
+        <defs>
+            <filter id="noise-filter">
+                <feTurbulence type="turbulence" baseFrequency="0.85" numOctaves="1" stitchTiles="stitch" result="noise" />
+                <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="coloredNoise" />
+            </filter>
+        </defs>
+        <rect width="100%" height="100%" filter="url(#noise-filter)" />
+    </svg>
+
+    {{-- Dot grid --}}
+    <div class="pointer-events-none fixed inset-0" style="background-image:radial-gradient(circle,rgba(255,255,255,0.12) 1px,transparent 1px);background-size:28px 28px;"></div>
+
+    {{-- Blue radial glow --}}
+    <div class="pointer-events-none fixed inset-0" style="background:radial-gradient(ellipse 90% 65% at 50% -10%,rgba(37,99,235,0.35) 0%,rgba(37,99,235,0.10) 40%,transparent 70%);"></div>
+
+    {{-- Purple secondary tint --}}
+    <div class="pointer-events-none fixed inset-0" style="background:radial-gradient(ellipse 50% 50% at 80% 20%,rgba(124,58,237,0.12) 0%,transparent 60%);"></div>
 
     <div id="app" class="relative min-h-screen flex flex-col">
 
@@ -29,15 +42,8 @@
         </div>
 
         <div class="flex-1 flex flex-col-reverse md:flex-row">
-            {{-- left: form --}}
-            <div class="md:basis-3/5 flex flex-col justify-center px-6 py-8">
-                {{ $left }}
-            </div>
-
-            {{-- right: accent panel --}}
-            <div class="md:basis-2/5 flex flex-col justify-center px-8 py-12 md:border-l border-white/5">
-                {{ $right }}
-            </div>
+            <div class="md:basis-3/5 flex flex-col justify-center px-6 py-8">{{ $left }}</div>
+            <div class="md:basis-2/5 flex flex-col justify-center px-8 py-12 md:border-l border-white/5">{{ $right }}</div>
         </div>
 
         @include('components.layouts.partials.tail')
