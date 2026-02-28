@@ -22,10 +22,25 @@ $tenant = Filament\Facades\Filament::getTenant();
 
     <div class="flex flex-col items-center md:flex-row">   
     
-        @if ( $this->getRecord()->screenshot_path && Storage::disk('public')->exists($this->getRecord()->screenshot_path))
-            <img class="object-cover w-full rounded-t-lg h-28 md:h-28 md:w-auto md:rounded-none md:rounded-l-lg" 
-            src="{{ Storage::disk('public')->url($this->getRecord()->screenshot_path) }}" alt="">
-        @endif 
+        @php
+            $screenshotPath = $this->getRecord()->screenshot_path;
+            $screenshotUrl  = null;
+            if ($screenshotPath) {
+                // Try public disk first, fall back to s3
+                foreach (['public', 's3'] as $disk) {
+                    try {
+                        if (Storage::disk($disk)->exists($screenshotPath)) {
+                            $screenshotUrl = Storage::disk($disk)->url($screenshotPath);
+                            break;
+                        }
+                    } catch (\Throwable) {}
+                }
+            }
+        @endphp
+        @if ($screenshotUrl)
+            <img class="object-cover w-full rounded-t-lg h-28 md:h-28 md:w-auto md:rounded-none md:rounded-l-lg"
+                 src="{{ $screenshotUrl }}" alt="Site screenshot">
+        @endif
         
         <div class="w-full relative px-6 py-4 h-full flex-row items-center justify-between">
             <div class="flex flex-col md:flex-row md:items-center">

@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Job to take a screenshot of a site's homepage.
- *
- * This job handles the process of taking a screenshot of a site's homepage,
- * storing it in the specified storage disk, and updating the site record
- * with the new screenshot path.
- */
-
 namespace App\Jobs\Site;
 
 use App\Models\Site;
@@ -19,114 +11,56 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Exception;
 
 class TakeHomeScreenshot implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * The Site instance.
-     *
-     * @var \App\Models\Site
-     */
-    public $site;
+    public int $timeout = 120;
+    public int $tries   = 2;
+    public int $backoff = 30;
 
-    /**
-     * Storage disk for the screenshot.
-     *
-     * @var string
-     */
-    public $storage;
+    public Site $site;
+    public string $storage;
 
-    /**
-     * Create a new job instance.
-     *
-     * @param \App\Models\Site $site The site to take a screenshot of
-     * @param string $storage The storage disk to use
-     * @return void
-     */
     public function __construct(Site $site, string $storage = 'public')
     {
-        $this->site = $site;
+        $this->site    = $site;
         $this->storage = $storage;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     * @throws \Exception If the screenshot process fails
-     */
-    public function handle()
+    public function handle(): void
     {
-        if (!$this->site) {
-            Log::error('Site instance is null in TakeHomeScreenshot job');
+        if (empty($this->site->url)) {
+            Log::warning('TakeHomeScreenshot: site has no URL', ['site_id' => $this->site->id]);
             return;
         }
 
-        try {
-            // Check if we have a screenshot already and delete it
-            if ($this->site->screenshot_path) {
-                $this->deleteOld($this->site->screenshot_path);
-            }
-
-            // Validate URL before proceeding
-            if (empty($this->site->url)) {
-                Log::error('Site URL is empty', ['site_id' => $this->site->id]);
-                return;
-            }
-
-            // Initialize the screenshot service
-            $new_take_screenshot = new TakeScreenshot(
-                $this->site->url,
-                $this->storage,
-                $this->site
-            );
-
-            // Take the screenshot and get the path
-            $screenshot_path = $new_take_screenshot->take_it();
-
-            // Save the new screenshot path to the database
-            if ($screenshot_path) {
-                $this->site->screenshot_path = $screenshot_path;
-                $this->site->save();
-            } else {
-                Log::error('Failed to take screenshot', [
+        // Delete the old screenshot from storage before taking a new one
+        if ($this->site->screenshot_path) {
+            try {
+                if (Storage::disk($this->storage)->exists($this->site->screenshot_path)) {
+                    Storage::disk($this->storage)->delete($this->site->screenshot_path);
+                }
+            } catch (\Throwable $e) {
+                Log::warning('TakeHomeScreenshot: could not delete old screenshot', [
                     'site_id' => $this->site->id,
-                    'url' => $this->site->url
+                    'path'    => $this->site->screenshot_path,
+                    'error'   => $e->getMessage(),
                 ]);
             }
-        } catch (Exception $e) {
-            Log::error('Error taking screenshot', [
-                'site_id' => $this->site->id,
-                'error' => $e->getMessage()
-            ]);
-            throw $e;
         }
-    }
 
-    /**
-     * Delete the old screenshot.
-     *
-     * @param string $path The path of the screenshot to delete
-     * @return void
-     */
-    private function deleteOld(string $path): void
-    {
-        try {
-            if (Storage::disk($this->storage)->exists($path)) {
-                Storage::disk($this->storage)->delete($path);
-                $this->site->screenshot_path = null;
-            }
-        } catch (Exception $e) {
-            Log::error('Error deleting old screenshot', [
+        $service = new TakeScreenshot($this->site, $this->storage);
+        $path    = $service->take();
+
+        if ($path) {
+            $this->site->screenshot_path = $path;
+            $this->site->save();
+        } else {
+            Log::error('TakeHomeScreenshot: take() returned null', [
                 'site_id' => $this->site->id,
-                'path' => $path,
-                'error' => $e->getMessage()
+                'url'     => $this->site->url,
             ]);
         }
     }

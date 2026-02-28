@@ -116,10 +116,11 @@ class ViewSite extends ViewRecord
 
     public function triggerScreenshot()
     {
-        TakeHomeScreenshot::dispatchSync($this->record);
+        TakeHomeScreenshot::dispatch($this->record);
 
         return Notification::make()
-                ->title('New screenshot taken.')
+                ->title('Screenshot queued.')
+                ->body('The screenshot will appear in the header once it is ready.')
                 ->success()
                 ->send();
     }

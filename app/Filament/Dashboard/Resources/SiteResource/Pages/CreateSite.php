@@ -3,15 +3,9 @@
 namespace App\Filament\Dashboard\Resources\SiteResource\Pages;
 
 use App\Filament\Dashboard\Resources\SiteResource;
-use Filament\Actions;
-use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Support\Facades\Auth;
-
+use App\Jobs\Site\TakeHomeScreenshot;
 use App\Services\Plans\SubscriptionLimitChecker;
-use Filament\Facades\Filament;
-
-use App\Models\Site;
-
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateSite extends CreateRecord
 {
@@ -19,12 +13,14 @@ class CreateSite extends CreateRecord
 
     protected function beforeCreate(): void
     {
-        if ( !SubscriptionLimitChecker::canCreate('site') ) 
-        {
+        if (!SubscriptionLimitChecker::canCreate('site')) {
             $this->halt();
         }
-     
     }
 
- 
+    protected function afterCreate(): void
+    {
+        // Queue a screenshot right after the site is saved
+        TakeHomeScreenshot::dispatch($this->record);
+    }
 }
