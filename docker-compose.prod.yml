@@ -1,0 +1,137 @@
+# ────────────────────────────────────────────────────────────────────────────
+# WPGrip — Docker Compose (Caddy edition)
+#
+# Usage:
+#   cp .env.docker .env.docker.local          # customise secrets
+#   docker compose -f docker-compose.prod.yml up --build
+#
+# The existing systemd setup (nginx + php-fpm on port 8000) is NOT affected.
+# This stack listens on DOCKER_PORT (default 8080) so both can coexist.
+# ────────────────────────────────────────────────────────────────────────────
+
+x-app: &app
+    build:
+        context: docker/app
+        dockerfile: Dockerfile
+        args:
+            WWWUSER: "${WWWUSER:-33}"
+            WWWGROUP: "${WWWGROUP:-33}"
+    image: wpgrip/app:latest
+    env_file:
+        - .env.docker
+    volumes:
+        - .:/var/www/laravel
+    networks:
+        - wpgrip
+    restart: unless-stopped
+    depends_on:
+        mysql:
+            condition: service_healthy
+        redis:
+            condition: service_healthy
+
+services:
+
+    # ─────────────────────────────────────────────────────────────────────
+    # caddy — serves static assets + proxies PHP to the php container
+    # ─────────────────────────────────────────────────────────────────────
+    caddy:
+        image: caddy:2-alpine
+        ports:
+            - "${DOCKER_PORT:-8080}:80"
+        volumes:
+            - .:/var/www/laravel:ro          # static assets (public/)
+            - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+            - caddy_data:/data
+            - caddy_config:/config
+        networks:
+            - wpgrip
+        restart: unless-stopped
+        depends_on:
+            - php
+
+    # ─────────────────────────────────────────────────────────────────────
+    # php — PHP 8.3-FPM + OpenSSH (via supervisor)
+    #        Runs migrations + cache warm on every start.
+    #        SSH in with:  ssh root@localhost -p 2222  (password: wpgrip)
+    # ─────────────────────────────────────────────────────────────────────
+    php:
+        <<: *app
+        ports:
+            - "${DOCKER_SSH_PORT:-2222}:22"  # SSH for Artisan / Tinker
+
+    # ─────────────────────────────────────────────────────────────────────
+    # horizon — queue worker (Laravel Horizon)
+    # ─────────────────────────────────────────────────────────────────────
+    horizon:
+        <<: *app
+        command: ["php", "artisan", "horizon"]
+
+    # ─────────────────────────────────────────────────────────────────────
+    # scheduler — runs php artisan schedule:work (cron replacement)
+    # ─────────────────────────────────────────────────────────────────────
+    scheduler:
+        <<: *app
+        command: ["php", "artisan", "schedule:work"]
+
+    # ─────────────────────────────────────────────────────────────────────
+    # mysql — persistent database
+    # ─────────────────────────────────────────────────────────────────────
+    mysql:
+        image: mysql:8.0
+        command: --default-authentication-plugin=mysql_native_password
+        environment:
+            MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD:-rootpassword}"
+            MYSQL_DATABASE:      "${DB_DATABASE:-laravel}"
+            MYSQL_USER:          "${DB_USERNAME:-laravel}"
+            MYSQL_PASSWORD:      "${DB_PASSWORD:-laravel}"
+        volumes:
+            - mysql_data:/var/lib/mysql
+            - ./docker/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh
+            - ./docker/mysql/ensure-native-password.sql:/docker-entrypoint-initdb.d/20-ensure-native-password.sql
+        networks:
+            - wpgrip
+        restart: unless-stopped
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+            interval: 5s
+            retries: 15
+            start_period: 15s
+            timeout: 5s
+
+    # ─────────────────────────────────────────────────────────────────────
+    # redis — cache / sessions / queues
+    # ─────────────────────────────────────────────────────────────────────
+    redis:
+        image: redis:7-alpine
+        volumes:
+            - redis_data:/data
+        networks:
+            - wpgrip
+        restart: unless-stopped
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 5s
+            retries: 5
+            timeout: 3s
+
+    # ─────────────────────────────────────────────────────────────────────
+    # mailpit — local SMTP catch-all + web UI on :8025
+    # ─────────────────────────────────────────────────────────────────────
+    mailpit:
+        image: axllent/mailpit:latest
+        ports:
+            - "${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025"
+        networks:
+            - wpgrip
+        restart: unless-stopped
+
+networks:
+    wpgrip:
+        driver: bridge
+
+volumes:
+    mysql_data:
+    redis_data:
+    caddy_data:
+    caddy_config:

@@ -1,0 +1,55 @@
+{
+    # Disable the Caddy admin API endpoint in production
+    admin off
+    # We handle TLS outside (exe.dev proxy / reverse proxy in front)
+    auto_https off
+}
+
+:80 {
+    root * /var/www/laravel/public
+
+    # Gzip / zstd compression
+    encode zstd gzip
+
+    # Security headers
+    header {
+        X-Frame-Options          SAMEORIGIN
+        X-Content-Type-Options   nosniff
+        X-XSS-Protection         "1; mode=block"
+        Referrer-Policy          strict-origin-when-cross-origin
+        # Strip server fingerprint
+        -Server
+    }
+
+    # Static assets — long cache, served directly by Caddy
+    @static {
+        path /build/* /images/* /fonts/* /css/* /js/*
+        file
+    }
+    handle @static {
+        header Cache-Control "public, max-age=31536000, immutable"
+        file_server
+    }
+
+    # favicon / robots — no log noise
+    @boring path /favicon.ico /robots.txt
+    handle @boring {
+        file_server
+        log_skip
+    }
+
+    # Everything else — PHP-FPM via FastCGI
+    php_fastcgi php:9000 {
+        env SERVER_NAME {host}
+        # Needed for Livewire / Filament streaming
+        trusted_proxies private_ranges
+    }
+
+    file_server
+
+    log {
+        output stdout
+        format console
+        level INFO
+    }
+}
