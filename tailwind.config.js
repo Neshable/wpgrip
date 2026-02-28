@@ -33,6 +33,9 @@ export default {
         'hover:bg-white/[0.05]',
         'hover:border-white/10',
         'hover:border-white/20',
+        // Pricing grid
+        'md:grid-cols-2',
+        'lg:grid-cols-4',
     ],
     plugins: [require("daisyui")],
     daisyui: {
