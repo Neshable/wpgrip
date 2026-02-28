@@ -71,7 +71,7 @@
             <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide">SSL Cert</p>
             @if ($certExpiry)
                 <p class="text-sm font-semibold {{ $certOk ? 'text-green-600 dark:text-green-400' : 'text-amber-500' }}">
-                    {{ $certDaysLeft }}d left
+                    {{ (int) $certDaysLeft }}d left
                 </p>
                 <p class="text-xs text-gray-400">{{ $certExpiry->format('d M Y') }}</p>
             @else
@@ -368,7 +368,7 @@
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/40">
                             <td class="px-5 py-2 font-mono text-xs text-gray-600 dark:text-gray-300">{{ $tbl['Name'] }}</td>
                             <td class="px-5 py-2 text-right text-xs text-gray-500">
-                                {{ $tbl['Size'] === '0 MB' ? '&lt; 1 MB' : $tbl['Size'] }}
+                                {{ $tbl['Size'] === '0 MB' ? '< 1 MB' : $tbl['Size'] }}
                             </td>
                         </tr>
                         @endforeach
