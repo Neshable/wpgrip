@@ -7,46 +7,132 @@
     {{-- Dot grid --}}
     <div class="pointer-events-none absolute inset-0" style="background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px); background-size: 28px 28px;"></div>
 
-    {{-- Strong blue radial glow centred top --}}
-    <div class="pointer-events-none absolute inset-0" style="background: radial-gradient(ellipse 90% 65% at 50% -10%, rgba(37,99,235,0.35) 0%, rgba(37,99,235,0.10) 40%, transparent 70%);"></div>
+    {{-- Blue radial glow top-left --}}
+    <div class="pointer-events-none absolute inset-0" style="background: radial-gradient(ellipse 70% 70% at -10% 50%, rgba(37,99,235,0.28) 0%, transparent 65%);"></div>
 
-    {{-- Secondary purple tint on right --}}
-    <div class="pointer-events-none absolute inset-0" style="background: radial-gradient(ellipse 50% 50% at 80% 20%, rgba(124,58,237,0.12) 0%, transparent 60%);"></div>
+    {{-- Purple tint right --}}
+    <div class="pointer-events-none absolute inset-0" style="background: radial-gradient(ellipse 50% 60% at 100% 40%, rgba(124,58,237,0.13) 0%, transparent 60%);"></div>
 
-    {{-- Bottom fade to next section --}}
-    <div class="pointer-events-none absolute bottom-0 left-0 right-0 h-56" style="background: linear-gradient(to bottom, transparent, #0a0a0a);"></div>
+    {{-- Bottom fade --}}
+    <div class="pointer-events-none absolute bottom-0 left-0 right-0 h-40" style="background: linear-gradient(to bottom, transparent, #0a0a0a);"></div>
 
-    <div class="relative max-w-screen-xl mx-auto px-6 flex flex-col items-center text-center pt-40 pb-12">
+    <div class="relative max-w-screen-xl mx-auto px-6 pt-32 pb-16">
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
-        <div class="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-300 text-xs font-medium tracking-wide uppercase">
-            <span class="inline-block h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-            No plugins. No complications.
-        </div>
+            {{-- Left: text + CTAs --}}
+            <div class="flex flex-col items-center text-center lg:items-start lg:text-left">
 
-        <h1 class="text-5xl md:text-7xl font-medium tracking-tight text-white text-balance leading-[1.08] max-w-3xl">
-            All Your WordPress Sites.<br>
-            <span class="text-blue-400">One Control Panel.</span>
-        </h1>
+                <div class="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-300 text-xs font-medium tracking-wide uppercase">
+                    <span class="inline-block h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+                    No plugins. No complications.
+                </div>
 
-        <p class="mt-6 text-lg md:text-xl text-neutral-400 font-light max-w-xl text-balance leading-relaxed">
-            Manage every WordPress site through a single encrypted SSH connection.
-            No agents. No plugins. No attack surface. Just pure, direct control.
-        </p>
+                <h1 class="text-5xl md:text-6xl font-medium tracking-tight text-white text-balance leading-[1.08]">
+                    All Your WordPress Sites.<br>
+                    <span class="text-blue-400">One Control Panel.</span>
+                </h1>
 
-        <div class="mt-10 flex flex-col sm:flex-row items-center gap-3">
-            <a href="/register" class="inline-flex items-center justify-center h-11 px-6 rounded-lg border border-blue-500 bg-blue-600 text-blue-50 hover:bg-blue-500 font-medium text-sm transition-all duration-200 shadow-lg shadow-blue-900/40">
-                Start your free trial
-            </a>
-            <a href="{{ route('pricing') }}" class="inline-flex items-center justify-center h-11 px-6 rounded-lg border border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white text-sm transition-all duration-200">
-                See pricing
-            </a>
-        </div>
+                <p class="mt-6 text-lg text-neutral-400 font-light max-w-lg text-balance leading-relaxed">
+                    Manage every WordPress site through a single encrypted SSH connection.
+                    No agents. No plugins. No attack surface. Just pure, direct control.
+                </p>
 
-        {{-- Dashboard preview --}}
-        <div class="mt-16 w-full max-w-5xl rounded-xl border border-white/10 bg-white/5 p-1.5 shadow-2xl shadow-black/60" style="mask-image: linear-gradient(to bottom, black 60%, transparent 100%)">
-            <div class="rounded-lg border border-neutral-700 overflow-hidden bg-neutral-900">
-                <img src="{{ URL::asset('/images/features/wphusk_dashboard.jpg') }}" alt="WPGrip Dashboard" class="w-full" />
+                <div class="mt-10 flex flex-col sm:flex-row items-center gap-3">
+                    <a href="/register" class="inline-flex items-center justify-center h-11 px-6 rounded-lg border border-blue-500 bg-blue-600 text-blue-50 hover:bg-blue-500 font-medium text-sm transition-all duration-200 shadow-lg shadow-blue-900/40">
+                        Start your free trial
+                    </a>
+                    <a href="{{ route('pricing') }}" class="inline-flex items-center justify-center h-11 px-6 rounded-lg border border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white text-sm transition-all duration-200">
+                        See pricing
+                    </a>
+                </div>
             </div>
+
+            {{-- Right: SVG network diagram --}}
+            <div class="flex items-center justify-center">
+                <div class="w-full max-w-lg rounded-xl border border-white/10 bg-white/[0.03] p-3 shadow-2xl shadow-black/60">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" class="w-full">
+                        <defs>
+                            <filter id="hero-glow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feGaussianBlur stdDeviation="5" result="blur"/>
+                                <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                            </filter>
+                            <linearGradient id="hero-hubGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#1e293b"/>
+                                <stop offset="100%" stop-color="#0f172a"/>
+                            </linearGradient>
+                            <linearGradient id="hero-siteGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ffffff"/>
+                                <stop offset="100%" stop-color="#f8fafc"/>
+                            </linearGradient>
+                        </defs>
+                        <style>
+                            .hero-ssh  { stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 6 6; animation: heroDash 20s linear infinite; }
+                            .hero-pkt  { fill: #10b981; filter: drop-shadow(0 0 4px #10b981); }
+                            @keyframes heroDash { to { stroke-dashoffset: -200; } }
+                        </style>
+
+                        <rect width="100%" height="100%" fill="transparent"/>
+
+                        {{-- Lines --}}
+                        <path d="M 400 250 L 180 120" class="hero-ssh"/>
+                        <path d="M 400 250 L 620 120" class="hero-ssh"/>
+                        <path d="M 400 250 L 180 380" class="hero-ssh"/>
+                        <path d="M 400 250 L 620 380" class="hero-ssh"/>
+
+                        {{-- Data packets --}}
+                        <circle r="4" class="hero-pkt"><animateMotion dur="3s"   repeatCount="indefinite" path="M 400 250 L 180 120"/></circle>
+                        <circle r="4" class="hero-pkt"><animateMotion dur="4s"   repeatCount="indefinite" path="M 620 120 L 400 250"/></circle>
+                        <circle r="4" class="hero-pkt"><animateMotion dur="3.5s" repeatCount="indefinite" path="M 400 250 L 180 380"/></circle>
+                        <circle r="4" class="hero-pkt"><animateMotion dur="2.5s" repeatCount="indefinite" path="M 620 380 L 400 250"/></circle>
+
+                        {{-- Lock icons --}}
+                        <g fill="#10b981">
+                            <g transform="translate(270,165) scale(0.6)"><rect x="10" y="12" width="16" height="12" rx="2"/><path d="M12 12 V 8 A 6 6 0 0 1 24 8 V 12" fill="none" stroke="#10b981" stroke-width="3"/></g>
+                            <g transform="translate(490,165) scale(0.6)"><rect x="10" y="12" width="16" height="12" rx="2"/><path d="M12 12 V 8 A 6 6 0 0 1 24 8 V 12" fill="none" stroke="#10b981" stroke-width="3"/></g>
+                            <g transform="translate(270,295) scale(0.6)"><rect x="10" y="12" width="16" height="12" rx="2"/><path d="M12 12 V 8 A 6 6 0 0 1 24 8 V 12" fill="none" stroke="#10b981" stroke-width="3"/></g>
+                            <g transform="translate(490,295) scale(0.6)"><rect x="10" y="12" width="16" height="12" rx="2"/><path d="M12 12 V 8 A 6 6 0 0 1 24 8 V 12" fill="none" stroke="#10b981" stroke-width="3"/></g>
+                        </g>
+
+                        {{-- Site nodes --}}
+                        <g transform="translate(130,90)">
+                            <rect width="100" height="60" rx="6" fill="url(#hero-siteGrad)" stroke="#cbd5e1" stroke-width="2"/>
+                            <circle cx="15" cy="15" r="4" fill="#ef4444"/><circle cx="27" cy="15" r="4" fill="#eab308"/><circle cx="39" cy="15" r="4" fill="#22c55e"/>
+                            <rect x="15" y="30" width="70" height="4" rx="2" fill="#cbd5e1"/><rect x="15" y="40" width="50" height="4" rx="2" fill="#cbd5e1"/>
+                            <text x="50" y="78" font-family="sans-serif" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">Client Site</text>
+                        </g>
+                        <g transform="translate(570,90)">
+                            <rect width="100" height="60" rx="6" fill="url(#hero-siteGrad)" stroke="#cbd5e1" stroke-width="2"/>
+                            <circle cx="15" cy="15" r="4" fill="#ef4444"/><circle cx="27" cy="15" r="4" fill="#eab308"/><circle cx="39" cy="15" r="4" fill="#22c55e"/>
+                            <rect x="15" y="30" width="70" height="4" rx="2" fill="#cbd5e1"/><rect x="15" y="40" width="40" height="4" rx="2" fill="#cbd5e1"/>
+                            <text x="50" y="78" font-family="sans-serif" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">Agency Shop</text>
+                        </g>
+                        <g transform="translate(130,350)">
+                            <rect width="100" height="60" rx="6" fill="url(#hero-siteGrad)" stroke="#cbd5e1" stroke-width="2"/>
+                            <circle cx="15" cy="15" r="4" fill="#ef4444"/><circle cx="27" cy="15" r="4" fill="#eab308"/><circle cx="39" cy="15" r="4" fill="#22c55e"/>
+                            <rect x="15" y="30" width="60" height="4" rx="2" fill="#cbd5e1"/><rect x="15" y="40" width="55" height="4" rx="2" fill="#cbd5e1"/>
+                            <text x="50" y="78" font-family="sans-serif" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">Staging WP</text>
+                        </g>
+                        <g transform="translate(570,350)">
+                            <rect width="100" height="60" rx="6" fill="url(#hero-siteGrad)" stroke="#cbd5e1" stroke-width="2"/>
+                            <circle cx="15" cy="15" r="4" fill="#ef4444"/><circle cx="27" cy="15" r="4" fill="#eab308"/><circle cx="39" cy="15" r="4" fill="#22c55e"/>
+                            <rect x="15" y="30" width="75" height="4" rx="2" fill="#cbd5e1"/><rect x="15" y="40" width="30" height="4" rx="2" fill="#cbd5e1"/>
+                            <text x="50" y="78" font-family="sans-serif" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">Legacy Blog</text>
+                        </g>
+
+                        {{-- Central hub --}}
+                        <g transform="translate(300,190)">
+                            <rect width="200" height="120" rx="8" fill="url(#hero-hubGrad)" filter="url(#hero-glow)"/>
+                            <rect width="200" height="24" rx="8" fill="#334155"/>
+                            <circle cx="16" cy="12" r="4" fill="#ef4444"/><circle cx="28" cy="12" r="4" fill="#eab308"/><circle cx="40" cy="12" r="4" fill="#22c55e"/>
+                            <text x="16" y="50"  font-family="monospace" font-size="12" fill="#10b981">~ wp-grip connect</text>
+                            <text x="16" y="70"  font-family="monospace" font-size="12" fill="#94a3b8">Establishing SSH...</text>
+                            <text x="16" y="90"  font-family="monospace" font-size="12" fill="#38bdf8">Monitoring active.</text>
+                            <text x="100" y="145" font-family="sans-serif" font-size="18" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="1">WPGRIP</text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+
         </div>
     </div>
 </section>

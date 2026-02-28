@@ -1,53 +1,129 @@
 <x-layouts.app>
         <div class="relative bg-gray-50 overflow-hidden">
-            <div aria-hidden="true" class="hidden sm:block sm:absolute sm:inset-y-0 sm:h-full sm:w-full">
+            {{-- dot-grid background decorations --}}
+            <div aria-hidden="true" class="hidden lg:block lg:absolute lg:inset-y-0 lg:h-full lg:w-full pointer-events-none">
                 <div class="relative h-full max-w-7xl mx-auto">
                     <svg class="absolute right-full transform translate-y-1/4 translate-x-1/4 lg:translate-x-1/2" fill="none" height="784" viewBox="0 0 404 784" width="404">
-                        <defs>
-                            <pattern id="f210dbf6-a58d-4871-961e-36d5016a0f49" height="20" patternUnits="userSpaceOnUse" width="20" x="0" y="0">
-                                <rect class="text-gray-200" fill="currentColor" height="4" width="4" x="0" y="0"></rect>
-                            </pattern>
-                        </defs>
-                        <rect fill="url(#f210dbf6-a58d-4871-961e-36d5016a0f49)" height="784" width="404"></rect>
+                        <defs><pattern id="dots-l" height="20" patternUnits="userSpaceOnUse" width="20" x="0" y="0"><rect class="text-gray-200" fill="currentColor" height="4" width="4" x="0" y="0"></rect></pattern></defs>
+                        <rect fill="url(#dots-l)" height="784" width="404"></rect>
                     </svg>
                     <svg class="absolute left-full transform -translate-y-3/4 -translate-x-1/4 md:-translate-y-1/2 lg:-translate-x-1/2" fill="none" height="784" viewBox="0 0 404 784" width="404">
-                        <defs>
-                            <pattern id="5d0dd344-b041-4d26-bec4-8d33ea57ec9b" height="20" patternUnits="userSpaceOnUse" width="20" x="0" y="0">
-                                <rect class="text-gray-200" fill="currentColor" height="4" width="4" x="0" y="0"></rect>
-                            </pattern>
-                        </defs>
-                        <rect fill="url(#5d0dd344-b041-4d26-bec4-8d33ea57ec9b)" height="784" width="404"></rect>
+                        <defs><pattern id="dots-r" height="20" patternUnits="userSpaceOnUse" width="20" x="0" y="0"><rect class="text-gray-200" fill="currentColor" height="4" width="4" x="0" y="0"></rect></pattern></defs>
+                        <rect fill="url(#dots-r)" height="784" width="404"></rect>
                     </svg>
                 </div>
             </div>
-        
-            <div class="relative pt-6 pb-16 sm:pb-24">
-            <div>
-          
-        </div>
-                <main class="mt-16 mx-auto max-w-7xl px-4 sm:mt-24">
-                    <div class="text-center">
-                        <x-pill class="text-primary-500 bg-primary-50">{{ __('ALL YOUR WORDPRESS SITES. ONE DASHBOARD.') }}</x-pill>
-                        <x-heading.h1 class="mt-4 font-bold">
-                            {{ __('Easily manage and control') }}
-                            <br class="hidden sm:block">
-                            {{ __('your WordPress sites') }}
-                        </x-heading.h1>
-                        <p class="text-primary-50 m-3">
-                            Gain 100% control and streamline operations with SSH connections and WP-CLI with 2x faster experience.
-                        </p>
-            
-                        <div class="flex flex-wrap gap-4 justify-center flex-col md:flex-row mt-6">
-                            <x-effect.glow></x-effect.glow>
-            
-                            <x-button-link.secondary href="#pricing" class="self-center !py-3" elementType="a">
-                                {{ __('Start Your Free Trial') }}
-                            </x-button-link.secondary>
-                            <x-button-link.primary-outline href="//demo.saasykit.com" class=" bg-transparent self-center !py-3 text-white border-white" rel=”nofollow” >
-                                {{ __('Check Pricing') }}
-                            </x-button-link.primary-outline>
-            
+
+            <div class="relative pt-10 pb-12 sm:pb-16">
+                <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div class="lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center">
+
+                        {{-- Left: text + CTAs --}}
+                        <div class="text-center lg:text-left">
+                            <x-pill class="text-primary-500 bg-primary-50">{{ __('ALL YOUR WORDPRESS SITES. ONE DASHBOARD.') }}</x-pill>
+                            <x-heading.h1 class="mt-4 font-bold">
+                                {{ __('Easily manage and control') }}
+                                <br class="hidden sm:block">
+                                {{ __('your WordPress sites') }}
+                            </x-heading.h1>
+                            <p class="text-primary-50 mt-4 text-lg">
+                                Gain 100% control and streamline operations with SSH connections and WP-CLI with 2x faster experience.
+                            </p>
+                            <div class="flex flex-wrap gap-4 justify-center lg:justify-start flex-col sm:flex-row mt-8">
+                                <x-effect.glow></x-effect.glow>
+                                <x-button-link.secondary href="#pricing" class="self-center !py-3" elementType="a">
+                                    {{ __('Start Your Free Trial') }}
+                                </x-button-link.secondary>
+                                <x-button-link.primary-outline href="//demo.saasykit.com" class="bg-transparent self-center !py-3 text-white border-white" rel="nofollow">
+                                    {{ __('Check Pricing') }}
+                                </x-button-link.primary-outline>
+                            </div>
                         </div>
+
+                        {{-- Right: SVG illustration --}}
+                        <div class="mt-10 lg:mt-0 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" class="w-full max-w-lg drop-shadow-xl">
+                                <defs>
+                                    <filter id="hero-glow" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="5" result="blur" />
+                                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                    </filter>
+                                    <linearGradient id="hero-hubGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#1e293b" />
+                                        <stop offset="100%" stop-color="#0f172a" />
+                                    </linearGradient>
+                                    <linearGradient id="hero-siteGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#ffffff" />
+                                        <stop offset="100%" stop-color="#f8fafc" />
+                                    </linearGradient>
+                                </defs>
+                                <style>
+                                    .hero-ssh-line { stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 6 6; animation: heroDash 20s linear infinite; }
+                                    .hero-packet   { fill: #10b981; filter: drop-shadow(0 0 4px #10b981); }
+                                    @keyframes heroDash { to { stroke-dashoffset: -200; } }
+                                </style>
+
+                                <rect width="100%" height="100%" fill="transparent" />
+
+                                {{-- Connection lines --}}
+                                <path d="M 400 250 L 180 120" class="hero-ssh-line" />
+                                <path d="M 400 250 L 620 120" class="hero-ssh-line" />
+                                <path d="M 400 250 L 180 380" class="hero-ssh-line" />
+                                <path d="M 400 250 L 620 380" class="hero-ssh-line" />
+
+                                {{-- Animated data packets --}}
+                                <circle r="4" class="hero-packet"><animateMotion dur="3s"   repeatCount="indefinite" path="M 400 250 L 180 120" /></circle>
+                                <circle r="4" class="hero-packet"><animateMotion dur="4s"   repeatCount="indefinite" path="M 620 120 L 400 250" /></circle>
+                                <circle r="4" class="hero-packet"><animateMotion dur="3.5s" repeatCount="indefinite" path="M 400 250 L 180 380" /></circle>
+                                <circle r="4" class="hero-packet"><animateMotion dur="2.5s" repeatCount="indefinite" path="M 620 380 L 400 250" /></circle>
+
+                                {{-- Lock icons on lines --}}
+                                <g fill="#10b981">
+                                    <g transform="translate(270,165) scale(0.6)"><rect x="10" y="12" width="16" height="12" rx="2"/><path d="M12 12 V 8 A 6 6 0 0 1 24 8 V 12" fill="none" stroke="#10b981" stroke-width="3"/></g>
+                                    <g transform="translate(490,165) scale(0.6)"><rect x="10" y="12" width="16" height="12" rx="2"/><path d="M12 12 V 8 A 6 6 0 0 1 24 8 V 12" fill="none" stroke="#10b981" stroke-width="3"/></g>
+                                    <g transform="translate(270,295) scale(0.6)"><rect x="10" y="12" width="16" height="12" rx="2"/><path d="M12 12 V 8 A 6 6 0 0 1 24 8 V 12" fill="none" stroke="#10b981" stroke-width="3"/></g>
+                                    <g transform="translate(490,295) scale(0.6)"><rect x="10" y="12" width="16" height="12" rx="2"/><path d="M12 12 V 8 A 6 6 0 0 1 24 8 V 12" fill="none" stroke="#10b981" stroke-width="3"/></g>
+                                </g>
+
+                                {{-- Site nodes --}}
+                                <g transform="translate(130,90)">
+                                    <rect width="100" height="60" rx="6" fill="url(#hero-siteGrad)" stroke="#cbd5e1" stroke-width="2"/>
+                                    <circle cx="15" cy="15" r="4" fill="#ef4444"/><circle cx="27" cy="15" r="4" fill="#eab308"/><circle cx="39" cy="15" r="4" fill="#22c55e"/>
+                                    <rect x="15" y="30" width="70" height="4" rx="2" fill="#cbd5e1"/><rect x="15" y="40" width="50" height="4" rx="2" fill="#cbd5e1"/>
+                                    <text x="50" y="78" font-family="sans-serif" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">Client Site</text>
+                                </g>
+                                <g transform="translate(570,90)">
+                                    <rect width="100" height="60" rx="6" fill="url(#hero-siteGrad)" stroke="#cbd5e1" stroke-width="2"/>
+                                    <circle cx="15" cy="15" r="4" fill="#ef4444"/><circle cx="27" cy="15" r="4" fill="#eab308"/><circle cx="39" cy="15" r="4" fill="#22c55e"/>
+                                    <rect x="15" y="30" width="70" height="4" rx="2" fill="#cbd5e1"/><rect x="15" y="40" width="40" height="4" rx="2" fill="#cbd5e1"/>
+                                    <text x="50" y="78" font-family="sans-serif" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">Agency Shop</text>
+                                </g>
+                                <g transform="translate(130,350)">
+                                    <rect width="100" height="60" rx="6" fill="url(#hero-siteGrad)" stroke="#cbd5e1" stroke-width="2"/>
+                                    <circle cx="15" cy="15" r="4" fill="#ef4444"/><circle cx="27" cy="15" r="4" fill="#eab308"/><circle cx="39" cy="15" r="4" fill="#22c55e"/>
+                                    <rect x="15" y="30" width="60" height="4" rx="2" fill="#cbd5e1"/><rect x="15" y="40" width="55" height="4" rx="2" fill="#cbd5e1"/>
+                                    <text x="50" y="78" font-family="sans-serif" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">Staging WP</text>
+                                </g>
+                                <g transform="translate(570,350)">
+                                    <rect width="100" height="60" rx="6" fill="url(#hero-siteGrad)" stroke="#cbd5e1" stroke-width="2"/>
+                                    <circle cx="15" cy="15" r="4" fill="#ef4444"/><circle cx="27" cy="15" r="4" fill="#eab308"/><circle cx="39" cy="15" r="4" fill="#22c55e"/>
+                                    <rect x="15" y="30" width="75" height="4" rx="2" fill="#cbd5e1"/><rect x="15" y="40" width="30" height="4" rx="2" fill="#cbd5e1"/>
+                                    <text x="50" y="78" font-family="sans-serif" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">Legacy Blog</text>
+                                </g>
+
+                                {{-- Central hub --}}
+                                <g transform="translate(300,190)">
+                                    <rect width="200" height="120" rx="8" fill="url(#hero-hubGrad)" filter="url(#hero-glow)"/>
+                                    <rect width="200" height="24" rx="8" fill="#334155"/>
+                                    <circle cx="16" cy="12" r="4" fill="#ef4444"/><circle cx="28" cy="12" r="4" fill="#eab308"/><circle cx="40" cy="12" r="4" fill="#22c55e"/>
+                                    <text x="16" y="50"  font-family="monospace" font-size="12" fill="#10b981">~ wp-grip connect</text>
+                                    <text x="16" y="70"  font-family="monospace" font-size="12" fill="#94a3b8">Establishing SSH...</text>
+                                    <text x="16" y="90"  font-family="monospace" font-size="12" fill="#38bdf8">Monitoring active.</text>
+                                    <text x="100" y="145" font-family="sans-serif" font-size="18" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="1">WPGRIP</text>
+                                </g>
+                            </svg>
+                        </div>
+
                     </div>
                 </main>
             </div>
