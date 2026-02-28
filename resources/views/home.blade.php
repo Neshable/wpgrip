@@ -24,7 +24,7 @@
 
                 <div class="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-300 text-xs font-medium tracking-wide uppercase">
                     <span class="inline-block h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                    No plugins. No complications.
+                    SSH-native &middot; Zero plugins &middot; AI-powered
                 </div>
 
                 <h1 class="text-5xl md:text-6xl font-medium tracking-tight text-white text-balance leading-[1.08]">
@@ -33,13 +33,13 @@
                 </h1>
 
                 <p class="mt-6 text-lg text-neutral-400 font-light max-w-lg text-balance leading-relaxed">
-                    Manage every WordPress site through a single encrypted SSH connection.
-                    No agents. No plugins. No attack surface. Just pure, direct control.
+                    Direct SSH access. WP-CLI commands. AI-powered diagnostics.
+                    Manage every site in your portfolio from one place — no plugins, no agents, no attack surface.
                 </p>
 
                 <div class="mt-10 flex flex-col sm:flex-row items-center gap-3">
                     <a href="/register" class="inline-flex items-center justify-center h-11 px-6 rounded-lg border border-blue-500 bg-blue-600 text-blue-50 hover:bg-blue-500 font-medium text-sm transition-all duration-200 shadow-lg shadow-blue-900/40">
-                        Start your free trial
+                        Start free trial
                     </a>
                     <a href="{{ route('pricing') }}" class="inline-flex items-center justify-center h-11 px-6 rounded-lg border border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white text-sm transition-all duration-200">
                         See pricing
@@ -140,7 +140,7 @@
 {{-- ===================== TRUST BAR ===================== --}}
 <section class="border-y border-white/5 bg-neutral-900/40 py-6">
     <div class="max-w-screen-xl mx-auto px-6">
-        <p class="text-center text-xs text-neutral-500 uppercase tracking-widest mb-6">Built for developers and agencies who care about security</p>
+        <p class="text-center text-xs text-neutral-500 uppercase tracking-widest mb-6">Built for developers &amp; agencies who manage WordPress at scale</p>
         <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16">
             @foreach([
                 ['label' => 'SSH Encrypted', 'icon' => '🔐'],
@@ -163,14 +163,13 @@
 <section class="py-24 bg-neutral-950">
     <div class="max-w-screen-xl mx-auto px-6">
         <div class="max-w-2xl mb-16">
-            <div class="inline-flex items-center justify-center px-3 py-1 rounded-md border border-emerald-900 bg-emerald-950 text-emerald-300 text-xs font-medium font-mono mb-6">Philosophy</div>
+            <div class="inline-flex items-center justify-center px-3 py-1 rounded-md border border-emerald-900 bg-emerald-950 text-emerald-300 text-xs font-medium font-mono mb-6">Why WPGrip</div>
             <h2 class="text-4xl md:text-5xl font-medium tracking-tight text-white text-balance leading-tight">
-                Manage WordPress sites<br>the way they should be managed
+                The right way to manage WordPress sites
             </h2>
             <p class="mt-4 text-lg text-neutral-400 font-light leading-relaxed">
-                Every other tool installs plugins on your sites — creating update dependencies, security surface area,
-                and performance overhead on your visitors' experience. WPGrip connects directly via SSH and WP-CLI.
-                Your sites stay lean. Your data stays yours.
+                Other tools install plugins — adding security risk, update debt, and overhead to every site they touch.
+                WPGrip connects via SSH and WP-CLI directly. Your sites stay lean. Your data stays yours.
             </p>
         </div>
 
@@ -180,19 +179,19 @@
                 [
                     'tag' => 'Performance',
                     'title' => '2× faster than plugin-based tools',
-                    'desc' => 'WP-CLI over SSH executes commands directly on your server — no HTTP round-trips, no plugin overhead, no shared memory constraints.',
+                    'desc' => 'WP-CLI over SSH runs directly on your server. No HTTP round-trips, no plugin overhead, no bottlenecks.',
                     'color' => 'emerald',
                 ],
                 [
                     'tag' => 'Security',
-                    'title' => 'Zero attack surface added to your sites',
-                    'desc' => 'An SSH key in your authorized_keys file is all WPGrip needs. No admin credentials stored, no REST API exposed, no third-party code running on your WordPress.',
+                    'title' => 'Zero attack surface',
+                    'desc' => 'One SSH key in authorized_keys is all WPGrip needs. No stored admin credentials, no REST API exposure, no third-party code on your site.',
                     'color' => 'blue',
                 ],
                 [
                     'tag' => 'Control',
                     'title' => 'Full access. Real commands.',
-                    'desc' => 'Run any WP-CLI command, inspect files, check logs, manage databases — from one dashboard, across all your sites simultaneously.',
+                    'desc' => 'Run any WP-CLI command, check logs, manage databases — across every site, from one dashboard.',
                     'color' => 'violet',
                 ],
             ];
@@ -224,15 +223,14 @@
             <div>
                 <div class="inline-flex items-center px-2.5 py-1 rounded-md border border-blue-900 bg-blue-950 text-blue-300 text-xs font-mono mb-6">Monitoring</div>
                 <h2 class="text-3xl md:text-4xl font-medium text-white tracking-tight text-balance leading-tight">
-                    Know the moment something goes wrong
+                    Know before your client does
                 </h2>
                 <p class="mt-4 text-base text-neutral-400 font-light leading-relaxed">
-                    Uptime checks, SSL expiry alerts, domain expiry warnings, PageSpeed regression detection —
-                    all running 24/7 across every site in your portfolio. When something breaks, you hear about
-                    it before your client does.
+                    Uptime, SSL, domain expiry, PageSpeed regressions — monitored 24/7 across your entire portfolio.
+                    When something breaks, you're the first to know.
                 </p>
                 <ul class="mt-8 space-y-3">
-                    @foreach(['Uptime monitoring with instant alerts', 'SSL certificate expiry warnings', 'Domain expiry tracking', 'Google PageSpeed mobile & desktop scores', 'Vulnerability scanning for plugins & themes', 'Daily regression testing'] as $f)
+                    @foreach(['Uptime monitoring with instant alerts', 'SSL & domain expiry warnings', 'Google PageSpeed scores (mobile & desktop)', 'Vulnerability scanning for plugins & themes', 'Automated daily regression checks'] as $f)
                     <li class="flex items-start gap-3 text-sm text-neutral-300">
                         <svg class="h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                         {{ $f }}
@@ -309,15 +307,14 @@
             <div>
                 <div class="inline-flex items-center px-2.5 py-1 rounded-md border border-violet-900 bg-violet-950 text-violet-300 text-xs font-mono mb-6">Git Deployments</div>
                 <h2 class="text-3xl md:text-4xl font-medium text-white tracking-tight text-balance leading-tight">
-                    Push to deploy. Across every site.
+                    Push to deploy. Every site.
                 </h2>
                 <p class="mt-4 text-base text-neutral-400 font-light leading-relaxed">
-                    Connect GitHub, GitLab, or Bitbucket repositories to any of your sites.
-                    Deploy manually with one click, or wire up webhooks to trigger automatic
-                    deployments on every push. Share one repo across dozens of sites.
+                    Connect GitHub, GitLab, or Bitbucket and deploy on push — or on demand.
+                    One repo can power dozens of sites simultaneously.
                 </p>
                 <ul class="mt-8 space-y-3">
-                    @foreach(['GitHub, GitLab & Bitbucket supported', 'Webhook-triggered auto deployments', 'One repo shared across multiple sites', 'Manual deploy with instant feedback', 'Rollback to any previous commit'] as $f)
+                    @foreach(['GitHub, GitLab & Bitbucket supported', 'Webhook-triggered auto deployments', 'One repo across multiple sites', 'Instant deploy feedback', 'Rollback to any previous commit'] as $f)
                     <li class="flex items-start gap-3 text-sm text-neutral-300">
                         <svg class="h-5 w-5 text-violet-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                         {{ $f }}
@@ -336,15 +333,14 @@
             <div>
                 <div class="inline-flex items-center px-2.5 py-1 rounded-md border border-blue-900 bg-blue-950 text-blue-300 text-xs font-mono mb-6">AI Assistant</div>
                 <h2 class="text-3xl md:text-4xl font-medium text-white tracking-tight text-balance leading-tight">
-                    Your expert WordPress consultant. Always on.
+                    An AI that knows your sites inside out.
                 </h2>
                 <p class="mt-4 text-base text-neutral-400 font-light leading-relaxed">
-                    WPGrip's AI assistant knows your site — its WordPress version, active plugins, server config,
-                    and performance scores. Ask it anything. It'll diagnose issues, recommend fixes,
-                    and even run WP-CLI commands to investigate and resolve problems.
+                    Ask anything. The AI knows your WordPress version, active plugins, server config, and performance history.
+                    It diagnoses issues, recommends fixes, and can run WP-CLI commands directly to resolve them.
                 </p>
                 <ul class="mt-8 space-y-3">
-                    @foreach(['Understands your full site context', 'Diagnoses plugin conflicts & vulnerabilities', 'PageSpeed optimisation recommendations', 'Can run SSH commands to investigate issues', 'Available 24/7 across all your sites'] as $f)
+                    @foreach(['Full site context — plugins, PHP, server', 'Diagnoses conflicts & vulnerabilities', 'PageSpeed optimisation advice', 'Runs SSH commands to investigate', 'Available 24/7 across all sites'] as $f)
                     <li class="flex items-start gap-3 text-sm text-neutral-300">
                         <svg class="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                         {{ $f }}
@@ -408,20 +404,20 @@
         <div class="text-center mb-16">
             <div class="inline-flex items-center px-2.5 py-1 rounded-md border border-neutral-700 bg-neutral-900 text-neutral-300 text-xs font-mono mb-6">All Features</div>
             <h2 class="text-3xl md:text-4xl font-medium text-white tracking-tight">Everything you need. Nothing you don't.</h2>
-            <p class="mt-4 text-neutral-400 font-light max-w-xl mx-auto">Every plan includes the full feature set. No feature paywalls, no artificial limits on what you can do.</p>
+            <p class="mt-4 text-neutral-400 font-light max-w-xl mx-auto">Every plan includes the full feature set. No paywalls, no artificial limits.</p>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             @php
             $features = [
-                ['icon' => '📡', 'title' => 'Uptime Monitoring', 'desc' => 'Get alerted the moment a site goes down — before your client notices.'],
-                ['icon' => '🔒', 'title' => 'SSL & Domain Tracking', 'desc' => 'Never let a certificate or domain expire again. Automated warnings weeks in advance.'],
-                ['icon' => '⚡', 'title' => 'Performance Scores', 'desc' => 'Track Google PageSpeed for mobile and desktop with full history.'],
-                ['icon' => '🛡️', 'title' => 'Vulnerability Scanning', 'desc' => 'Continuously updated database detects vulnerable plugins, themes, and WP core.'],
-                ['icon' => '🤖', 'title' => 'AI Assistant', 'desc' => 'Context-aware AI that understands your site and can run commands to investigate.'],
-                ['icon' => '🚀', 'title' => 'Git Deployments', 'desc' => 'Connect GitHub, GitLab, Bitbucket. Deploy on push or on demand.'],
-                ['icon' => '🗄️', 'title' => 'Database Backups', 'desc' => 'Encrypted cloud backups on your schedule. Restore with one click.'],
-                ['icon' => '👥', 'title' => 'Team Collaboration', 'desc' => 'Invite team members and manage access across workspaces.'],
-                ['icon' => '🔄', 'title' => 'One-Click Updates', 'desc' => 'Update plugins, themes, and WP core across all sites simultaneously.'],
+                ['icon' => '📡', 'title' => 'Uptime Monitoring', 'desc' => 'Instant alerts when a site goes down — before your client notices.'],
+                ['icon' => '🔒', 'title' => 'SSL & Domain Tracking', 'desc' => 'Automated expiry warnings weeks in advance. Never get caught out.'],
+                ['icon' => '⚡', 'title' => 'Performance Scores', 'desc' => 'Google PageSpeed tracking for mobile and desktop, with full history.'],
+                ['icon' => '🛡️', 'title' => 'Vulnerability Scanning', 'desc' => 'Continuously updated CVE database flags vulnerable plugins, themes, and WP core.'],
+                ['icon' => '🤖', 'title' => 'AI Assistant', 'desc' => 'Powered by Claude. Knows your site context and can run commands to investigate.'],
+                ['icon' => '🚀', 'title' => 'Git Deployments', 'desc' => 'GitHub, GitLab, Bitbucket. Deploy on push, webhook, or on demand.'],
+                ['icon' => '🗄️', 'title' => 'Database Backups', 'desc' => 'Scheduled encrypted backups. One-click restore.'],
+                ['icon' => '👥', 'title' => 'Team Collaboration', 'desc' => 'Invite team members with role-based access across workspaces.'],
+                ['icon' => '🔄', 'title' => 'One-Click Updates', 'desc' => 'Update plugins, themes, and WP core across all sites at once.'],
             ];
             @endphp
             @foreach($features as $f)
@@ -444,12 +440,12 @@
         <div class="space-y-3">
             @php
             $faqs = [
-                ['q' => 'Does WPGrip require me to install a plugin on my WordPress sites?', 'a' => 'No — and that\'s the whole point. WPGrip connects via SSH using a unique key you add to your server. No WordPress plugins, no REST API credentials, no third-party code running on your site.'],
-                ['q' => 'What hosting providers does WPGrip support?', 'a' => 'Any hosting provider that allows SSH access and has WP-CLI installed — which covers virtually all VPS, cloud, and managed hosting environments. We especially recommend VPS setups where you have root-level SSH control.'],
-                ['q' => 'What are the minimum requirements?', 'a' => 'Your server needs to allow SSH connections and have WP-CLI available for the SSH user. That\'s it. No specific WordPress version requirements, no server software constraints.'],
-                ['q' => 'Can I manage sites across different hosting providers?', 'a' => 'Absolutely. WPGrip is hosting-agnostic. You can manage sites on DigitalOcean, AWS, Hetzner, Kinsta, WP Engine, Cloudways — or any mix of providers — all in one dashboard.'],
-                ['q' => 'How does WPGrip keep my credentials secure?', 'a' => 'WPGrip uses SSH key-based authentication — your server passwords are never stored. All connections are encrypted. Your SSH private keys are encrypted at rest in our database.'],
-                ['q' => 'Can I use WPGrip without SSH access?', 'a' => 'You can still use monitoring features — uptime, SSL status, domain expiry, and PageSpeed tracking — without SSH. But the management features (plugin updates, deployments, AI assistant, backups) require SSH.'],
+                ['q' => 'Do I need to install a plugin on my sites?', 'a' => 'No. WPGrip connects via SSH using a key you add to your server. No plugins, no REST API, no third-party code on your site.'],
+                ['q' => 'Which hosting providers are supported?', 'a' => 'Any host that allows SSH and has WP-CLI installed — VPS, cloud, or managed. DigitalOcean, Hetzner, AWS, Kinsta, Cloudways, WP Engine, and more.'],
+                ['q' => 'What are the minimum requirements?', 'a' => 'SSH access and WP-CLI on the server. That\'s it.'],
+                ['q' => 'Can I manage sites across different hosts?', 'a' => 'Yes. WPGrip is hosting-agnostic — mix and match any providers in one dashboard.'],
+                ['q' => 'How are my credentials kept secure?', 'a' => 'SSH key-based auth only — no passwords stored. Keys are encrypted at rest. Your WordPress admin credentials are never needed or stored.'],
+                ['q' => 'Can I use WPGrip without SSH access?', 'a' => 'Monitoring features (uptime, SSL, domain, PageSpeed) work without SSH. Management features — updates, deployments, AI assistant, backups — require SSH.'],
             ];
             @endphp
             @foreach($faqs as $i => $faq)
@@ -482,9 +478,9 @@
         </div>
         <div class="border border-white/10 bg-[#101010] px-8 py-12">
             <h2 class="text-3xl md:text-4xl font-medium text-white tracking-tight text-balance">
-                Take control of your WordPress portfolio
+                Your WordPress portfolio, fully under control.
             </h2>
-            <p class="mt-3 text-lg text-neutral-400 font-light">Start for free. No credit card required.</p>
+            <p class="mt-3 text-lg text-neutral-400 font-light">Free to start. No credit card required.</p>
             <div class="mt-10 flex flex-col sm:flex-row justify-center gap-3">
                 <a href="/register" class="inline-flex items-center justify-center h-11 px-6 rounded-lg border border-blue-500 bg-blue-600 text-blue-50 hover:bg-blue-500 font-medium text-sm transition-all duration-200 shadow-lg shadow-blue-900/40">
                     Get started for free
