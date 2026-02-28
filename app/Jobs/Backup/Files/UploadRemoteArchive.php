@@ -7,94 +7,76 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use phpseclib3\Net\SFTP;
-use  Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
 use Exception;
-
 use Carbon\Carbon;
 use App\Models\Snapshot;
-
 use App\Services\SFTPSiteConnect;
 
 class UploadRemoteArchive implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $snapshot_id;
-
-    protected $archiveFile;
+    public int $timeout = 1800;
+    public int $tries   = 2;
+    public int $backoff = 300;
 
     private $site;
+    private int $snapshotId;
 
-    /**
-     * Create a new job instance.
-     *
-     * @param int $snapshot_id
-     */
-    public function __construct($site, $snapshot_id)
+    public function __construct($site, int $snapshotId)
     {
-        $this->site = $site;
-        $this->snapshot_id = $snapshot_id;
+        $this->site       = $site;
+        $this->snapshotId = $snapshotId;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @throws Exception
-     */
-    public function handle()
+    public function handle(): void
     {
-        // Fetch the snapshot and retrieve the archive path
-        $snapshot = Snapshot::find($this->snapshot_id);
-        if (!$snapshot || !$snapshot->local_path) {
-            throw new Exception('No archive path found in snapshot record');
+        $snapshot = Snapshot::findOrFail($this->snapshotId);
+
+        if (!$snapshot->local_path) {
+            throw new Exception('Snapshot has no local_path — CreateRemoteDatabaseArchive may have failed');
         }
 
-        // Establish SFTP connection
-        $sftp_service = new SFTPSiteConnect( $this->site );
-        if (!$sftp_service->active) {
-            throw new Exception('Failed to authenticate with remote server');
+        $sftpService = new SFTPSiteConnect($this->site);
+        if (!$sftpService->active) {
+            throw new Exception('SFTP authentication failed for site ' . $this->site->id);
         }
 
-        // Define the local Laravel tmp directory to store the backup
-        $localTmpPath = storage_path('tmp'); // This will create or use storage/tmp folder
-        if (!file_exists($localTmpPath)) {
-            mkdir($localTmpPath, 0755, true); // Create the directory if it does not exist
+        $remotePath = rtrim($this->site->dir_path, '/') . '/tmp/' . $snapshot->local_path;
+        $s3Dir      = 'backups/site-' . $this->site->id;
+        $s3Key      = $s3Dir . '/' . basename($snapshot->local_path);
+
+        // ── Stream from SFTP directly into S3 ──────────────────────────────
+        // phpseclib SFTP::get() can write directly to a PHP stream handle.
+        // We open a temp stream in memory (no disk write on the Laravel server).
+        $tmpStream = fopen('php://temp', 'r+');
+        if (!$tmpStream) {
+            throw new Exception('Could not open php://temp stream');
         }
 
-        // Create a local temporary file in the Laravel tmp directory
-        $localTempFile = $localTmpPath . '/' . basename($snapshot->local_path);
-
-
-        // Download the remote archive file to the local temporary file
-        if (!$sftp_service->sftp->get( $this->site->dir_path . '/tmp/' . $snapshot->local_path, $localTempFile)) 
-        {
-            throw new Exception('Unable to download the archive file from the remote server');
+        if (!$sftpService->sftp->get($remotePath, $tmpStream)) {
+            fclose($tmpStream);
+            throw new Exception('SFTP download failed for: ' . $remotePath);
         }
 
-        // Upload the local file to S3
-        $s3Path = 'backups/site-' . $this->site->id;
+        rewind($tmpStream);
 
-        // $fileStream = fopen($localTempFile, 'r');
-        
-        // Upload to s3
-        $status = Storage::disk('s3')->putFileAs( $s3Path, new File( $localTempFile ), basename( $snapshot->local_path ) );
-        // $status = Storage::disk('s3')->put( $s3Path, $fileStream );
+        // putStream() uploads a PHP resource — S3 SDK streams it in chunks,
+        // so the Laravel server never holds the whole file in memory.
+        $ok = Storage::disk('s3')->putStream($s3Key, $tmpStream);
+        fclose($tmpStream);
 
-        if ( $status )
-        {
-            // Save our snapshot model
-            $snapshot->remote_path = $s3Path;
-            $snapshot->status = 'cleaning';
-            $snapshot->size = Storage::disk('s3')->size( $s3Path . '/' . basename($snapshot->local_path) );
-            // @todo get the schedule.
-            $snapshot->deletion_date = Carbon::now()->addMonths(5);
-            $snapshot->save();
+        if (!$ok) {
+            throw new Exception('S3 upload failed for key: ' . $s3Key);
         }
 
-        // Close the file stream and delete the local temporary file
-        // fclose($fileStream);
-        unlink($localTempFile);
+        $s3Size = Storage::disk('s3')->size($s3Key);
+
+        $snapshot->remote_path   = $s3Dir;
+        $snapshot->status        = 'cleaning';
+        $snapshot->size          = $s3Size;
+        $snapshot->deletion_date = Carbon::now()->addDays(60);
+        $snapshot->save();
     }
 }

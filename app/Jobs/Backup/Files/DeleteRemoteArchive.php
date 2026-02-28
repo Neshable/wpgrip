@@ -7,88 +7,66 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-// use phpseclib3\Net\SFTP;
 use Illuminate\Support\Facades\Storage;
 use Exception;
-
 use Carbon\Carbon;
 use App\Models\Snapshot;
-
-// use App\Services\SFTPSiteConnect;
 use App\Services\SSHSiteConnect;
 
 class DeleteRemoteArchive implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $snapshot_id;
-    protected $archiveFile;
+    public int $timeout = 300;
+    public int $tries   = 3;
+    public int $backoff = 60;
 
     private $site;
+    private int $snapshotId;
 
-    /**
-     * Create a new job instance.
-     *
-     * @param int $snapshot_id
-     */
-    public function __construct( $site, $snapshot_id )
+    public function __construct($site, int $snapshotId)
     {
-        $this->site = $site;
-        $this->snapshot_id = $snapshot_id;
+        $this->site       = $site;
+        $this->snapshotId = $snapshotId;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @throws Exception
-     */
-    public function handle()
+    public function handle(): void
     {
-        // Fetch the snapshot and retrieve the archive path
-        $snapshot = Snapshot::find( $this->snapshot_id );
-        if (!$snapshot || !$snapshot->local_path) {
-            throw new Exception('No archive path found in snapshot record');
+        $snapshot = Snapshot::findOrFail($this->snapshotId);
+
+        if (!$snapshot->local_path) {
+            throw new Exception('Snapshot has no local_path');
         }
 
-        // Delete local file first
-        $localTmpPath = storage_path('tmp'); 
-        unlink( $localTmpPath . '/' . basename($snapshot->local_path) );
-
-
-        // Establish SSH connection using SSHSiteConnect service
         $connection = new SSHSiteConnect($this->site);
         if (!$connection->active) {
-            throw new Exception('Failed to authenticate with remote server');
+            throw new Exception('SSH authentication failed for site ' . $this->site->id);
         }
 
-        // Delete the remote archive file
-        $deleteCommand = "cd {$this->site->dir_path} && rm -rf tmp/{$snapshot->local_path}";
-        $connection->exec($deleteCommand);
+        $tmpDir  = rtrim($this->site->dir_path, '/') . '/tmp';
+        $outFile = $tmpDir . '/' . $snapshot->local_path;
 
-        // Verify the file was deleted successfully
-        $checkFile = $connection->exec("if [ -f {$this->site->dir_path} . '/tmp/' . {$snapshot->local_path} ]; then echo 'exists'; else echo 'not_found'; fi");
-        if (trim($checkFile) === 'exists') {
-            throw new Exception('Failed to delete the archive file from the remote server');
-        }
+        // Delete the remote archive (idempotent — no error if already gone)
+        $connection->exec("rm -f {$outFile}");
 
-        // Close the SSH connection
+        // Verify deletion using a correctly formed shell test
+        $check = trim($connection->exec("[ -f {$outFile} ] && echo exists || echo gone"));
         $connection->close();
 
-        // Save our snapshot model
+        if ($check === 'exists') {
+            throw new Exception('Remote archive still present after delete: ' . $outFile);
+        }
+
+        // Mark snapshot complete
         $snapshot->status = 'completed';
         $snapshot->save();
 
-         
-        // Update the backup model.
-        if ( $snapshot->backup )
-        {
-             // Calculate total size
+        // Update the parent backup record
+        if ($snapshot->backup) {
             $totalSize = $snapshot->backup->snapshots()->sum('size');
-            
+
             $snapshot->backup->last_backup = Carbon::now();
-            $snapshot->backup->next_backup = Carbon::now()->addDays( $snapshot->backup->frequency ?? 30 );
-            if (  $totalSize )
-            {
+            if ($totalSize > 0) {
                 $snapshot->backup->size = $totalSize;
             }
             $snapshot->backup->save();

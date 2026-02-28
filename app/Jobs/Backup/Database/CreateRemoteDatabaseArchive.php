@@ -9,77 +9,98 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Services\SSHSiteConnect;
 use Exception;
-
 use App\Models\Snapshot;
 
 class CreateRemoteDatabaseArchive implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $site;
-    protected $archiveFile;
-    protected $snapshotId;
+    /** @var int Max seconds this job may run (30 min) */
+    public int $timeout = 1800;
 
-    /**
-     * CreateRemoteArchive constructor.
-     *
-     * @param $site
-     * @param int $snapshotId
-     */
-    public function __construct($site, $snapshotId)
+    /** @var int Retry once after 5 minutes if it fails */
+    public int $tries = 2;
+    public int $backoff = 300;
+
+    protected $site;
+    protected string $archiveFile;
+    protected int $snapshotId;
+
+    public function __construct($site, int $snapshotId)
     {
-        $this->site = $site;
-        $this->archiveFile = 'db-backup-' . $site->id . '-' . time() . '.sql.gz';
+        $this->site       = $site;
         $this->snapshotId = $snapshotId;
+        // Unique filename per snapshot — avoids collisions when multiple sites
+        // trigger backups simultaneously.
+        $this->archiveFile = 'db-backup-' . $site->id . '-' . $snapshotId . '-' . time() . '.sql.gz';
     }
 
-    /**
-     * Execute the job.
-     *
-     * @throws Exception
-     */
-    public function handle()
+    public function handle(): void
     {
-        // Establish SSH connection using SSHSiteConnect service
         $connection = new SSHSiteConnect($this->site);
         if (!$connection->active) {
-            throw new Exception('Failed to authenticate with remote server');
+            throw new Exception('SSH authentication failed for site ' . $this->site->id);
         }
 
-        // Step 1: Get the estimated size of the backup directory
-        $directorySize = $connection->exec("du -sb {$this->site->dir_path} | awk '{print $1}'");
-        $estimatedBackupSize = (int)trim($directorySize);
+        $dir     = rtrim($this->site->dir_path, '/');
+        $tmpDir  = $dir . '/tmp';
+        $outFile = $tmpDir . '/' . $this->archiveFile;
 
-        // Step 2: Check available disk space on the remote server
-        $availableSpace = $connection->exec("df -P /tmp | awk 'NR==2 {print $4}'");
-        $availableSpaceBytes = trim($availableSpace) * 1024; // Convert KB to Bytes
+        // ── 1. Ensure tmp dir exists ──────────────────────────────────────────
+        $connection->exec("mkdir -p {$tmpDir}");
 
-        // Step 3: Compare the available disk space with the estimated backup size
-        if ($availableSpaceBytes < $estimatedBackupSize) {
-            throw new Exception('Insufficient disk space available on remote server to create the archive');
+        // ── 2. Disk-space check (df returns KB; convert to bytes) ─────────────
+        // We estimate the dump will be at most the raw DB data size on disk.
+        $rawDbSize = (int) trim($connection->exec(
+            "wp --path={$dir} db size --size_format=b --all-tables --skip-plugins --skip-themes 2>/dev/null || echo 0"
+        ));
+
+        // df -k returns Available in 1K-blocks
+        $availableKb = (int) trim($connection->exec("df -Pk {$tmpDir} | awk 'NR==2{print \$4}'"));
+        $availableBytes = $availableKb * 1024;
+
+        if ($availableBytes > 0 && $availableBytes < $rawDbSize) {
+            throw new Exception(
+                sprintf('Not enough disk space on remote server: need ~%s MB, have %s MB',
+                    round($rawDbSize / 1048576, 1),
+                    round($availableBytes / 1048576, 1)
+                )
+            );
         }
 
-        // Step 4: Create the archive, excluding the archive itself if it's in the same directory
-        $tarCommand = "mkdir -p {$this->site->dir_path}/tmp ";
-        $tarCommand .= " && cd {$this->site->dir_path} && wp db export --all-tablespaces --single-transaction --quick --lock-tables=false - | gzip -9 - > tmp/{$this->archiveFile}";
-        $connection->exec($tarCommand);
+        // ── 3. Dump + gzip in one pipeline (no intermediate .sql file) ────────
+        // --single-transaction + --quick avoids locking tables and keeps memory
+        // usage low on the remote server.
+        // Write to a .tmp file first, rename on success — prevents a partial
+        // archive from being picked up by UploadRemoteArchive if something dies.
+        $dumpCmd = implode(' ', [
+            "wp --path={$dir} db export",
+            '--single-transaction',
+            '--quick',
+            '--lock-tables=false',
+            '--all-tablespaces',
+            '--skip-plugins',
+            '--skip-themes',
+            '-',
+            "| gzip -6 > {$outFile}.tmp",
+            "&& mv {$outFile}.tmp {$outFile}",
+            "&& chmod 600 {$outFile}",
+        ]);
+        $connection->exec($dumpCmd);
 
-        // Make chmod 600 /path/to/file
-        $connection->exec("chmod 600 {$this->site->dir_path}/tmp/{$this->archiveFile}");
-
-        // Step 5: Verify archive creation success
-        $checkFile = $connection->exec("if [ -f {$this->site->dir_path}/tmp/{$this->archiveFile} ]; then echo 'exists'; else echo 'not_found'; fi");
-        if (trim($checkFile) !== 'exists') {
-            throw new Exception('Failed to create archive on the remote server');
+        // ── 4. Verify the archive was actually created and is non-empty ────────
+        $sizeOut = trim($connection->exec("stat -c%s {$outFile} 2>/dev/null || echo 0"));
+        if ((int) $sizeOut === 0) {
+            throw new Exception('Remote archive is missing or empty after dump: ' . $outFile);
         }
 
-        // Update the snapshot with the archive path
-        $snapshot = Snapshot::find($this->snapshotId);
+        // ── 5. Persist the archive name in the snapshot ───────────────────────
+        $snapshot = Snapshot::findOrFail($this->snapshotId);
         $snapshot->local_path = $this->archiveFile;
-        $snapshot->status = 'archived';
+        $snapshot->status     = 'archived';
+        $snapshot->size       = (int) $sizeOut;
         $snapshot->save();
 
-        // Close the SSH connection
         $connection->close();
     }
 }

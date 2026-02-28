@@ -193,6 +193,18 @@ return [
             'timeout' => 60,
             'nice' => 0,
         ],
+        'supervisor-longrunning' => [
+            'connection' => 'redis',
+            'queue' => ['longrunning'],
+            'balance' => 'simple',
+            'maxProcesses' => 3,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 256,
+            'tries' => 2,
+            'timeout' => 1800, // 30 minutes for SSH dump + S3 upload
+            'nice' => 5,
+        ],
     ],
 
     'environments' => [

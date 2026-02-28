@@ -7,10 +7,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Services\SSHSiteConnect;
-use Exception;
-
 use Illuminate\Support\Facades\Bus;
+use Throwable;
+use Exception;
 
 use App\Models\Snapshot;
 use App\Models\Site;
@@ -20,70 +19,45 @@ use App\Jobs\Backup\Database\CreateRemoteDatabaseArchive;
 use App\Jobs\Backup\Files\UploadRemoteArchive;
 use App\Jobs\Backup\Files\DeleteRemoteArchive;
 
-class ChainDbBackup implements ShouldQueue {
+class ChainDbBackup implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-	use Dispatchable;
-	use InteractsWithQueue;
-	use Queueable;
-	use SerializesModels;
+    public int $timeout = 30;
+    public int $tries   = 1;
 
-	private $backup;
+    private Backup $backup;
+    public string $type;
 
-	public $type;
-
-	/**
-	 * ChainAll constructor.
-	 */
-	public function __construct( Backup $backup, string $type = 'scheduled' ) {
-		$this->backup = $backup;
-		$this->type   = $type;
-	}
-
-	/**
-	 * Execute the job.
-	 *
-	 * @throws Exception
-	 */
-	public function handle() 
+    public function __construct(Backup $backup, string $type = 'manual')
     {
+        $this->backup = $backup;
+        $this->type   = $type;
+    }
 
-		try 
-        {
-			$site = Site::find( $this->backup->site_id );
-		} 
-        catch ( \Throwable $e ) 
-        {
-			$this->error( 'Site not found: ' . $e->getMessage() );
-			return;
-		}
+    public function handle(): void
+    {
+        $site = Site::find($this->backup->site_id);
+        if (!$site) {
+            throw new Exception('Site not found for backup id ' . $this->backup->id);
+        }
 
-		try 
-        {
-			$snapshot = Snapshot::create(
-				array(
-					'enabled'   => true,
-					'status'    => 'pending',
-					'type'      => $this->type,
-					'backup_id' => $this->backup->id,
-					'tenant_id' => $this->backup->tenant_id,
-				)
-			);
-		} catch ( \Throwable $e ) {
-			$this->error( 'Error creating snapshot id: ' . $e->getMessage() );
-			return;
-		}
+        $snapshot = Snapshot::create([
+            'enabled'   => true,
+            'status'    => 'pending',
+            'type'      => $this->type,
+            'backup_id' => $this->backup->id,
+            'tenant_id' => $this->backup->tenant_id,
+        ]);
 
-		Bus::chain(
-			array(
-				new CreateRemoteDatabaseArchive( $site, $snapshot->id ),
-				new UploadRemoteArchive( $site, $snapshot->id ),
-				new DeleteRemoteArchive( $site, $snapshot->id ),
-			)
-		)->catch(
-			function ( Throwable $e ) {
-				// A job within the chain has failed...
-			}
-		)->onQueue( 'longrunning' )->dispatch();
-		// })->dispatch();
-	}
+        Bus::chain([
+            new CreateRemoteDatabaseArchive($site, $snapshot->id),
+            new UploadRemoteArchive($site, $snapshot->id),
+            new DeleteRemoteArchive($site, $snapshot->id),
+        ])->catch(function (Throwable $e) use ($snapshot) {
+            // Mark snapshot as failed so the UI reflects it
+            $snapshot->status = 'failed';
+            $snapshot->save();
+        })->onQueue('longrunning')->dispatch();
+    }
 }
