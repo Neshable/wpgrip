@@ -111,11 +111,20 @@ class SyncSiteStats implements ShouldQueue
 
     protected function fetchPHPVersion()
     {
-        $command = 'php -v | sed -e \'/^PHP/!d\' -e \'s/.* \([0-9]\+\.[0-9]\+\.[0-9]\+\).*$/\1/\'';
-        $output = $this->connection->exec($command);
+        // Use `wp eval` so we get the PHP version WordPress actually runs under
+        // (the web-server / FPM version, not the CLI binary which may differ).
+        $command = 'cd ' . $this->site->dir_path . ' && wp eval "echo phpversion();" 2>/dev/null';
+        $output  = trim($this->connection->exec($command));
+
+        // Fallback to CLI php -v if wp eval fails (e.g. no WP-CLI on the server)
+        if (!$output || !preg_match('/^\d+\.\d+/', $output)) {
+            $command = 'php -v 2>/dev/null | grep -oP \'(?<=PHP )\d+\.\d+\.\d+\'';
+            $output  = trim($this->connection->exec($command));
+        }
 
         if ($output) {
-            $this->site->php_ver = floatval($output);
+            // Store full semver string so we don't lose the patch number
+            $this->site->php_ver = $output;
         }
     }
 
