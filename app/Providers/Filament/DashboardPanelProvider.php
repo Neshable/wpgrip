@@ -140,25 +140,25 @@ class DashboardPanelProvider extends PanelProvider
             ->breadcrumbs(false)
             ->databaseNotifications()
             ->colors([
-                'primary' => Color::Blue,// '#1654D1',
-                'danger' => Color::Rose,
-                'gray' => [
-                    50 => '245, 246, 246',
-                    100 => '229, 231, 232',
-                    200 => '206, 208, 211',
-                    300 => '172, 176, 180',
-                    400 => '130, 135, 142',
-                    500 => '103, 108, 115',
-                    600 => '88, 92, 98',
-                    700 => '75, 78, 83',
-                    800 => '66, 68, 72',
-                    900 => '58, 59, 63',
-                    950 => '32, 33, 35',
+                // Brand blue #3f63e6 — matches marketing site
+                'primary' => [
+                    50  => '240, 244, 254',
+                    100 => '222, 229, 251',
+                    200 => '196, 211, 249',
+                    300 => '155, 182, 245',
+                    400 => '108, 145, 238',
+                    500 => '63, 99, 230',
+                    600 => '52, 77, 220',
+                    700 => '44, 59, 201',
+                    800 => '41, 50, 164',
+                    900 => '38, 47, 130',
+                    950 => '28, 32, 79',
                 ],
-                // 'gray' => Color::Slate, // Background
-                // 'info' => Color::Blue,
-                'success' => Color::Green,
-                // 'warning' => Color::Red,
+                'danger'  => Color::Rose,
+                'success' => Color::Emerald,
+                'warning' => Color::Amber,
+                'info'    => Color::Sky,
+                'gray' => Color::Slate,
             ])
             ->brandLogoHeight('3rem')
             // ->brandLogo(asset('images/logo-dark.svg'))
