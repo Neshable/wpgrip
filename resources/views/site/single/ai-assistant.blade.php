@@ -142,59 +142,57 @@
         </template>
     </div>
 
-    {{-- Input row --}}
-    <div class="mt-3 flex items-end gap-2">
-        <div class="flex-1">
-            <textarea
-                x-ref="input"
-                x-model="draft"
-                @keydown="handleKeydown($event)"
-                @input="autoResize($el)"
-                :disabled="loading"
-                rows="1"
-                placeholder="Ask about this site…  (Shift+Enter for new line)"
-                style="
-                    width:100%; resize:none; border-radius:.75rem;
-                    border:1px solid #d1d5db; padding:.75rem 1rem;
-                    font-size:.875rem; line-height:1.5;
-                    background:#ffffff; color:#111827;
-                    max-height:140px; overflow-y:auto;
-                    box-shadow:0 1px 2px rgba(0,0,0,.06);
-                    transition:border-color .15s, box-shadow .15s;
-                    outline:none;
-                "
-                @focus="$el.style.borderColor='#7c3aed'; $el.style.boxShadow='0 0 0 2px rgba(124,58,237,.25)'"
-                @blur="$el.style.borderColor='#d1d5db'; $el.style.boxShadow='0 1px 2px rgba(0,0,0,.06)'"
-            ></textarea>
-        </div>
-        <button
-            type="button"
-            @click="submit()"
-            :disabled="loading || !draft.trim()"
+    {{-- Input row: textarea with embedded send button --}}
+    <div
+        class="mt-3 flex items-end rounded-xl border bg-white dark:bg-gray-900 overflow-hidden"
+        style="border-color:#d1d5db; box-shadow:0 1px 2px rgba(0,0,0,.06); transition:border-color .15s, box-shadow .15s;"
+        @focusin="$el.style.borderColor='#7c3aed'; $el.style.boxShadow='0 0 0 2px rgba(124,58,237,.25)'"
+        @focusout="$el.style.borderColor='#d1d5db'; $el.style.boxShadow='0 1px 2px rgba(0,0,0,.06)'"
+    >
+        <textarea
+            x-ref="input"
+            x-model="draft"
+            @keydown="handleKeydown($event)"
+            @input="autoResize($el)"
+            :disabled="loading"
+            rows="1"
+            placeholder="Ask about this site…  (Shift+Enter for new line)"
             style="
-                flex-shrink:0; display:flex; align-items:center; justify-content:center;
-                width:2.75rem; height:2.75rem; border-radius:.75rem;
-                border:none; cursor:pointer;
-                transition:background .15s, opacity .15s;
+                flex:1; resize:none; border:none; outline:none;
+                padding:.75rem 1rem;
+                font-size:.875rem; line-height:1.5;
+                background:transparent; color:#111827;
+                max-height:140px; overflow-y:auto;
             "
-            :style="(loading || !draft.trim())
-                ? 'background:#c4b5fd; cursor:not-allowed;'
-                : 'background:#7c3aed;'"
-            @mouseover="if(!loading && draft.trim()) $el.style.background='#6d28d9'"
-            @mouseout="$el.style.background=(loading || !draft.trim()) ? '#c4b5fd' : '#7c3aed'"
-        >
-            <template x-if="!loading">
-                <svg xmlns="http://www.w3.org/2000/svg" style="width:1.1rem;height:1.1rem;color:#fff;" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
-                </svg>
-            </template>
-            <template x-if="loading">
-                <svg style="width:1.1rem;height:1.1rem;color:#fff;" class="animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 12 0 12 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-            </template>
-        </button>
+            class="dark:text-gray-100"
+        ></textarea>
+        <div class="flex-shrink-0 flex items-end p-2">
+            <button
+                type="button"
+                @click="submit()"
+                :disabled="loading || !draft.trim()"
+                class="flex items-center justify-center rounded-lg transition-all duration-150"
+                style="width:2.25rem; height:2.25rem; border:none; cursor:pointer;"
+                :style="(loading || !draft.trim())
+                    ? 'background:#c4b5fd; cursor:not-allowed; opacity:.7;'
+                    : 'background:#7c3aed;'"
+                @mouseover="if(!loading && draft.trim()) $el.style.background='#6d28d9'"
+                @mouseout="$el.style.background=(loading || !draft.trim()) ? '#c4b5fd' : '#7c3aed'"
+                title="Send"
+            >
+                <template x-if="!loading">
+                    <svg xmlns="http://www.w3.org/2000/svg" style="width:1rem;height:1rem;color:#fff;" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+                    </svg>
+                </template>
+                <template x-if="loading">
+                    <svg style="width:1rem;height:1rem;color:#fff;" class="animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 12 0 12 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </template>
+            </button>
+        </div>
     </div>
 
     <p class="mt-2 text-xs text-center" style="color:#9ca3af;">
