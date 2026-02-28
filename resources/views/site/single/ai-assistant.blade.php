@@ -10,22 +10,51 @@
     class="flex flex-col"
     style="height: calc(100vh - 220px); min-height: 520px;"
 >
-    {{-- Header --}}
+    {{-- Header row --}}
     <div class="flex items-center justify-between mb-3">
         <div class="flex items-center gap-2">
             <x-filament::icon icon="heroicon-m-sparkles" class="w-5 h-5 text-violet-500" />
             <span class="font-semibold text-gray-800 dark:text-white">AI Assistant</span>
             <span class="text-xs text-gray-400 dark:text-gray-500">Powered by Claude</span>
         </div>
-        <button
-            @click="clearChat()"
-            class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-800 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-        >
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-            Clear
-        </button>
+
+        <div class="flex items-center gap-2">
+            {{-- Context freshness badge --}}
+            <span
+                class="inline-flex items-center gap-1 rounded-full border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-gray-800 px-2.5 py-1 text-xs text-gray-500 dark:text-gray-400"
+                title="Age of the cached site snapshot (SITE.md)"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Context:
+                <span x-text="siteMdAge || '{{ $siteMdAge }}'" class="font-medium"></span>
+            </span>
+
+            {{-- Refresh context --}}
+            <button
+                @click="refreshContext()"
+                :disabled="refreshing"
+                class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-800 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-violet-900/30 hover:border-violet-300 transition disabled:opacity-50"
+                title="Regenerate SITE.md from current DB data"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" :class="refreshing ? 'animate-spin' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span x-text="refreshing ? 'Refreshing…' : 'Refresh context'"></span>
+            </button>
+
+            {{-- Clear chat --}}
+            <button
+                @click="clearChat()"
+                class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-800 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Clear
+            </button>
+        </div>
     </div>
 
     {{-- Server-side error banner --}}
@@ -50,7 +79,7 @@
                 </div>
                 <h3 class="text-base font-semibold text-gray-700 dark:text-gray-200 mb-1">Ask me anything about this site</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 max-w-xs mb-6">
-                    I have full DB context and can connect via SSH to read files and logs.
+                    I know everything in the WPGrip database about this site: plugins, themes, server, DB tables and more.
                 </p>
                 <div class="grid grid-cols-1 gap-2 w-full max-w-sm">
                     <template x-for="s in suggestions" :key="s">
@@ -68,7 +97,6 @@
         {{-- Rendered messages --}}
         <template x-for="(msg, i) in messages" :key="i">
             <div class="ai-msg">
-                {{-- User bubble --}}
                 <template x-if="msg.role === 'user'">
                     <div class="flex justify-end">
                         <div
@@ -78,7 +106,6 @@
                         ></div>
                     </div>
                 </template>
-                {{-- Assistant bubble --}}
                 <template x-if="msg.role === 'assistant'">
                     <div class="flex items-start gap-3">
                         <div class="flex-shrink-0 rounded-full p-1.5 mt-0.5" style="background:#ede9fe;">
@@ -171,7 +198,7 @@
     </div>
 
     <p class="mt-2 text-xs text-center" style="color:#9ca3af;">
-        AI may make mistakes. Always verify critical information before applying changes.
+        Answers are based on the cached site snapshot. Use “Refresh context” to pull the latest DB data.
     </p>
 </div>
 
@@ -186,6 +213,7 @@
                 ->markdown(['html_input' => 'escape', 'allow_unsafe_links' => false])
             : '',
     ], $messages))) }}"
+    data-age="{{ e($siteMdAge) }}"
     style="display:none;"
 ></div>
 

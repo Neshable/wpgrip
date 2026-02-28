@@ -4,6 +4,7 @@ namespace App\Jobs\Site;
 
 use App\Models\Site;
 use App\Models\Theme;
+use App\Jobs\Site\GenerateSiteMd;
 
 use App\Services\SSHSiteConnect;
 use App\Services\GripNotifications;
@@ -121,6 +122,7 @@ class GetAllThemes implements ShouldQueue
             
 
             GripNotifications::getDatabaseSyncedNotification();
+            GenerateSiteMd::dispatch($this->site);
             return true;
         }   
     }

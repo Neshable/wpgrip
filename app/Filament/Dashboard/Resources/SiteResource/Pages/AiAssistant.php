@@ -3,21 +3,21 @@
 namespace App\Filament\Dashboard\Resources\SiteResource\Pages;
 
 use App\Filament\Dashboard\Resources\SiteResource;
-use App\Services\SSHSiteConnect;
+use App\Jobs\Site\GenerateSiteMd;
+use App\Services\SiteMdService;
 use Filament\Resources\Pages\ViewRecord;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Log;
-use Anthropic\Laravel\Facades\Anthropic;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Anthropic\Laravel\Facades\Anthropic;
 
 class AiAssistant extends ViewRecord
 {
     protected static string $resource = SiteResource::class;
-
-    protected static string $view = 'site.single.ai-assistant';
+    protected static string $view     = 'site.single.ai-assistant';
 
     // -------------------------------------------------------------------------
     // Livewire state
@@ -26,14 +26,10 @@ class AiAssistant extends ViewRecord
     /** @var array<int, array{role: string, content: string}> */
     public array $messages = [];
 
-    /** The current user input */
     public string $userMessage = '';
-
-    /** Whether we are waiting for a reply */
-    public bool $loading = false;
-
-    /** Error string shown in UI */
-    public string $aiError = '';
+    public bool   $loading     = false;
+    public string $aiError     = '';
+    public string $siteMdAge   = '';   // shown in UI so user knows how fresh the context is
 
     // -------------------------------------------------------------------------
 
@@ -45,6 +41,9 @@ class AiAssistant extends ViewRecord
     public function mount(int|string $record): void
     {
         parent::mount($record);
+
+        // Pre-compute the age of SITE.md so the view can show it
+        $this->siteMdAge = $this->getSiteMdAge();
 
         FilamentView::registerRenderHook(
             PanelsRenderHook::HEAD_END,
@@ -59,6 +58,124 @@ class AiAssistant extends ViewRecord
         );
     }
 
+    // -------------------------------------------------------------------------
+    // Chat
+    // -------------------------------------------------------------------------
+
+    public function sendMessage(string $text): array
+    {
+        $text = trim($text);
+        if (empty($text)) {
+            return ['error' => 'Empty message.'];
+        }
+
+        $this->aiError = '';
+        $this->messages[] = ['role' => 'user', 'content' => $text];
+
+        try {
+            $reply = $this->callAnthropic();
+        } catch (\Throwable $e) {
+            Log::error('AI Assistant error: ' . $e->getMessage());
+            $this->aiError = 'AI request failed: ' . $e->getMessage();
+            return ['error' => $e->getMessage()];
+        }
+
+        $this->messages[] = ['role' => 'assistant', 'content' => $reply];
+
+        $html = (string) Str::of($reply)
+            ->markdown(['html_input' => 'escape', 'allow_unsafe_links' => false]);
+
+        return ['content' => $reply, 'html' => $html];
+    }
+
+    /**
+     * Manually trigger a SITE.md regeneration.
+     * Returns the new age string so Alpine can update the badge.
+     */
+    public function refreshSiteMd(): array
+    {
+        try {
+            app(SiteMdService::class)->write($this->record);
+            $this->siteMdAge = $this->getSiteMdAge();
+            return ['ok' => true, 'age' => $this->siteMdAge];
+        } catch (\Throwable $e) {
+            Log::error('Manual SITE.md refresh failed: ' . $e->getMessage());
+            return ['ok' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    public function clearChat(): void
+    {
+        $this->messages = [];
+        $this->aiError  = '';
+    }
+
+    // -------------------------------------------------------------------------
+    // Anthropic — DB-only, no SSH tools
+    // -------------------------------------------------------------------------
+
+    private function callAnthropic(): string
+    {
+        $site    = $this->record;
+        $siteMd  = app(SiteMdService::class)->read($site);
+
+        $system = <<<SYSTEM
+You are an AI assistant built into WPGrip, a WordPress site management platform.
+You help users understand and manage the WordPress site: "{$site->name}" ({$site->url}).
+
+Below is a full snapshot of the site data from the WPGrip database (SITE.md):
+
+{$siteMd}
+
+---
+Guidelines:
+- Answer questions based ONLY on the data above.
+- If information is not in the snapshot, say so clearly and suggest the user trigger a sync.
+- Format answers in markdown. Use tables and bullet lists where appropriate.
+- Be concise and direct.
+- Never suggest running SSH commands — you do not have shell access.
+- When you spot pending plugin/theme updates, proactively mention them.
+SYSTEM;
+
+        $anthropicMessages = array_map(
+            fn ($m) => ['role' => $m['role'], 'content' => $m['content']],
+            $this->messages,
+        );
+
+        $response = Anthropic::messages()->create([
+            'model'      => 'claude-opus-4-5',
+            'max_tokens' => 2048,
+            'system'     => $system,
+            'messages'   => $anthropicMessages,
+        ]);
+
+        $text = '';
+        foreach ($response->content as $block) {
+            if ($block->type === 'text') {
+                $text .= $block->text;
+            }
+        }
+
+        return $text ?: '(No response)';
+    }
+
+    // -------------------------------------------------------------------------
+    // Helpers
+    // -------------------------------------------------------------------------
+
+    private function getSiteMdAge(): string
+    {
+        $path = storage_path('app/sites/' . $this->record->id . '/SITE.md');
+        if (!file_exists($path)) {
+            return 'never generated';
+        }
+        return \Carbon\Carbon::createFromTimestamp(filemtime($path))->diffForHumans();
+    }
+
+    // -------------------------------------------------------------------------
+    // Inline JS
+    // -------------------------------------------------------------------------
+
     private function aiScript(): string
     {
         return <<<'JS'
@@ -68,61 +185,60 @@ class AiAssistant extends ViewRecord
                 messages: [],
                 draft: '',
                 loading: false,
+                refreshing: false,
+                siteMdAge: '',
                 suggestions: [
-                    'List all plugins with pending updates',
-                    'What PHP version is running?',
-                    'Show the last 30 lines of the error log',
-                    'Check wp-config.php for debug or security issues',
-                    'How big is the database?',
+                    'Which plugins have updates available?',
+                    'What WordPress and PHP version is this site running?',
+                    'Show me the database tables and sizes',
+                    'Is anything flagged as vulnerable or has issues?',
+                    'When was this site last synced?',
+                    'List all inactive plugins',
                 ],
 
                 init(rootEl) {
-                    // Load seed data from the hidden div
                     const seed = document.getElementById('ai-chat-seed');
                     if (seed) {
-                        try { this.messages = JSON.parse(seed.dataset.messages || '[]'); }
-                        catch(e) { this.messages = []; }
+                        try { this.messages = JSON.parse(seed.dataset.messages || '[]'); } catch(e) { this.messages = []; }
+                        this.siteMdAge = seed.dataset.age || '';
                     }
-
                     this.$nextTick(() => this.scrollToBottom());
-
-                    // No $wire.$on listener here — replies come back via .then() in submit()
-                    // so there is no risk of the listener being registered twice on re-render.
                 },
 
                 handleKeydown(e) {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        this.submit();
-                    }
+                    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.submit(); }
                 },
 
                 submit() {
                     const text = this.draft.trim();
                     if (!text || this.loading) return;
-
-                    // Optimistic: show user bubble immediately
                     this.messages.push({ role: 'user', content: text, html: '' });
                     this.draft   = '';
                     this.loading = true;
-
                     this.$nextTick(() => {
                         if (this.$refs.input) this.$refs.input.style.height = 'auto';
                         this.scrollToBottom();
                     });
-
-                    // Call Livewire — it returns { content, html } or { error }
                     this.$wire.sendMessage(text)
                         .then((result) => {
                             this.loading = false;
                             if (result && result.html) {
                                 this.messages.push({ role: 'assistant', content: result.content, html: result.html });
                                 this.$nextTick(() => this.scrollToBottom());
-                            } else if (result && result.error) {
-                                // error is already surfaced via $wire.aiError on the server side
                             }
                         })
                         .catch(() => { this.loading = false; });
+                },
+
+                refreshContext() {
+                    if (this.refreshing) return;
+                    this.refreshing = true;
+                    this.$wire.refreshSiteMd()
+                        .then((r) => {
+                            this.refreshing = false;
+                            if (r && r.ok) { this.siteMdAge = r.age; }
+                        })
+                        .catch(() => { this.refreshing = false; });
                 },
 
                 fillSuggestion(s) {
@@ -180,286 +296,10 @@ class AiAssistant extends ViewRecord
         .ai-bubble code          { font-size: .78rem; }
         .ai-bubble ul, .ai-bubble ol { margin: .25rem 0 .5rem 1.2rem; }
         .ai-bubble li            { margin-bottom: .15rem; }
+        .ai-bubble table         { width: 100%; border-collapse: collapse; font-size: .78rem; margin: .4rem 0; }
+        .ai-bubble th, .ai-bubble td { border: 1px solid #e5e7eb; padding: .3rem .6rem; text-align: left; }
+        .ai-bubble th            { background: #f3f4f6; font-weight: 600; }
         </style>
         CSS;
-    }
-
-    // -------------------------------------------------------------------------
-    // Chat
-    // -------------------------------------------------------------------------
-
-    /**
-     * Called by Alpine with the message text.
-     * Returns ['content' => string, 'html' => string] on success,
-     * or ['error' => string] on failure.
-     * Alpine's .then() handler appends the reply bubble — no events needed.
-     */
-    public function sendMessage(string $text): array
-    {
-        $text = trim($text);
-        if (empty($text)) {
-            return ['error' => 'Empty message.'];
-        }
-
-        $this->aiError = '';
-
-        // Keep server-side conversation history in sync
-        $this->messages[] = ['role' => 'user', 'content' => $text];
-
-        try {
-            $reply = $this->callAnthropic();
-        } catch (\Throwable $e) {
-            Log::error('AI Assistant error: ' . $e->getMessage());
-            $this->aiError = 'AI request failed: ' . $e->getMessage();
-            return ['error' => $e->getMessage()];
-        }
-
-        $this->messages[] = ['role' => 'assistant', 'content' => $reply];
-
-        $html = (string) Str::of($reply)
-            ->markdown(['html_input' => 'escape', 'allow_unsafe_links' => false]);
-
-        return ['content' => $reply, 'html' => $html];
-    }
-
-    // -------------------------------------------------------------------------
-    // Anthropic call with tool use
-    // -------------------------------------------------------------------------
-
-    private function callAnthropic(): string
-    {
-        $site    = $this->record;
-        $siteCtx = $this->buildSiteContext();
-
-        $systemPrompt = <<<SYSTEM
-You are an AI assistant integrated into WPGrip, a WordPress site management platform.
-You are helping the user manage and understand the WordPress site: "{$site->name}" ({$site->url}).
-
-Here is the current data we have in our database for this site:
-
-{$siteCtx}
-
-You have a tool called `run_ssh_command` that lets you run read-only shell commands on the remote server via SSH.
-Use it when the user asks about files, logs, server details, or anything not already in the database context.
-Only use safe, non-destructive commands (cat, ls, tail, grep, wp, etc.).
-Never run commands that modify, delete, or write files.
-
-Be concise, helpful, and format code/output in markdown code blocks.
-SYSTEM;
-
-        // Build conversation for Anthropic
-        $anthropicMessages = [];
-        foreach ($this->messages as $msg) {
-            $anthropicMessages[] = [
-                'role'    => $msg['role'],
-                'content' => $msg['content'],
-            ];
-        }
-
-        $tools = [
-            [
-                'name'        => 'run_ssh_command',
-                'description' => 'Run a read-only shell command on the remote WordPress server via SSH and return its output.',
-                'input_schema' => [
-                    'type'       => 'object',
-                    'properties' => [
-                        'command' => [
-                            'type'        => 'string',
-                            'description' => 'The shell command to execute. Must be read-only (cat, ls, tail, grep, wp option get, etc.).',
-                        ],
-                    ],
-                    'required' => ['command'],
-                ],
-            ],
-        ];
-
-        // Agentic loop — allow up to 5 tool rounds
-        $maxRounds = 5;
-        $round     = 0;
-
-        while ($round < $maxRounds) {
-            $round++;
-
-            $response = Anthropic::messages()->create([
-                'model'      => 'claude-opus-4-5',
-                'max_tokens' => 2048,
-                'system'     => $systemPrompt,
-                'messages'   => $anthropicMessages,
-                'tools'      => $tools,
-            ]);
-
-            $textParts     = [];
-            $toolUseBlocks = [];
-
-            foreach ($response->content as $block) {
-                if ($block->type === 'text') {
-                    $textParts[] = $block->text;
-                } elseif ($block->type === 'tool_use') {
-                    $toolUseBlocks[] = $block;
-                }
-            }
-
-            // No tool calls -> final answer
-            if (empty($toolUseBlocks)) {
-                return implode('\n', $textParts) ?: '(No response)';
-            }
-
-            // Append assistant message with raw content blocks
-            $rawContent = [];
-            foreach ($textParts as $txt) {
-                $rawContent[] = ['type' => 'text', 'text' => $txt];
-            }
-            foreach ($toolUseBlocks as $tb) {
-                $rawContent[] = [
-                    'type'  => 'tool_use',
-                    'id'    => $tb->id,
-                    'name'  => $tb->name,
-                    'input' => $tb->input,
-                ];
-            }
-            $anthropicMessages[] = ['role' => 'assistant', 'content' => $rawContent];
-
-            // Process tool calls
-            $toolResults = [];
-            foreach ($toolUseBlocks as $toolBlock) {
-                if ($toolBlock->name === 'run_ssh_command') {
-                    $cmd    = $toolBlock->input['command'] ?? '';
-                    $output = $this->runSshCommand($cmd);
-
-                    $toolResults[] = [
-                        'type'        => 'tool_result',
-                        'tool_use_id' => $toolBlock->id,
-                        'content'     => $output,
-                    ];
-                }
-            }
-
-            $anthropicMessages[] = ['role' => 'user', 'content' => $toolResults];
-        }
-
-        return '(Max tool-use rounds reached without a final text response.)';
-    }
-
-    // -------------------------------------------------------------------------
-    // SSH tool
-    // -------------------------------------------------------------------------
-
-    private function runSshCommand(string $command): string
-    {
-        // Block destructive patterns
-        $blocked = ['rm ', 'rmdir', 'mkfs', 'dd ', '> /', 'wget ', 'curl ', 'chmod ', 'chown ', 'mv ', 'cp '];
-        foreach ($blocked as $b) {
-            if (stripos($command, $b) !== false) {
-                return '[BLOCKED] The command "' . $command . '" is not permitted for safety reasons.';
-            }
-        }
-
-        try {
-            $conn = new SSHSiteConnect($this->record);
-            if (! $conn->active) {
-                return '[SSH] Could not establish SSH connection to the server.';
-            }
-            $output = $conn->exec($command);
-            $conn->close();
-            return $output ?: '(empty output)';
-        } catch (\Throwable $e) {
-            Log::error('AI Assistant SSH error: ' . $e->getMessage());
-            return '[SSH Error] ' . $e->getMessage();
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // Build a rich context string from the DB
-    // -------------------------------------------------------------------------
-
-    private function buildSiteContext(): string
-    {
-        $site = $this->record;
-        $site->load(['server', 'client', 'sitemeta', 'plugins', 'themes']);
-
-        $lines = [];
-
-        $lines[] = '## Site Info';
-        $lines[] = 'Name: ' . ($site->name ?? 'n/a');
-        $lines[] = 'URL: ' . ($site->url ?? 'n/a');
-        $lines[] = 'SSH User: ' . ($site->ssh_user ?? 'n/a');
-        $lines[] = 'Dir Path: ' . ($site->dir_path ?? 'n/a');
-        $lines[] = 'WordPress Version: ' . ($site->wp_ver ?? 'n/a');
-        $lines[] = 'PHP Version: ' . ($site->php_ver ?? 'n/a');
-        $lines[] = 'WP-CLI Version: ' . ($site->cli_ver ?? 'n/a');
-        $lines[] = 'DB Prefix: ' . ($site->db_prefix ?? 'n/a');
-        $lines[] = 'Is Staging: ' . ($site->is_staging ? 'yes' : 'no');
-        $lines[] = 'SSH Connected: ' . ($site->ssh_connection ? 'yes' : 'no');
-        $lines[] = 'Last Synced: ' . ($site->updated_at?->toDateTimeString() ?? 'n/a');
-
-        if ($site->server) {
-            $lines[] = '';
-            $lines[] = '## Server';
-            $lines[] = 'Name: ' . $site->server->name;
-            $lines[] = 'IP: ' . $site->server->ip;
-            $lines[] = 'Port: ' . ($site->server->port ?? 22);
-            $provider = $site->server->provider;
-            $lines[] = 'Provider: ' . ($provider instanceof \BackedEnum ? $provider->value : ($provider ?? 'n/a'));
-        }
-
-        if ($site->client) {
-            $lines[] = '';
-            $lines[] = '## Client';
-            $lines[] = 'Name: ' . $site->client->name;
-        }
-
-        if ($site->sitemeta) {
-            $meta    = $site->sitemeta;
-            $lines[] = '';
-            $lines[] = '## Site Meta';
-            $lines[] = 'DB Size: ' . ($meta->db_size ?? 'n/a') . ' MB';
-            $lines[] = 'Domain Expiry: ' . ($meta->domain_expiry_date ?? 'n/a');
-            $lines[] = 'Admin Email: ' . ($meta->admin_email ?? 'n/a');
-            $lines[] = 'Active Theme: ' . ($meta->active_theme ?? 'n/a');
-        }
-
-        if ($site->plugins && $site->plugins->count()) {
-            $lines[] = '';
-            $lines[] = '## Plugins (' . $site->plugins->count() . ' total)';
-            foreach ($site->plugins->take(40) as $plugin) {
-                $status = $plugin->pivot->status ?? 'unknown';
-                $ver    = $plugin->pivot->version ?? 'n/a';
-                $upd    = $plugin->pivot->update_version ?? null;
-                $line   = '- ' . $plugin->name . ' v' . $ver . ' [' . $status . ']';
-                if ($upd) {
-                    $line .= ' (update available: v' . $upd . ')';
-                }
-                $lines[] = $line;
-            }
-            if ($site->plugins->count() > 40) {
-                $lines[] = '... and ' . ($site->plugins->count() - 40) . ' more plugins.';
-            }
-        }
-
-        if ($site->themes && $site->themes->count()) {
-            $lines[] = '';
-            $lines[] = '## Themes (' . $site->themes->count() . ' total)';
-            foreach ($site->themes as $theme) {
-                $ver  = $theme->pivot->version ?? 'n/a';
-                $upd  = $theme->pivot->update_version ?? null;
-                $line = '- ' . $theme->name . ' v' . $ver;
-                if ($upd) {
-                    $line .= ' (update available: v' . $upd . ')';
-                }
-                $lines[] = $line;
-            }
-        }
-
-        return implode("\n", $lines);
-    }
-
-    // -------------------------------------------------------------------------
-    // Clear chat
-    // -------------------------------------------------------------------------
-
-    public function clearChat(): void
-    {
-        $this->messages = [];
-        $this->aiError  = '';
     }
 }

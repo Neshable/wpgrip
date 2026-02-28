@@ -4,6 +4,7 @@ namespace App\Jobs\Site;
 
 use App\Models\Site;
 use App\Models\Plugin;
+use App\Jobs\Site\GenerateSiteMd;
 
 use App\Services\SSHSiteConnect;
 use App\Services\GripNotifications;
@@ -92,6 +93,7 @@ class SyncSiteStats implements ShouldQueue
             }
 
             GripNotifications::getSiteSyncedNotification();
+            GenerateSiteMd::dispatch($this->site);
             return true;
         }   
     }
