@@ -16,7 +16,7 @@
     {{-- Bottom fade --}}
     <div class="pointer-events-none absolute bottom-0 left-0 right-0 h-40" style="background: linear-gradient(to bottom, transparent, #0a0a0a);"></div>
 
-    <div class="relative max-w-screen-xl mx-auto px-6 pt-32 pb-16">
+    <div class="relative max-w-screen-xl mx-auto px-6 pt-40 pb-20">
         <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
             {{-- Left: text + CTAs --}}
