@@ -16,7 +16,7 @@
             Simple pricing.<br><span class="text-blue-400">Powerful features.</span>
         </h1>
         <p class="mt-6 text-lg text-neutral-400 font-light max-w-xl leading-relaxed">
-            Three plans, priced by how many sites you manage.
+            Four plans, priced by how many sites you manage.
             Scale up when you're ready.
         </p>
     </div>
