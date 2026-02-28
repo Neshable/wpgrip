@@ -12,6 +12,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 use App\Jobs\Site\SyncSiteStats;
+use App\Jobs\Site\GetAllPlugins;
+use App\Jobs\Site\GetAllThemes;
 
 class SyncAllSitesStats implements ShouldQueue
 {
@@ -50,6 +52,8 @@ class SyncAllSitesStats implements ShouldQueue
             if ( $site->enabled )
             {
                 SyncSiteStats::dispatch( $site )->onQueue('default');
+                GetAllPlugins::dispatch( $site )->onQueue('default');
+                GetAllThemes::dispatch( $site )->onQueue('default');
             }            
         }  
         
