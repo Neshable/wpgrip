@@ -16,8 +16,8 @@
             Simple pricing.<br><span class="text-blue-400">Powerful features.</span>
         </h1>
         <p class="mt-6 text-lg text-neutral-400 font-light max-w-xl leading-relaxed">
-            Every plan includes the full feature set. No paywalls on core functionality.
-            Pay for what you need, scale when you're ready.
+            Three plans, priced by how many sites you manage.
+            Scale up when you're ready.
         </p>
     </div>
 </section>
@@ -25,66 +25,118 @@
 {{-- PLANS --}}
 <section class="bg-[#0a0a0a] pt-4 pb-24">
     <div class="max-w-screen-xl mx-auto px-6">
+        @php
+        $plans = [
+            [
+                'name'     => 'Basic',
+                'slug'     => 'basic-monthly',
+                'price'    => '$10',
+                'popular'  => false,
+                'limit'    => 'Up to 5 sites',
+                'features' => [
+                    ['label' => '5 WordPress sites',          'included' => true],
+                    ['label' => 'Uptime monitoring',           'included' => true],
+                    ['label' => 'SSL & domain expiry alerts',  'included' => true],
+                    ['label' => 'PageSpeed tracking',          'included' => true],
+                    ['label' => 'Vulnerability scanning',      'included' => true],
+                    ['label' => 'One-click plugin/theme updates', 'included' => true],
+                    ['label' => 'Database backups',            'included' => true],
+                    ['label' => 'Git deployments',             'included' => false],
+                    ['label' => 'AI Assistant',                'included' => false],
+                    ['label' => 'Team members',                'included' => false],
+                ],
+            ],
+            [
+                'name'     => 'Pro',
+                'slug'     => 'pro-monthly',
+                'price'    => '$25',
+                'popular'  => true,
+                'limit'    => 'Up to 25 sites',
+                'features' => [
+                    ['label' => '25 WordPress sites',          'included' => true],
+                    ['label' => 'Uptime monitoring',           'included' => true],
+                    ['label' => 'SSL & domain expiry alerts',  'included' => true],
+                    ['label' => 'PageSpeed tracking',          'included' => true],
+                    ['label' => 'Vulnerability scanning',      'included' => true],
+                    ['label' => 'One-click plugin/theme updates', 'included' => true],
+                    ['label' => 'Database backups',            'included' => true],
+                    ['label' => 'Git deployments',             'included' => true],
+                    ['label' => 'AI Assistant',                'included' => true],
+                    ['label' => 'Up to 3 team members',        'included' => true],
+                ],
+            ],
+            [
+                'name'     => 'Ultimate',
+                'slug'     => 'ultimate-monthly',
+                'price'    => '$50',
+                'popular'  => false,
+                'limit'    => 'Unlimited sites',
+                'features' => [
+                    ['label' => 'Unlimited WordPress sites',   'included' => true],
+                    ['label' => 'Uptime monitoring',           'included' => true],
+                    ['label' => 'SSL & domain expiry alerts',  'included' => true],
+                    ['label' => 'PageSpeed tracking',          'included' => true],
+                    ['label' => 'Vulnerability scanning',      'included' => true],
+                    ['label' => 'One-click plugin/theme updates', 'included' => true],
+                    ['label' => 'Database backups',            'included' => true],
+                    ['label' => 'Git deployments',             'included' => true],
+                    ['label' => 'AI Assistant',                'included' => true],
+                    ['label' => 'Unlimited team members',      'included' => true],
+                ],
+            ],
+        ];
+        @endphp
 
-        {{-- Dark wrapper for the plans component --}}
-        <div class="[&_.section-hero]:hidden
-                    [&_section]:bg-transparent
-                    [&_.card]:bg-neutral-900
-                    [&_h2]:text-white
-                    [&_h3]:text-white
-                    [&_p]:text-neutral-400">
-            <x-plans.all calculate-saving-rates="true" preselected-interval="month"></x-plans.all>
+        <div class="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            @foreach($plans as $plan)
+            @php $popular = $plan['popular']; @endphp
+            <div class="relative flex flex-col rounded-xl border p-8 transition-all duration-200 {{ $popular ? 'border-blue-500/50 bg-blue-950/20 shadow-[0_0_40px_rgba(37,99,235,0.12)]' : 'border-white/10 bg-white/[0.02]' }}">
+
+                @if($popular)
+                <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-blue-500 bg-blue-600 text-white text-xs font-medium whitespace-nowrap">
+                    <span class="h-1.5 w-1.5 rounded-full bg-blue-200"></span>
+                    Most popular
+                </div>
+                @endif
+
+                {{-- Name + price --}}
+                <div class="mb-6">
+                    <div class="text-sm font-medium text-neutral-400 mb-3">{{ $plan['name'] }}</div>
+                    <div class="flex items-end gap-1.5 mb-1">
+                        <span class="text-4xl font-semibold text-white tracking-tight">{{ $plan['price'] }}</span>
+                        <span class="text-sm text-neutral-500 mb-1.5">/ month</span>
+                    </div>
+                    <div class="text-xs text-neutral-500 mt-1">{{ $plan['limit'] }}</div>
+                </div>
+
+                {{-- Features --}}
+                <ul class="flex flex-col gap-3 flex-1 mb-8">
+                    @foreach($plan['features'] as $f)
+                    <li class="flex items-start gap-3 text-sm {{ $f['included'] ? 'text-neutral-300' : 'text-neutral-600' }}">
+                        @if($f['included'])
+                        <svg class="h-4 w-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                        @else
+                        <svg class="h-4 w-4 text-neutral-700 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        @endif
+                        {{ $f['label'] }}
+                    </li>
+                    @endforeach
+                </ul>
+
+                {{-- CTA --}}
+                <a href="{{ Auth::check() ? route('checkout.subscription', $plan['slug']) : '/register' }}"
+                   class="inline-flex items-center justify-center h-10 w-full rounded-lg border text-sm font-medium transition-all duration-200 {{ $popular ? 'border-blue-500 bg-blue-600 text-white hover:bg-blue-500' : 'border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white' }}">
+                    Start free trial
+                </a>
+            </div>
+            @endforeach
         </div>
+
+        <p class="text-center text-xs text-neutral-600 mt-8">5-day free trial &middot; No credit card required &middot; Cancel anytime</p>
     </div>
 </section>
 
-{{-- EVERYTHING INCLUDED --}}
-<section class="py-24 border-t border-white/5 bg-neutral-950">
-    <div class="max-w-screen-xl mx-auto px-6">
-        <div class="grid md:grid-cols-2 gap-16 items-start">
-            <div>
-                <div class="inline-flex items-center px-2.5 py-1 rounded-md border border-emerald-900 bg-emerald-950 text-emerald-300 text-xs font-mono mb-6">Every Plan</div>
-                <h2 class="text-3xl md:text-4xl font-semibold text-white tracking-tight leading-tight">
-                    Everything included.<br>No feature paywalls.
-                </h2>
-                <p class="mt-4 text-base text-neutral-400 font-light leading-relaxed">
-                    We don't lock core features behind higher tiers. Every plan gives you access to the full
-                    WPGrip toolkit — monitoring, AI assistant, git deployments, backups, and more.
-                    The only difference is how many sites you manage.
-                </p>
-                <div class="mt-8 flex flex-col gap-3">
-                    <a href="/register" class="inline-flex items-center justify-center h-11 px-6 w-fit rounded-lg border border-blue-500 bg-blue-600 text-blue-50 hover:bg-blue-500 font-medium text-sm transition-all duration-200 shadow-lg shadow-blue-900/40">
-                        Start free trial
-                    </a>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                @php
-                $allFeatures = [
-                    ['icon' => '📡', 'label' => 'Uptime Monitoring'],
-                    ['icon' => '🔒', 'label' => 'SSL Tracking'],
-                    ['icon' => '🌐', 'label' => 'Domain Expiry Alerts'],
-                    ['icon' => '⚡', 'label' => 'PageSpeed Scores'],
-                    ['icon' => '🛡️', 'label' => 'Vulnerability Scanning'],
-                    ['icon' => '🤖', 'label' => 'AI Assistant'],
-                    ['icon' => '🚀', 'label' => 'Git Deployments'],
-                    ['icon' => '🗄️', 'label' => 'Database Backups'],
-                    ['icon' => '🔄', 'label' => 'One-Click Updates'],
-                    ['icon' => '👥', 'label' => 'Team Collaboration'],
-                    ['icon' => '📊', 'label' => 'Performance History'],
-                    ['icon' => '🔔', 'label' => 'Slack & Email Alerts'],
-                ];
-                @endphp
-                @foreach($allFeatures as $f)
-                <div class="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.02] px-4 py-3">
-                    <span class="text-lg">{{ $f['icon'] }}</span>
-                    <span class="text-sm text-neutral-300">{{ $f['label'] }}</span>
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
-</section>
+
 
 {{-- COLLABORATION NOTE --}}
 <section class="py-16 border-t border-white/5" style="background: linear-gradient(180deg, #0a0a0a 0%, #0f0f0f 100%)">
@@ -121,7 +173,6 @@
                 ['q' => 'Do you offer refunds?', 'a' => 'Yes. We offer a 30-day money-back guarantee on all annual subscriptions. If you\'re not happy, just ask.'],
                 ['q' => 'Which payment methods do you support?', 'a' => 'We accept all major credit cards and PayPal. All payments are processed securely.'],
                 ['q' => 'Is there a setup fee?', 'a' => 'None. You\'re up and running the moment you add an SSH key to your server — no additional costs.'],
-                ['q' => 'Are there annual plans available?', 'a' => 'Yes — annual plans are available at a discounted rate. You can switch between monthly and annual billing from your account settings.'],
                 ['q' => 'Can I manage sites across different hosting providers?', 'a' => 'Absolutely. WPGrip is hosting-agnostic — DigitalOcean, Hetzner, AWS, Kinsta, WP Engine, Cloudways, or any VPS with SSH access.'],
             ];
             @endphp
