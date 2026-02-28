@@ -21,6 +21,9 @@ fi
 # ──────────────────────────────────────────────────────────────────────
 # Full boot — php-fpm container only
 # ──────────────────────────────────────────────────────────────────────
+# Ensure required runtime directories exist (named volumes start empty)
+mkdir -p storage/framework/{cache/data,sessions,views,testing}
+mkdir -p storage/logs bootstrap/cache
 # Fix storage permissions
 chown -R www-data:www-data storage bootstrap/cache
 

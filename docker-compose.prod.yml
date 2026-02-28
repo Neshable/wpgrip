@@ -21,6 +21,12 @@ x-app: &app
         - .env.docker
     volumes:
         - .:/var/www/laravel
+        # Isolate bootstrap/cache from the host — prevents config:cache / route:cache
+        # (run with Docker .env values) from overwriting the host's cached config.
+        - app_bootstrap_cache:/var/www/laravel/bootstrap/cache
+        # Also isolate runtime storage dirs so Docker doesn't bleed into host
+        - app_storage_framework:/var/www/laravel/storage/framework
+        - app_storage_logs:/var/www/laravel/storage/logs
     networks:
         - wpgrip
     restart: unless-stopped
@@ -135,3 +141,6 @@ volumes:
     redis_data:
     caddy_data:
     caddy_config:
+    app_bootstrap_cache:
+    app_storage_framework:
+    app_storage_logs:
