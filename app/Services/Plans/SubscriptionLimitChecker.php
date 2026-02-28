@@ -13,19 +13,22 @@ class SubscriptionLimitChecker
 {
     protected static array $resourceLimits = [
         'site' => [
-            'basic' => 5,
-            'pro' => 20,
-            'ultimate' => 60,
+            'basic'      => 5,
+            'pro'        => 20,
+            'ultimate'   => 50,
+            'enterprise' => PHP_INT_MAX,
         ],
         'repository' => [
-            'basic' => 10,
-            'pro' => 40,
-            'ultimate' => 100,
+            'basic'      => 10,
+            'pro'        => 40,
+            'ultimate'   => 150,
+            'enterprise' => PHP_INT_MAX,
         ],
         'backup' => [
-            'basic' => 20,
-            'pro' => 50,
-            'ultimate' => 100,
+            'basic'      => 20,
+            'pro'        => 60,
+            'ultimate'   => 200,
+            'enterprise' => PHP_INT_MAX,
         ],
     ];
 
