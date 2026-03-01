@@ -147,7 +147,10 @@ class ListThemes extends Component implements HasForms, HasTable
                     ->label('Sync themes')
                     ->requiresConfirmation()
                     ->color('success')
-                    ->action( fn () => GetAllThemes::dispatchSync( $this->site_model )  ),
+                    ->action( function () {
+                        GetAllThemes::dispatch( $this->site_model );
+                        Notification::make()->title('Theme sync queued.')->success()->body('Theme list is syncing in the background.')->send();
+                    }),
                 
                 ActionGroup::make([
 

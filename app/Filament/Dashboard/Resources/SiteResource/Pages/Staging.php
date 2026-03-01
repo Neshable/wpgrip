@@ -113,7 +113,7 @@ class Staging extends ViewRecord implements HasForms, HasActions
             // ]
             
             // Restore the DB to the 
-            RemoteDBRestore::dispatchSync( $this->getStagingID(), $data['db'] );
+            RemoteDBRestore::dispatch( $this->getStagingID(), $data['db'] );
             // Sent notification.
             GripNotifications::getStagingSyncDispatched();
 

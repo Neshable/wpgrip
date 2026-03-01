@@ -11,6 +11,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 
 use App\Jobs\Git\SshAndGitPull;
+use Filament\Notifications\Notification;
 use Filament\Tables\Actions\Action;
 
 class ViewRepository extends ViewRecord
@@ -37,7 +38,12 @@ class ViewRepository extends ViewRecord
 
     public static function deployRepo( ?Repository $repository )
     {
-        SshAndGitPull::dispatchSync( $repository );
+        SshAndGitPull::dispatch( $repository );
+        Notification::make()
+            ->title('Deploy queued.')
+            ->success()
+            ->body('Git pull is running in the background.')
+            ->send();
     }
 
     // public function getHeader(): ?View
@@ -51,7 +57,12 @@ class ViewRepository extends ViewRecord
         return [
             Actions\Action::make('deploy')
                 ->action(function ( Repository $repository ) {
-                    SshAndGitPull::dispatchSync( $repository );
+                    SshAndGitPull::dispatch( $repository );
+                    Notification::make()
+                        ->title('Deploy queued.')
+                        ->success()
+                        ->body('Git pull is running in the background.')
+                        ->send();
                 } )
                 ->icon('heroicon-o-check-circle')
                 ->color('success')

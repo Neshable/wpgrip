@@ -158,7 +158,10 @@ class ListPlugins extends Component implements HasForms, HasTable
                         ->color('info')
                         ->visible( fn (Plugin $record) => $record->status == 'active' )
                         ->requiresConfirmation()
-                        ->action( fn (Plugin $record) => SwitchSinglePlugin::dispatchSync( $this->site_model, $record, true )  ),
+                        ->action( function (Plugin $record) {
+                            SwitchSinglePlugin::dispatch( $this->site_model, $record, true );
+                            Notification::make()->title('Deactivating plugin…')->success()->body('Plugin is being deactivated in the background.')->send();
+                        }),
                     
                     Action::make('activate')
                         ->label('Activate Plugin')
@@ -168,7 +171,10 @@ class ListPlugins extends Component implements HasForms, HasTable
                         ->color('success')
                         ->visible( fn (Plugin $record) => $record->status == 'inactive' )
                         ->requiresConfirmation()
-                        ->action( fn (Plugin $record) => SwitchSinglePlugin::dispatchSync( $this->site_model, $record )  ),
+                        ->action( function (Plugin $record) {
+                            SwitchSinglePlugin::dispatch( $this->site_model, $record );
+                            Notification::make()->title('Activating plugin…')->success()->body('Plugin is being activated in the background.')->send();
+                        }),
 
                     Action::make('updatesingle')
                         ->color('success')
@@ -178,7 +184,10 @@ class ListPlugins extends Component implements HasForms, HasTable
                         ->successNotificationTitle( 'Would you like to update this plugin?' )
                         ->color('success')
                         ->requiresConfirmation()
-                        ->action( fn (Plugin $record) => UpdateSinglePlugin::dispatchSync( $this->site_model, $record, $record->update_version )  ),
+                        ->action( function (Plugin $record) {
+                            UpdateSinglePlugin::dispatch( $this->site_model, $record, $record->update_version );
+                            Notification::make()->title('Updating plugin…')->success()->body('Plugin update is running in the background.')->send();
+                        }),
 
                     DeleteAction::make(),
                 ])->icon('heroicon-m-ellipsis-vertical'),
@@ -189,7 +198,10 @@ class ListPlugins extends Component implements HasForms, HasTable
                     ->label('Sync plugin list')
                     ->requiresConfirmation()
                     ->color('success')
-                    ->action( fn () => GetAllPlugins::dispatchSync( $this->site_model )  ),
+                    ->action( function () {
+                        GetAllPlugins::dispatch( $this->site_model );
+                        Notification::make()->title('Plugin sync queued.')->success()->body('Plugin list is syncing in the background.')->send();
+                    }),
                 
                 ActionGroup::make([
 

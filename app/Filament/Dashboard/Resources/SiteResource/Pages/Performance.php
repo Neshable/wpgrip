@@ -8,6 +8,7 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Pages\Actions\Action;
 
 use App\Services\GripNotifications;
+use Filament\Notifications\Notification;
 
 use Filament\Tables\Concerns\InteractsWithTable;
 use Illuminate\Contracts\View\View;
@@ -46,8 +47,13 @@ class Performance extends ViewRecord
             }
         }
         
-        PageSpeed::dispatchSync( $this->record, 'mobile' );
+        PageSpeed::dispatch( $this->record, 'mobile' );
         //PageSpeed::dispatch( $this->record, 'desktop' );
+        Notification::make()
+            ->title('PageSpeed test queued.')
+            ->success()
+            ->body('The performance test is running in the background.')
+            ->send();
         
     }
 

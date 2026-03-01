@@ -157,12 +157,12 @@ class GetWordpressInfo extends Component implements HasForms, HasActions
             ->modalSubmitActionLabel('Sync now')
             ->action(function (array $arguments): void {
                 $site = Site::find($arguments['site_id']);
-                SyncSiteStats::dispatchSync($site);
-                $this->site->refresh();
+                SyncSiteStats::dispatch($site);
 
                 Notification::make()
-                    ->title('Stats synced')
+                    ->title('Stats sync queued.')
                     ->success()
+                    ->body('Site stats are being refreshed in the background.')
                     ->send();
             });
     }

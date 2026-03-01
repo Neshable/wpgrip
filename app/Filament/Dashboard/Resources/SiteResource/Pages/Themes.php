@@ -9,6 +9,7 @@ use Filament\Pages\Actions\Action;
 
 use App\Jobs\ListAllWPPlugins;
 use App\Jobs\Site\GetAllPlugins;
+use App\Jobs\Site\GetAllThemes;
 use App\Jobs;
 
 
@@ -69,7 +70,12 @@ class Themes extends ViewRecord implements HasActions
 
     public function getAllThemes()
     {
-        GetAllThemes::dispatchSync(  $this->record );    
+        GetAllThemes::dispatch( $this->record );
+        Notification::make()
+            ->title('Theme sync queued.')
+            ->success()
+            ->body('Theme list is being synced in the background.')
+            ->send();
     }
 
     // public function render(): View

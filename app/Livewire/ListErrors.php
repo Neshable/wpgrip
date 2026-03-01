@@ -13,6 +13,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 
 use App\Jobs\Server\TailErrorLog;
+use Filament\Notifications\Notification;
 
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -127,7 +128,10 @@ class ListErrors extends Component implements HasForms, HasTable
                 Action::make('clear')
                 ->label('Sync logs')
                 ->requiresConfirmation()
-                ->action(fn () => TailErrorLog::dispatchSync( Site::find( $this->site_id ), 'fatal' ) ),
+                ->action(function () {
+                    TailErrorLog::dispatch( Site::find( $this->site_id ), 'fatal' );
+                    Notification::make()->title('Log sync queued.')->success()->body('Error logs are being fetched in the background.')->send();
+                }),
                 
                 Action::make('delete')
                 ->label('Delete logs')

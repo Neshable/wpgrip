@@ -69,7 +69,12 @@ class Plugins extends ViewRecord implements HasActions
 
     public function getAllPlugins()
     {
-        GetAllPlugins::dispatchSync(  $this->record );    
+        GetAllPlugins::dispatch( $this->record );
+        Notification::make()
+            ->title('Plugin sync queued.')
+            ->success()
+            ->body('Plugin list is being synced in the background.')
+            ->send();
     }
 
     // public function render(): View

@@ -258,11 +258,16 @@ class SiteResource extends Resource
                     ->icon('heroicon-o-camera')
                     ->tooltip('Take a new screenshot of this site')
                     ->action(function ( Site $record) {
-                        TakeHomeScreenshot::dispatchSync($record);
+                        TakeHomeScreenshot::dispatch($record);
+                        Notification::make()
+                            ->title('Screenshot queued.')
+                            ->success()
+                            ->body('A new screenshot is being taken in the background.')
+                            ->send();
                     }),
                 Tables\Actions\Action::make('sync')
                     ->action(function ( Site $record) {
-                        SyncSiteStats::dispatchSync($record);
+                        SyncSiteStats::dispatch($record);
                         Notification::make()
                             ->title('Syncing.')
                             ->success()

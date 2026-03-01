@@ -66,7 +66,8 @@ class ListScreenshots extends Component implements HasForms, HasTable
                             $site_model = Site::FindOrFail( $this->site_id );
                             if ( $site_model )
                             {
-                                CompareImages::dispatchSync( $screenshot, $site_model );
+                                CompareImages::dispatch( $screenshot, $site_model );
+                                Notification::make()->title('Comparison queued.')->success()->body('Image comparison is running in the background.')->send();
                             }
                         } )
                         ->label('Run manual test')

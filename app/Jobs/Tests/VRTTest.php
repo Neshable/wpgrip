@@ -116,8 +116,8 @@ class VRTTest implements ShouldQueue
                 // Send notification to the user.
                 if ( $vrt->exists ) 
                 {   
-                    // Dispatch to a different job, possibly async.
-                    CompareImages::dispatchSync( $vrt, $this->site );
+                    // Dispatch async — comparison runs in background.
+                    CompareImages::dispatch( $vrt, $this->site );
                     if ( $this->manual )
                     {
                         // If all good return notification.   

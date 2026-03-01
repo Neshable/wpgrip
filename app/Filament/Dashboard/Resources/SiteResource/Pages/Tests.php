@@ -42,7 +42,12 @@ class Tests extends ViewRecord
 
     public function runVRTTest()
     {
-        VRTTest::dispatchSync( $this->record );
+        VRTTest::dispatch( $this->record );
+        Notification::make()
+            ->title('VRT test queued.')
+            ->success()
+            ->body('The visual regression test is running in the background.')
+            ->send();
     }
 
     public function getHeader(): ?View
@@ -77,7 +82,12 @@ class Tests extends ViewRecord
             // $this->record->save();
             // Send some basic notificaiton
            //  GripNotifications::fieldUpdated();
-           TakeHomeScreenshot::dispatchSync( $this->record );
+           TakeHomeScreenshot::dispatch( $this->record );
+           Notification::make()
+               ->title('Screenshot queued.')
+               ->success()
+               ->body('Control screenshot is being taken in the background.')
+               ->send();
         });      
          
     }
@@ -88,7 +98,12 @@ class Tests extends ViewRecord
     {
         switch ( $action ) {
             case 'runLightHouseTest':
-                LighthouseTest::dispatchSync( $this->record );
+                LighthouseTest::dispatch( $this->record );
+                Notification::make()
+                    ->title('Lighthouse test queued.')
+                    ->success()
+                    ->body('The Lighthouse test is running in the background.')
+                    ->send();
                 break;
             case 'backupfiles':
                 Jobs\RemoteFilesBackup::dispatch( $this->record );
