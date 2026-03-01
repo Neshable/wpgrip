@@ -1,158 +1,53 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
-/* ============================================================
-   WPGrip Dashboard Theme — Light & Dark
-   Brand blue: #3f63e6  (primary-500)
-   ============================================================ */
-
-:root {
-    --wpg-blue:       #3f63e6;
-    --wpg-blue-hover: #ebeffd;
-    --wpg-border:     #e3e8f0;
-}
-
-/* ============================================================
-   LIGHT MODE
-   ============================================================ */
 body.fi-panel-dashboard {
-    background: #f0f2f7;
+    /* background: #f5f7fa; */
+    background: #f5f7fa;
+    
+    
+    .fi-sidebar {
+        background: #f5f7fa;
+        max-width: 220px;
+        .fi-sidebar-item-icon,
+        .fi-sidebar-group-icon  {
+            width: 1.2rem;
+            height: 1.2rem;
+        }
+    }
+    
+    .fi-sidebar-header {
+        background: #222937;
+    }
+    .fi-topbar {
+        nav {
+            background: #222937;
+        }
+    }
 }
 
-/* Sidebar shell */
-body.fi-panel-dashboard .fi-sidebar {
-    background: #ffffff !important;
-    border-right: 1px solid var(--wpg-border) !important;
-    max-width: 220px;
-    box-shadow: none !important;
-}
-
-body.fi-panel-dashboard .fi-sidebar-item-icon,
-body.fi-panel-dashboard .fi-sidebar-group-icon {
-    width: 1.15rem !important;
-    height: 1.15rem !important;
-}
-
-/* Sidebar logo / header */
-body.fi-panel-dashboard .fi-sidebar-header {
-    background: #ffffff !important;
-    border-bottom: 1px solid var(--wpg-border) !important;
-    box-shadow: none !important;
-}
-
-/* Sidebar nav background (the scrollable region) */
-body.fi-panel-dashboard .fi-sidebar-nav {
-    background: #ffffff;
-}
-
-/* Sidebar item default state */
-body.fi-panel-dashboard .fi-sidebar-item-button {
-    border-radius: 0.5rem !important;
-    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
-}
-
-/* Hover */
-body.fi-panel-dashboard .fi-sidebar-item-button:hover {
-    background: var(--wpg-blue-hover) !important;
-    color: var(--wpg-blue) !important;
-}
-
-/* Active item — Filament adds bg-gray-100 to active items in light mode */
-body.fi-panel-dashboard .fi-sidebar-item-button.bg-gray-100 {
-    background: var(--wpg-blue-hover) !important;
-    color: var(--wpg-blue) !important;
-    font-weight: 600;
-    /* Left blue pill via inset box-shadow (stays within overflow:hidden) */
-    box-shadow: inset 3px 0 0 var(--wpg-blue) !important;
-}
-
-/* Sidebar group labels */
-body.fi-panel-dashboard .fi-sidebar-group-label {
-    color: #94a3b8 !important;
-    font-size: 0.65rem !important;
-    letter-spacing: 0.08em !important;
-    text-transform: uppercase !important;
-    font-weight: 600 !important;
-}
-
-/* Topbar — white with subtle bottom border + very light shadow */
-body.fi-panel-dashboard .fi-topbar nav {
-    background: #ffffff !important;
-    border-bottom: 1px solid var(--wpg-border) !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
-}
-
-/* Main content area */
-body.fi-panel-dashboard .fi-main-ctn {
-    background: #f0f2f7;
-}
-
-/* Table / panel cards */
-body.fi-panel-dashboard .fi-ta-ctn,
-body.fi-panel-dashboard .fi-section,
-body.fi-panel-dashboard .fi-resource-table-empty-state {
-    background: #ffffff;
-    border-color: var(--wpg-border);
-}
-
-/* ============================================================
-   DARK MODE
-   ============================================================ */
+/* Dark mode styles */
 .dark body.fi-panel-dashboard {
-    background: #0f1117;
-}
-
-.dark body.fi-panel-dashboard .fi-sidebar {
-    background: #161b27 !important;
-    border-right: 1px solid rgba(255,255,255,0.06) !important;
-    max-width: 220px;
-    box-shadow: none !important;
-}
-
-.dark body.fi-panel-dashboard .fi-sidebar-header {
-    background: #161b27 !important;
-    border-bottom: 1px solid rgba(255,255,255,0.06) !important;
-    box-shadow: none !important;
-}
-
-.dark body.fi-panel-dashboard .fi-sidebar-nav {
-    background: #161b27;
-}
-
-.dark body.fi-panel-dashboard .fi-sidebar-item-button:hover {
-    background: rgba(63, 99, 230, 0.15) !important;
-    color: #93b4ff !important;
-}
-
-/* Active in dark mode — Filament adds BOTH bg-gray-100 AND dark:bg-white/5 only on the active item */
-.dark body.fi-panel-dashboard .fi-sidebar-item-button {
-    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
-    border-radius: 0.5rem !important;
-}
-
-/* Only items with bg-gray-100 are active (it's added alongside dark:bg-white/5 only for active items) */
-.dark body.fi-panel-dashboard .fi-sidebar-item-button.bg-gray-100 {
-    background: rgba(63, 99, 230, 0.18) !important;
-    color: #93b4ff !important;
-    font-weight: 600;
-    box-shadow: inset 3px 0 0 #6c91ee !important;
-}
-
-.dark body.fi-panel-dashboard .fi-sidebar-group-label {
-    color: #475569 !important;
-    font-size: 0.65rem !important;
-    letter-spacing: 0.08em !important;
-    text-transform: uppercase !important;
-    font-weight: 600 !important;
-}
-
-.dark body.fi-panel-dashboard .fi-topbar nav {
-    background: #161b27 !important;
-    border-bottom: 1px solid rgba(255,255,255,0.06) !important;
-    box-shadow: none !important;
-}
-
-.dark body.fi-panel-dashboard .fi-main-ctn {
-    background: #0f1117;
+    background: #1b1c1d; /* Dark slate background */
+    
+    .fi-sidebar {
+        background: #282a2c; /* Dark sidebar background */
+        
+        .fi-sidebar-item-icon,
+        .fi-sidebar-group-icon {
+            width: 1.2rem;
+            height: 1.2rem;
+        }
+    }
+    
+    .fi-sidebar-header {
+        background: #1b1c1d; /* Darker header background */
+    }
+    
+    .fi-topbar {
+        nav {
+            background: #1b1c1d; /* Dark topbar background */
+        }
+    }
 }
 
 @config './tailwind.config.js';
