@@ -1,5 +1,5 @@
 <header
-    class="fixed inset-x-0 top-0 z-50 border-b border-b-transparent bg-gradient-to-b from-transparent to-transparent shadow-none backdrop-blur-none transition-all duration-500"
+    class="fixed inset-x-0 top-0 z-50 border-b transition-all duration-300 backdrop-blur-md"
     x-data="{
         scrolled: window.pageYOffset >= 24,
         mobileOpen: false,
@@ -8,8 +8,8 @@
     }"
     x-on:scroll.window.passive="evaluate"
     :class="scrolled
-        ? 'border-b-white/[0.08] from-neutral-950/90 to-neutral-950/60 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.6)]'
-        : 'border-b-transparent from-neutral-950/0 to-neutral-950/0 backdrop-blur-none'"
+        ? 'border-white/10 bg-neutral-950/90 shadow-[0_4px_24px_rgba(0,0,0,0.5)]'
+        : 'border-white/[0.06] bg-neutral-950/70'"
 >
 
     <div class="max-w-screen-xl mx-auto px-6 flex items-center justify-between h-16">
