@@ -24,7 +24,7 @@
     @else
    
 
-    @livewire('list-plugins', ['site_model' => $this->getRecord() ] )
+    @livewire('plugins-panel', ['site_model' => $this->getRecord() ] )
 
     @endif
 
