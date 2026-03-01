@@ -140,25 +140,36 @@ class DashboardPanelProvider extends PanelProvider
             ->breadcrumbs(false)
             ->databaseNotifications()
             ->colors([
-                'primary' => Color::Blue,// '#1654D1',
-                'danger' => Color::Rose,
-                'gray' => [
-                    50 => '245, 246, 246',
-                    100 => '229, 231, 232',
-                    200 => '206, 208, 211',
-                    300 => '172, 176, 180',
-                    400 => '130, 135, 142',
-                    500 => '103, 108, 115',
-                    600 => '88, 92, 98',
-                    700 => '75, 78, 83',
-                    800 => '66, 68, 72',
-                    900 => '58, 59, 63',
-                    950 => '32, 33, 35',
+                'primary' => [  // brand blue — matches main site
+                    50  => '235, 240, 255',
+                    100 => '214, 224, 255',
+                    200 => '173, 196, 255',
+                    300 => '122, 161, 255',
+                    400 => '82,  124, 246',
+                    500 => '63,  99,  230',  // #3f63e6
+                    600 => '50,  79,  204',
+                    700 => '40,  63,  170',
+                    800 => '31,  50,  138',
+                    900 => '24,  39,  108',
+                    950 => '14,  23,  71',
                 ],
-                // 'gray' => Color::Slate, // Background
-                // 'info' => Color::Blue,
+                'danger'  => Color::Rose,
+                'gray'    => [
+                    // Light end (used for light-mode surfaces) — keep neutral
+                    50  => '249, 250, 251',
+                    100 => '243, 244, 246',
+                    200 => '229, 231, 235',
+                    300 => '209, 213, 219',
+                    400 => '156, 163, 175',
+                    500 => '107, 114, 128',
+                    600 => '75,  85,  99',
+                    // Dark end — cool near-blacks matching neutral-950 palette
+                    700 => '31,  32,  35',
+                    800 => '20,  20,  20',
+                    900 => '17,  17,  17',
+                    950 => '10,  10,  10',
+                ],
                 'success' => Color::Green,
-                // 'warning' => Color::Red,
             ])
             ->brandLogoHeight('3rem')
             // ->brandLogo(asset('images/logo-dark.svg'))
