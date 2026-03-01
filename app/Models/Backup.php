@@ -9,6 +9,10 @@ class Backup extends Model
 {
     use HasFactory;
 
+    protected $attributes = [
+        'type' => 'db',
+    ];
+
     protected $fillable = [
         'site_id' ,
         'provider',
