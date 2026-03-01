@@ -27,9 +27,9 @@ class FilamentCustomHooksComponents
             fn (): View => view('filament/components/tenant-role'),
         );
 
-        // Global notificaiton for plan, subcriptions
-         FilamentView::registerRenderHook(
-            PanelsRenderHook::SIDEBAR_NAV_END,
+        // Plan widget — pinned to the very bottom of the sidebar
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::SIDEBAR_FOOTER,
             fn (): View => view('filament/components/current-plan-info'),
         );
 
