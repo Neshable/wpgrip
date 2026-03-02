@@ -31,6 +31,17 @@ Schedule::command('app:local-subscription-expiring-soon-reminder')->dailyAt('00:
 Schedule::command('app:cleanup-local-subscription-statuses')->hourly();
 Schedule::command('app:sync-seat-based-subscription-quantities')->hourly();
 
+// Daily PageSpeed tests for all production sites (01:00 AM)
+Schedule::call(function () {
+    \App\Models\Site::where('is_staging', false)
+        ->whereNotNull('url')
+        ->get()
+        ->each(function ($site) {
+            \App\Jobs\Tests\PageSpeed::dispatch($site, 'mobile');
+            \App\Jobs\Tests\PageSpeed::dispatch($site, 'desktop');
+        });
+})->dailyAt('01:00')->name('daily-pagespeed-tests')->withoutOverlapping();
+
 // Weekly site screenshots (Sunday at 02:00, runs in background queue)
 Schedule::call(function () {
     \App\Models\Site::where('is_staging', false)

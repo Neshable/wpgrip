@@ -49,8 +49,8 @@ class DomSizeChart extends ChartWidget
             ->orderBy('created_at')
             ->pluck('dom_size')->toArray();
         
-        // Dates for last 7 days
-        $labels = collect(range(0, ($subdays - 1)))->map(function($day) {
+        // Dates oldest-first to match orderBy('created_at', 'asc') data order
+        $labels = collect(range(($subdays - 1), 0))->map(function($day) {
             return Carbon::now()->subDays($day)->format('d M');
         })->values()->toArray();
   
@@ -95,7 +95,6 @@ protected function getOptions(): RawJs
                     },
                 },
                 x: {
-                    reverse: true,
                 },
             },
         }

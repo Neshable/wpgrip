@@ -463,7 +463,6 @@ class SiteResource extends Resource
             'blacklists' => Pages\Blacklists::route('/{record}/blacklists'), 
             
 
-            'performance' => Pages\Performance::route('/{record}/performance'), 
             'performance_history' => Pages\PerformanceHistory::route('/{record}/performance/history'), 
 
             'access' => Pages\Access::route('/{record}/access'), 

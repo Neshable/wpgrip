@@ -8,7 +8,7 @@
                 <h1 class="text-3xl font-bold text-white tracking-tight">Welcome back</h1>
                 <p class="mt-3 text-neutral-400 text-sm">
                     New to WPGrip?
-                    <a href="{{ route('register') }}" class="text-blue-400 hover:text-blue-300 font-semibold transition-colors">Create an account</a>
+                    <a href="/" class="text-blue-400 hover:text-blue-300 font-semibold transition-colors">View plans</a>
                 </p>
             </div>
 

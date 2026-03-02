@@ -26,28 +26,18 @@ class SitePerformanceHistory extends ChartWidget
         $subdays = 7;
 
 
-        if ( $this->type && $this->type == 'mobile' )
-        {
-            self::$heading = 'Mobile Performance';
-            $mainQuery = PerformanceData::where('strategy', 'mobile')
-                ->where('site_id', $site)
-                ->where('created_at', '>=', Carbon::now()->subDays($subdays))
-                ->orderBy('created_at')
-                ->get()->toArray();
-        }
-        else 
-        {
-            self::$heading = 'Desktop Performance';
-            $mainQuery = PerformanceData::where('strategy', 'desktop')
-                ->where('site_id', $site)
-                ->where('created_at', '>=', Carbon::now()->subDays($subdays))
-                ->orderBy('created_at', 'desc')
-                ->get()->toArray();
-        }
+        $strategy = ($this->type === 'mobile') ? 'mobile' : 'desktop';
+        self::$heading = ($strategy === 'mobile') ? 'Mobile Performance History' : 'Desktop Performance History';
+
+        $mainQuery = PerformanceData::where('strategy', $strategy)
+            ->where('site_id', $site)
+            ->where('created_at', '>=', Carbon::now()->subDays($subdays))
+            ->orderBy('created_at', 'asc')
+            ->get()->toArray();
 
 
-        // Dates for last 7 days
-          $labels = collect(range(0, ($subdays - 1)))->map(function($day) {
+        // Dates for last 7 days — oldest first (left) to newest (right), matching data order
+        $labels = collect(range(($subdays - 1), 0))->map(function($day) {
             return Carbon::now()->subDays($day)->format('d M');
         })->values()->toArray();
 
@@ -182,9 +172,8 @@ class SitePerformanceHistory extends ChartWidget
                         },
                     },
                     x: {
-                        reverse: true,
-                        stacked: true,
-                    },
+                    stacked: false,
+                },
                 },
             }
         JS);

@@ -56,7 +56,8 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
-        if (url()->previous() != route('register') && Redirect::getIntendedUrl() === null) {
+        // 'register' route is disabled — skip that check entirely
+        if (Redirect::getIntendedUrl() === null) {
             Redirect::setIntendedUrl(url()->previous()); // make sure we redirect back to the page we came from
         }
 
