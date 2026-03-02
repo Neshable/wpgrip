@@ -57,6 +57,11 @@ Route::get('/get-started', function () {
 
 Auth::routes(['register' => false]);
 
+// Stricter rate-limit on the login POST on top of ThrottlesLogins trait
+Route::middleware('throttle:login')->group(function () {
+    Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
+});
+
 Route::get('/plan/start', function (
     TenantCreationManager $tenantCreationManager,
     SessionManager $sessionManager

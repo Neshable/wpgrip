@@ -24,6 +24,17 @@ class LoginController extends Controller
 
     use AuthenticatesUsers;
 
+    /**
+     * Max failed attempts before lockout (default in trait: 5).
+     */
+    protected int $maxAttempts = 5;
+
+    /**
+     * Lockout window in minutes (default in trait: 1).
+     * Raised to 15 to deter brute-force.
+     */
+    protected int $decayMinutes = 15;
+
     //    /**
     //     * Where to redirect users after login.
     //     *

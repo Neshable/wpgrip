@@ -28,6 +28,17 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
 
+        // Login brute-force protection:
+        // 10 attempts per minute per IP across the login endpoint.
+        // Works in tandem with the ThrottlesLogins trait (5 attempts / 15 min
+        // per email+IP combo) to block both credential-stuffing and spray attacks.
+        RateLimiter::for('login', function (Request $request) {
+            return [
+                Limit::perMinute(10)->by($request->ip()),
+                Limit::perMinute(5)->by($request->input('email') . '|' . $request->ip()),
+            ];
+        });
+
         $this->routes(function () {
             Route::middleware('api')
                 ->prefix('api')
