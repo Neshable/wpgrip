@@ -3,6 +3,7 @@
 namespace App\Filament\Dashboard\Resources\SiteResource\Pages;
 
 use App\Filament\Dashboard\Resources\SiteResource;
+use App\Services\Plans\SubscriptionLimitChecker;
 use App\Services\ShelleyManager;
 use Filament\Pages\Actions\Action;
 use Filament\Resources\Pages\ViewRecord;
@@ -24,6 +25,14 @@ class Insights extends ViewRecord implements HasActions
     public function mount(int|string $record): void
     {
         parent::mount($record);
+
+        if (! SubscriptionLimitChecker::canUseAi()) {
+            $this->redirect(static::getResource()::getUrl('view', [
+                'record' => $record,
+                'tenant' => \Filament\Facades\Filament::getTenant(),
+            ]));
+            return;
+        }
 
         try {
             $manager = app(ShelleyManager::class);

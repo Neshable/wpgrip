@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Anthropic\Laravel\Facades\Anthropic;
+use App\Services\Plans\SubscriptionLimitChecker;
 
 class AiAssistant extends ViewRecord
 {
@@ -41,6 +42,11 @@ class AiAssistant extends ViewRecord
     public function mount(int|string $record): void
     {
         parent::mount($record);
+
+        if (! SubscriptionLimitChecker::canUseAi()) {
+            $this->redirect(static::getResource()::getUrl('view', ['record' => $record, 'tenant' => \Filament\Facades\Filament::getTenant()]));
+            return;
+        }
 
         // Pre-compute the age of SITE.md so the view can show it
         $this->siteMdAge = $this->getSiteMdAge();

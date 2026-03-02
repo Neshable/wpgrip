@@ -24,6 +24,7 @@ use Filament\Forms\Components\Section;
 use Filament\Notifications\Notification;
 
 use App\Jobs\Git\SshAndGitPull;
+use App\Services\Plans\SubscriptionLimitChecker;
 use Filament\Infolists\Components\Actions;
 use Filament\Tables\Actions\Action;
 
@@ -33,6 +34,16 @@ use Illuminate\Support\HtmlString;
 class RepositoryResource extends Resource
 {
     protected static ?string $model = Repository::class;
+
+    public static function canViewAny(): bool
+    {
+        return SubscriptionLimitChecker::canUseGit();
+    }
+
+    public static function canCreate(): bool
+    {
+        return SubscriptionLimitChecker::canUseGit();
+    }
 
     protected static ?string $navigationIcon = 'icon-git';
 

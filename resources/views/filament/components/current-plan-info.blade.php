@@ -4,12 +4,25 @@
     $tenant = Filament\Facades\Filament::getTenant();
     $user   = auth()->user();
 
-    // Detect active plan (highest first)
-    $planSlugs = ['enterprise', 'ultimate', 'pro', 'basic'];
+    // Detect active plan (highest first) via plan slug on active subscriptions.
+    // "enterprise" is a plan under the "ultimate" product — no separate enterprise product slug.
+    $planPriority = [
+        'enterprise-monthly' => 'enterprise',
+        'ultimate-yearly'    => 'ultimate',
+        'ultimate-monthly'   => 'ultimate',
+        'pro-yearly'         => 'pro',
+        'pro-monthly'        => 'pro',
+        'basic-yearly'       => 'basic',
+        'basic-monthly'      => 'basic',
+    ];
     $activePlanSlug = null;
-    foreach ($planSlugs as $slug) {
-        if ($user->isSubscribed($slug, $tenant)) {
-            $activePlanSlug = $slug;
+    $activeSubs = $tenant->subscriptions()
+        ->whereIn('status', ['active', 'trialing'])
+        ->with('plan')
+        ->get();
+    foreach (array_keys($planPriority) as $slug) {
+        if ($activeSubs->contains(fn($s) => $s->plan->slug === $slug)) {
+            $activePlanSlug = $planPriority[$slug];
             break;
         }
     }

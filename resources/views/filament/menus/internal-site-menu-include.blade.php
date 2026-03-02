@@ -1,5 +1,7 @@
 @php
-    $tenant = Filament\Facades\Filament::getTenant(); 
+    $tenant = Filament\Facades\Filament::getTenant();
+    $canAI  = \App\Services\Plans\SubscriptionLimitChecker::canUseAiSilent();
+    $canGit = \App\Services\Plans\SubscriptionLimitChecker::canUseGitSilent();
 @endphp
     
 <x-filament::tabs class="w-full">
@@ -17,6 +19,7 @@
     Overview  
 </x-filament::tabs.item>
 
+@if($canAI)
 <x-filament::tabs.item 
     :href="route( 'filament.dashboard.resources.sites.ai-assistant', [
         'record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 
@@ -42,6 +45,7 @@
 >
     AI Insights  
 </x-filament::tabs.item>
+@endif
 
 
 <x-filament::tabs.item
@@ -87,6 +91,7 @@ Monitors
     Security
 </x-filament::tabs.item> --}}
 
+@if($canGit)
 <x-filament::tabs.item
     :href="route( 'filament.dashboard.resources.sites.repositories', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )" 
     tag="a"
@@ -96,6 +101,7 @@ Monitors
 >
 Repositories
 </x-filament::tabs.item>
+@endif
 
 <x-filament::tabs.item
     :href="route( 'filament.dashboard.resources.sites.tools', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )" 
