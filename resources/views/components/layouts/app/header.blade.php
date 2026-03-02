@@ -22,7 +22,6 @@
         <nav class="hidden md:flex items-center gap-8">
             <a href="{{ route('features') }}" class="text-sm font-light text-neutral-400 hover:text-white transition-colors duration-200">Features</a>
             <a href="{{ route('pricing') }}" class="text-sm font-light text-neutral-400 hover:text-white transition-colors duration-200">Pricing</a>
-            <a href="{{ route('roadmap') }}" class="text-sm font-light text-neutral-400 hover:text-white transition-colors duration-200">Roadmap</a>
             @auth
                 <a href="{{ route('dashboard') }}" class="text-sm font-medium text-white hover:text-blue-400 transition-colors duration-200">Dashboard</a>
             @endauth
@@ -35,9 +34,6 @@
             @else
                 <a href="{{ route('login') }}" class="inline-flex items-center justify-center h-9 px-4 rounded-md border border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white text-sm transition-colors">
                     Sign in
-                </a>
-                <a href="/register" class="inline-flex items-center justify-center h-9 px-4 rounded-md border border-blue-500 bg-blue-600 text-blue-100 hover:bg-blue-500 text-sm font-medium transition-colors">
-                    Start for free
                 </a>
             @endauth
         </div>
@@ -54,13 +50,11 @@
         <nav class="flex flex-col p-4 gap-1">
             <a href="{{ route('features') }}" class="px-3 py-3 text-neutral-400 hover:text-white text-sm">Features</a>
             <a href="{{ route('pricing') }}" class="px-3 py-3 text-neutral-400 hover:text-white text-sm">Pricing</a>
-            <a href="{{ route('roadmap') }}" class="px-3 py-3 text-neutral-400 hover:text-white text-sm">Roadmap</a>
             @auth
                 <a href="{{ route('dashboard') }}" class="px-3 py-3 text-white text-sm font-medium">Dashboard</a>
             @else
                 <div class="mt-4 flex flex-col gap-3 pt-4 border-t border-white/10">
                     <a href="{{ route('login') }}" class="inline-flex justify-center items-center h-10 rounded-md border border-white/10 bg-white/5 text-neutral-300 text-sm">Sign in</a>
-                    <a href="/register" class="inline-flex justify-center items-center h-10 rounded-md border border-blue-500 bg-blue-600 text-blue-100 text-sm font-medium">Start for free</a>
                 </div>
             @endauth
         </nav>

@@ -23,13 +23,11 @@
                     <nav class="flex flex-col gap-4">
                         <a href="{{ route('features') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Features</a>
                         <a href="{{ route('pricing') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Pricing</a>
-                        <a href="{{ route('roadmap') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Roadmap</a>
                     </nav>
                 </div>
                 <div class="space-y-5">
                     <h4 class="text-sm font-medium text-white">Account</h4>
                     <nav class="flex flex-col gap-4">
-                        <a href="/register" class="text-sm text-neutral-400 hover:text-white transition-colors">Sign Up</a>
                         <a href="{{ route('login') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Sign In</a>
                         @auth
                             <a href="{{ route('dashboard') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Dashboard</a>
@@ -41,6 +39,7 @@
                     <nav class="flex flex-col gap-4">
                         <a href="{{ route('terms-of-service') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Terms of Service</a>
                         <a href="{{ route('privacy-policy') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Privacy Policy</a>
+                        <a href="{{ route('refund-policy') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Refund Policy</a>
                     </nav>
                 </div>
             </div>

@@ -55,7 +55,7 @@ Route::get('/get-started', function () {
 })->name('get-started')->middleware('auth');
 
 
-Auth::routes();
+Auth::routes(['register' => false]);
 
 Route::get('/plan/start', function (
     TenantCreationManager $tenantCreationManager,
@@ -67,7 +67,7 @@ Route::get('/plan/start', function (
         $tenantCreationManager->createTenantForFreePlanUser(auth()->user());
     }
 
-    return redirect()->route('register');
+    return redirect()->route('login');
 })->name('plan.start');
 
 Route::get('/email/verify', function () {
@@ -203,22 +203,11 @@ Route::get('/checkout/product/success', [
     'productCheckoutSuccess',
 ])->name('checkout.product.success')->middleware('auth');
 
-// roadmap
+// roadmap disabled
 
-Route::get('/roadmap/suggest', [
-    App\Http\Controllers\RoadmapController::class,
-    'suggest',
-])->name('roadmap.suggest')->middleware('auth');
-
-Route::get('/roadmap', [
-    App\Http\Controllers\RoadmapController::class,
-    'index',
-])->name('roadmap');
-
-Route::get('/roadmap/i/{itemSlug}', [
-    App\Http\Controllers\RoadmapController::class,
-    'viewItem',
-])->name('roadmap.viewItem');
+Route::get('/refund-policy', function () {
+    return view('pages.refund-policy');
+})->name('refund-policy');
 
 // Invitations
 
