@@ -48,6 +48,7 @@ class PluginsPanel extends Component
     public function syncPlugins(): void
     {
         GetAllPlugins::dispatch($this->site_model);
+        ActivityLogger::siteAction('plugins.synced', $this->site_model);
         Notification::make()
             ->title('Plugin sync queued.')
             ->success()
@@ -71,13 +72,6 @@ class PluginsPanel extends Component
             SwitchSinglePlugin::dispatch($this->site_model, $plugin, true);
             Notification::make()->title('Deactivating plugin…')->success()->body('Running in the background.')->send();
         }
-    }
-
-    public function syncPlugins(): void
-    {
-        GetAllPlugins::dispatch($this->site_model);
-        ActivityLogger::siteAction('plugins.synced', $this->site_model);
-        Notification::make()->title('Plugin sync queued.')->success()->body('Plugin list is syncing in the background.')->send();
     }
 
     public function updatePlugin(int $pluginId): void
