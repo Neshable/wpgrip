@@ -7,6 +7,7 @@ use App\Models\Plugin;
 
 use App\Services\SSHSiteConnect;
 use App\Services\GripNotifications;
+use App\Services\ActivityLogger;
 
 use App\Enums\SiteStatus;
 use Carbon\Carbon;
@@ -94,13 +95,14 @@ class UpdateWPCore implements ShouldQueue
             {
                 $this->updateCoreVersion();
                 GripNotifications::pluginUpdatedSuccess();
-                // Dispatch some events.
                 WPCoreUpdated::dispatch( $this->site );
+                ActivityLogger::siteAction('core.updated', $this->site, ['version' => $this->version]);
                 return true;
             }
-            
+
             $this->resetUpdateStatus();
             GripNotifications::pluginUpdatedFailed();
+            ActivityLogger::siteAction('core.update_failed', $this->site, ['version' => $this->version], 'failed');
             return false;
         }
         

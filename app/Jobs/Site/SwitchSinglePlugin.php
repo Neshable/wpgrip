@@ -7,6 +7,7 @@ use App\Models\Plugin;
 
 use App\Services\SSHSiteConnect;
 use App\Services\GripNotifications;
+use App\Services\ActivityLogger;
 
 use Carbon\Carbon;
 use App\Services\WPCliService;
@@ -93,10 +94,18 @@ class SwitchSinglePlugin implements ShouldQueue
             if ( $success )
             {
                 $this->update_db();
+                $action = $this->deactivate ? 'plugin.deactivated' : 'plugin.activated';
+                ActivityLogger::pluginAction($action, $this->site, $this->plugin->title ?? $this->plugin->name, [
+                    'plugin' => $this->plugin->name,
+                ]);
                 GripNotifications::pluginUpdatedSuccess();
                 return true;
             }
-   
+
+            $action = $this->deactivate ? 'plugin.deactivate_failed' : 'plugin.activate_failed';
+            ActivityLogger::pluginAction($action, $this->site, $this->plugin->title ?? $this->plugin->name, [
+                'plugin' => $this->plugin->name,
+            ], 'failed');
             GripNotifications::pluginUpdatedFailed();
             return false;
         }   

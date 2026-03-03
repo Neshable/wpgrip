@@ -5,6 +5,7 @@ namespace App\Filament\Dashboard\Resources\SiteResource\Pages;
 use App\Filament\Dashboard\Resources\SiteResource;
 use App\Jobs\Site\TakeHomeScreenshot;
 use App\Services\Plans\SubscriptionLimitChecker;
+use App\Services\ActivityLogger;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateSite extends CreateRecord
@@ -20,7 +21,9 @@ class CreateSite extends CreateRecord
 
     protected function afterCreate(): void
     {
-        // Queue a screenshot right after the site is saved
         TakeHomeScreenshot::dispatch($this->record);
+        ActivityLogger::siteAction('site.created', $this->record, [
+            'url' => $this->record->url,
+        ]);
     }
 }

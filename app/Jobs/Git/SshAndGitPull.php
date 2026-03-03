@@ -9,6 +9,7 @@ use App\Models\User;
 
 use App\Services\SSHSiteConnect;
 use App\Services\GripNotifications;
+use App\Services\ActivityLogger;
 
 use App\Events\Git\GitPullSuccess;
 
@@ -251,28 +252,31 @@ class SshAndGitPull implements ShouldQueue
     
         if ( $success )
         {
-            // Dispatch event for git pull success
             event(new GitPullSuccess( $this->repository, $this->site, $this->deployment_type ) );
-            // Save the db
             $this->status = RepoStatus::SUCCESS->value;
             $this->status_text = 'Git pull success.';
             $this->last_pull = Carbon::now();
             $this->saveToDb();
-            // dispatch user notification.
             Notification::make()
                 ->title('Git pull success.')
                 ->success()
-                ->body( $this->status_text ) 
+                ->body( $this->status_text )
                 ->sendToDatabase($this->recipient);
-
+            ActivityLogger::gitAction('git.deployed', $this->site, $this->repository->name ?? 'Repository', [
+                'repo'   => $this->repository->name ?? null,
+                'branch' => $this->repository->branch ?? null,
+                'type'   => $this->deployment_type,
+            ]);
         }
         else
         {
-            // Pass true for errors.
             $this->status = RepoStatus::ERROR->value;
             $this->status_text = 'Git pull failed.';
             $this->saveToDb();
-            // GripNotifications::getGitPulledFailed();
+            ActivityLogger::gitAction('git.deploy_failed', $this->site, $this->repository->name ?? 'Repository', [
+                'repo'   => $this->repository->name ?? null,
+                'branch' => $this->repository->branch ?? null,
+            ], 'failed');
         }
    
         return true;  

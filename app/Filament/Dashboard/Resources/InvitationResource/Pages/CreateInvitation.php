@@ -3,6 +3,7 @@
 namespace App\Filament\Dashboard\Resources\InvitationResource\Pages;
 
 use App\Filament\Dashboard\Resources\InvitationResource;
+use App\Services\ActivityLogger;
 use App\Services\TenantManager;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\CreateRecord;
@@ -28,5 +29,10 @@ class CreateInvitation extends CreateRecord
         /** @var TenantManager $tenantManager */
         $tenantManager = app(TenantManager::class);
         $tenantManager->handleAfterInvitationCreated($this->getRecord());
+
+        ActivityLogger::userAction('user.invited', Filament::getTenant()->id, $this->getRecord()->email, [
+            'email' => $this->getRecord()->email,
+            'role'  => $this->getRecord()->role ?? null,
+        ]);
     }
 }

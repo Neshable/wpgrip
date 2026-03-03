@@ -7,6 +7,7 @@ use App\Models\Plugin;
 
 use App\Services\SSHSiteConnect;
 use App\Services\GripNotifications;
+use App\Services\ActivityLogger;
 
 use Carbon\Carbon;
 
@@ -87,9 +88,16 @@ class UpdateSinglePlugin implements ShouldQueue
             {
                 $this->update_db();
                 GripNotifications::pluginUpdatedSuccess();
+                ActivityLogger::pluginAction('plugin.updated', $this->site, $this->plugin->title ?? $this->plugin->name, [
+                    'version' => $this->version,
+                    'plugin'  => $this->plugin->name,
+                ]);
                 return true;
             }
-   
+
+            ActivityLogger::pluginAction('plugin.update_failed', $this->site, $this->plugin->title ?? $this->plugin->name, [
+                'version' => $this->version,
+            ], 'failed');
             GripNotifications::pluginUpdatedFailed();
             return false;
         }   

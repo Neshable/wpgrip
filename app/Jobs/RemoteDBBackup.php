@@ -16,6 +16,7 @@ use App\Services\SSHSiteConnect;
 use App\Services\SSHService;
 
 use App\Services\GripNotifications;
+use App\Services\ActivityLogger;
 
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
@@ -204,14 +205,17 @@ class RemoteDBBackup implements ShouldQueue
                     // BackupSuccessful::dispatch( $backup );
                     event(new BackupSuccessful( $backup ));
 
-                    // dispatch user notification.
                     $this->user->notify(
                         Notification::make()
                             ->title('Database backup complete.')
                             ->success()
-                            ->body( 'Database backup for ' . $this->site->name . ' is complete.' ) 
+                            ->body( 'Database backup for ' . $this->site->name . ' is complete.' )
                             ->toDatabase(),
                     );
+                    ActivityLogger::backupAction('backup.created', $this->site, [
+                        'type' => 'database',
+                        'size' => $backup->size ?? null,
+                    ]);
                 } 
                 
             }

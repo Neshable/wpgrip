@@ -3,6 +3,7 @@
 namespace App\Livewire\Filament\Dashboard;
 
 use App\Models\User;
+use App\Services\ActivityLogger;
 use App\Services\TenantManager;
 use App\Services\TenantPermissionManager;
 use Filament\Facades\Filament;
@@ -94,13 +95,17 @@ class Team extends Component implements HasForms, HasTable
                         return $tenantManager->canRemoveUser(Filament::getTenant(), $user);
                     })
                     ->action(function (User $user, TenantManager $tenantManager) {
-                        $result = $tenantManager->removeUser(Filament::getTenant(), $user);
+                        $tenant = Filament::getTenant();
+                        $result = $tenantManager->removeUser($tenant, $user);
 
                         if ($result) {
                             Notification::make()
                                 ->title(__('User has been removed.'))
                                 ->success()
                                 ->send();
+                            ActivityLogger::userAction('user.removed', $tenant->id, $user->name, [
+                                'email' => $user->email,
+                            ]);
                         } else {
                             Notification::make()
                                 ->title(__('User could not be removed.'))
