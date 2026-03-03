@@ -487,6 +487,7 @@ class SiteResource extends Resource
             
             'tools' => Pages\Tools::route('/{record}/tools'), 
             'ai-assistant' => Pages\AiAssistant::route('/{record}/ai-assistant'),
+            'files' => Pages\FileExplorer::route('/{record}/files'),
             'security' => Pages\Security::route('/{record}/security'), 
             // 'checksums' => Pages\SecurityGroup\Checksumss::route('/{record}/security/checksums'),
             'repos' => Pages\Git::route('/{record}/repos'),

@@ -92,6 +92,16 @@ Repositories
 @endif
 
 <x-filament::tabs.item
+    :href="route( 'filament.dashboard.resources.sites.files', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )" 
+    tag="a"
+    :wire:navigate
+    icon="heroicon-m-document-text"
+    :active="request()->getRequestUri() === \URL::route('filament.dashboard.resources.sites.files', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid ], false)"
+>
+Files
+</x-filament::tabs.item>
+
+<x-filament::tabs.item
     :href="route( 'filament.dashboard.resources.sites.tools', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid] )" 
     tag="a"
     :wire:navigate
