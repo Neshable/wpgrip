@@ -458,7 +458,6 @@ class SiteResource extends Resource
 
           
             'monitoring' => Pages\Monitoring::route('/{record}/monitoring'), 
-            'monitors' => Pages\Monitors::route('/{record}/monitoring/monitors'),
 
             
 

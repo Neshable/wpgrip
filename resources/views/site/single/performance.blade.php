@@ -103,17 +103,17 @@
         $c     = $scoreColor($score);
         $pct   = $score ?? 0;
     @endphp
-    <div class="rounded-xl ring-1 {{ $c['ring'] }} bg-gray-900/50 border border-white/5 p-5">
+    <div class="rounded-xl ring-1 {{ $c['ring'] }} bg-white dark:bg-gray-900/50 border border-gray-200 dark:border-white/5 p-5">
         {{-- Panel header --}}
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-2">
                 <x-filament::icon icon="{{ $panel['icon'] }}" class="w-4 h-4 text-gray-400" />
-                <span class="text-sm font-semibold text-gray-200">{{ $panel['label'] }}</span>
+                <span class="text-sm font-semibold text-gray-800 dark:text-gray-200">{{ $panel['label'] }}</span>
             </div>
             @if($rec)
             <span class="text-xs {{ $c['badge'] }} px-2 py-0.5 rounded-full font-medium">{{ $c['label'] }}</span>
             @else
-            <span class="text-xs bg-gray-700/40 text-gray-500 px-2 py-0.5 rounded-full">No data</span>
+            <span class="text-xs bg-gray-200 dark:bg-gray-700/40 text-gray-500 px-2 py-0.5 rounded-full">No data</span>
             @endif
         </div>
 
@@ -122,7 +122,7 @@
             {{-- SVG ring gauge --}}
             <div class="relative flex-shrink-0 w-20 h-20">
                 <svg viewBox="0 0 36 36" class="w-20 h-20 -rotate-90">
-                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-700/60" />
+                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-300 dark:text-gray-700/60" />
                     @if($score !== null)
                     <circle cx="18" cy="18" r="15.9" fill="none" stroke-width="2.5"
                         stroke-linecap="round"
@@ -140,7 +140,7 @@
                 <div class="flex justify-between text-xs text-gray-500 mb-1.5">
                     <span>0</span><span>50</span><span>90</span><span>100</span>
                 </div>
-                <div class="relative h-2 bg-gray-700/60 rounded-full overflow-hidden">
+                <div class="relative h-2 bg-gray-200 dark:bg-gray-700/60 rounded-full overflow-hidden">
                     {{-- colour zones --}}
                     <div class="absolute inset-y-0 left-0 w-[50%] bg-red-500/20 rounded-l-full"></div>
                     <div class="absolute inset-y-0 left-[50%] w-[40%] bg-amber-500/20"></div>
@@ -164,7 +164,7 @@
 
         @if($rec)
         {{-- Core Web Vitals metrics --}}
-        <div class="border-t border-white/5 pt-4 grid grid-cols-2 gap-x-6 gap-y-3">
+        <div class="border-t border-gray-200 dark:border-white/5 pt-4 grid grid-cols-2 gap-x-6 gap-y-3">
             @foreach([
                 ['key' => 'fcp',                 'label' => 'First Contentful Paint',  'val' => $rec->fcp,                 'fmt' => 'ms'],
                 ['key' => 'lcp',                 'label' => 'Largest Contentful Paint','val' => $rec->lcp,                 'fmt' => 'ms'],
@@ -188,9 +188,9 @@
 
         {{-- DOM Size --}}
         @if($rec->dom_size)
-        <div class="border-t border-white/5 mt-3 pt-3 flex items-center justify-between">
+        <div class="border-t border-gray-200 dark:border-white/5 mt-3 pt-3 flex items-center justify-between">
             <span class="text-xs text-gray-400">DOM Size</span>
-            <span class="text-xs font-mono text-gray-300">{{ number_format($rec->dom_size) }} elements
+            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">{{ number_format($rec->dom_size) }} elements
                 @if($rec->dom_size > 1500)
                 <span class="ml-1 text-amber-400 text-[10px]">⚠ large</span>
                 @endif
@@ -199,7 +199,7 @@
         @endif
 
         @else
-        <div class="border-t border-white/5 pt-4 text-center text-sm text-gray-500 py-4">
+        <div class="border-t border-gray-200 dark:border-white/5 pt-4 text-center text-sm text-gray-500 py-4">
             No data — run a test to populate {{ $panel['label'] }} metrics.
         </div>
         @endif

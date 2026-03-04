@@ -68,7 +68,12 @@
         @livewire(\App\Filament\Dashboard\Resources\SiteResource\Widgets\UptimeChart::class)
     </div>
 
-
+    {{-- Monitors table --}}
+    <x-filament::section>
+        <x-slot name="heading">Monitors</x-slot>
+        <x-slot name="description">List of all monitored URLs.</x-slot>
+        @livewire('list-monitors', ['site_id' => $this->getRecord()->id])
+    </x-filament::section>
 
     @endif
 @endsection
