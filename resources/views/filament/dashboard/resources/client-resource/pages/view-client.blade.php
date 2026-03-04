@@ -119,8 +119,8 @@
         <p class="text-xs text-gray-400 uppercase tracking-wide">Notes</p>
     </div>
     <div class="rounded-xl bg-white dark:bg-gray-900 ring-1 ring-gray-950/5 dark:ring-white/10 px-5 py-4 text-center">
-        <p class="text-2xl font-bold text-gray-950 dark:text-white">{{ $client->created_at->diffInDays(now()) }}</p>
-        <p class="text-xs text-gray-400 uppercase tracking-wide">Days as client</p>
+        <p class="text-2xl font-bold text-gray-950 dark:text-white">{{ $client->servers_count }}</p>
+        <p class="text-xs text-gray-400 uppercase tracking-wide">Servers</p>
     </div>
 </div>
 
@@ -305,40 +305,6 @@
             </div>
         </x-filament::section>
 
-        {{-- ACTIVITY TIMELINE --}}
-        <x-filament::section icon="heroicon-m-clock" icon-color="gray">
-            <x-slot name="heading">Activity</x-slot>
-
-            @forelse($activities as $activity)
-                <div class="flex gap-3 py-2 {{ !$loop->last ? 'border-b border-gray-50 dark:border-white/5' : '' }}">
-                    <div class="flex-shrink-0 mt-1">
-                        @php
-                            $iconMap = [
-                                'note_added' => 'heroicon-m-chat-bubble-left',
-                                'note_deleted' => 'heroicon-m-trash',
-                                'contact_added' => 'heroicon-m-user-plus',
-                                'contact_deleted' => 'heroicon-m-user-minus',
-                                'status_changed' => 'heroicon-m-arrow-path',
-                                'site_synced' => 'heroicon-m-arrow-path-rounded-square',
-                                'backup_created' => 'heroicon-m-archive-box',
-                                'manual' => 'heroicon-m-pencil-square',
-                            ];
-                            $icon = $iconMap[$activity->type] ?? 'heroicon-m-bolt';
-                        @endphp
-                        <x-filament::icon :icon="$icon" class="w-4 h-4 text-gray-400" />
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-xs text-gray-600 dark:text-gray-300">{{ $activity->description }}</p>
-                        <p class="text-[11px] text-gray-400 mt-0.5">
-                            {{ $activity->user?->name ?? 'System' }} · {{ $activity->created_at->diffForHumans() }}
-                        </p>
-                    </div>
-                </div>
-            @empty
-                <p class="text-sm text-gray-400 py-2 text-center">No activity yet.</p>
-            @endforelse
-        </x-filament::section>
-
         {{-- BILLING INFO --}}
         @if($client->billing_email || $client->address)
         <x-filament::section icon="heroicon-m-document-text" icon-color="success">
@@ -384,5 +350,46 @@
         @endif
     </div>
 </div>
+
+{{-- ACTIVITY TIMELINE (full width) --}}
+<x-filament::section icon="heroicon-m-clock" icon-color="gray">
+    <x-slot name="heading">Activity</x-slot>
+
+    @if($activities->count())
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6">
+            @foreach($activities as $activity)
+                <div class="flex gap-3 py-2 {{ !$loop->last ? 'border-b border-gray-50 dark:border-white/5' : '' }}">
+                    <div class="flex-shrink-0 mt-0.5">
+                        @php
+                            $iconMap = [
+                                'note_added' => 'heroicon-m-chat-bubble-left',
+                                'note_deleted' => 'heroicon-m-trash',
+                                'contact_added' => 'heroicon-m-user-plus',
+                                'contact_deleted' => 'heroicon-m-user-minus',
+                                'status_changed' => 'heroicon-m-arrow-path',
+                                'site_synced' => 'heroicon-m-arrow-path-rounded-square',
+                                'backup_created' => 'heroicon-m-archive-box',
+                                'contract_updated' => 'heroicon-m-calendar',
+                                'revenue_updated' => 'heroicon-m-banknotes',
+                                'client_created' => 'heroicon-m-plus-circle',
+                                'manual' => 'heroicon-m-pencil-square',
+                            ];
+                            $icon = $iconMap[$activity->type] ?? 'heroicon-m-bolt';
+                        @endphp
+                        <x-filament::icon :icon="$icon" class="w-4 h-4 text-gray-400" />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs text-gray-600 dark:text-gray-300">{{ $activity->description }}</p>
+                        <p class="text-[11px] text-gray-400 mt-0.5">
+                            {{ $activity->user?->name ?? 'System' }} &middot; {{ $activity->created_at->diffForHumans() }}
+                        </p>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @else
+        <p class="text-sm text-gray-400 py-2 text-center">No activity yet.</p>
+    @endif
+</x-filament::section>
 
 </x-filament-panels::page>

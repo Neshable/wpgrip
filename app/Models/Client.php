@@ -113,6 +113,14 @@ class Client extends Model
             : $this->name;
     }
 
+    /**
+     * Unique servers this client's sites are hosted on.
+     */
+    public function getServersCountAttribute(): int
+    {
+        return $this->sites()->distinct('server_id')->count('server_id');
+    }
+
     public function getIsContractExpiringAttribute(): bool
     {
         if (!$this->contract_end) {
