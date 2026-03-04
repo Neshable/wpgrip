@@ -131,6 +131,23 @@ body.has-site-sidebar {
         &:not(.fi-sidebar-open) .fi-sidebar-nav-tenant-menu-ctn {
             display: none !important;
         }
+
+        /* Make icons larger when collapsed on site pages */
+        &:not(.fi-sidebar-open) .fi-sidebar-item-icon {
+            width: 1.5rem !important;
+            height: 1.5rem !important;
+        }
+
+        /* Center the icons in their buttons */
+        &:not(.fi-sidebar-open) .fi-sidebar-item-button {
+            justify-content: center !important;
+            padding-inline: 0 !important;
+        }
+
+        /* Hide group wrappers but keep items visible */
+        &:not(.fi-sidebar-open) .fi-sidebar-group-button {
+            display: none !important;
+        }
     }
 
     /* Hide the site header (screenshot card) — info is in sub-sidebar now.
@@ -149,28 +166,33 @@ body.has-site-sidebar {
 .site-page-with-sidebar {
     display: flex;
     gap: 0;
-    min-height: calc(100vh - 8rem);
-    margin: -1.5rem -1rem -1.5rem -1rem; /* counteract fi-main padding */
+    min-height: calc(100vh - 4rem);
+    margin: -2rem -1rem -1.5rem -1rem; /* counteract fi-main padding; pull up to top-align */
 }
 
 @media (min-width: 768px) {
     .site-page-with-sidebar {
-        margin: -1.5rem -1.5rem -1.5rem -1.5rem;
+        margin: -2rem -1.5rem -1.5rem -1.5rem;
     }
 }
 
 @media (min-width: 1024px) {
     .site-page-with-sidebar {
-        margin: -1.5rem -2rem -1.5rem -2rem;
+        margin: -2rem -2rem -1.5rem -2rem;
     }
 }
 
-/* Sub-sidebar styling */
+/* Remove top padding from the page section when sub-sidebar is present */
+body.has-site-sidebar .fi-page > section {
+    padding-top: 0 !important;
+}
+
+/* Sub-sidebar styling — transparent, no background */
 .site-sub-sidebar {
     width: 220px;
     min-width: 220px;
     flex-shrink: 0;
-    background: #ffffff;
+    background: transparent;
     border-right: 1px solid rgba(0, 0, 0, 0.07);
     display: flex;
     flex-direction: column;
@@ -182,13 +204,14 @@ body.has-site-sidebar {
 }
 
 .dark .site-sub-sidebar {
-    background: #111111;
+    background: transparent;
     border-right-color: rgba(255, 255, 255, 0.06);
 }
 
 .site-sub-sidebar-header {
     border-bottom: 1px solid rgba(0, 0, 0, 0.07);
     padding: 0.25rem 0;
+    background: transparent;
 }
 
 .dark .site-sub-sidebar-header {
