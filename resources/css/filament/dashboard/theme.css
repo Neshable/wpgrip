@@ -109,29 +109,39 @@ body.fi-panel-dashboard {
    SITE SUB-SIDEBAR — second-level navigation for single site pages
    ═══════════════════════════════════════════════════════════════════ */
 
-/* When the body has the site-sidebar marker, force the main sidebar
-   to stay collapsed and show icon-only. On hover expand it as overlay. */
+/* When the body has the site-sidebar marker, keep main sidebar collapsed
+   and hide overflow (plan widget, labels etc). No hover expand. */
 body.has-site-sidebar {
     .fi-sidebar {
-        /* When collapsed (default on site pages) */
+        /* Keep collapsed width, hide overflowing footer/labels */
         &:not(.fi-sidebar-open) {
             width: var(--collapsed-sidebar-width) !important;
+            overflow: hidden !important;
         }
 
-        /* When hovering the collapsed sidebar, expand as overlay */
-        &:not(.fi-sidebar-open):hover {
-            width: var(--sidebar-width) !important;
-            z-index: 40 !important;
-            position: fixed !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+        /* Hide sidebar footer (plan widget) when collapsed on site pages */
+        &:not(.fi-sidebar-open) > nav.fi-sidebar-nav ~ * {
+            display: none !important;
+        }
+
+        /* Hide nav item labels when collapsed — show icons only */
+        &:not(.fi-sidebar-open) .fi-sidebar-item-label,
+        &:not(.fi-sidebar-open) .fi-sidebar-group-label,
+        &:not(.fi-sidebar-open) .fi-sidebar-item-badge,
+        &:not(.fi-sidebar-open) .fi-sidebar-nav-tenant-menu-ctn {
+            display: none !important;
         }
     }
 
-    /* Adjust the main content area to leave room for collapsed sidebar + sub-sidebar */
-    .fi-main-ctn {
-        &:not(.fi-main-ctn-sidebar-open) {
-            /* Don't shift for open sidebar since it's overlay now */
-        }
+    /* Hide the site header (screenshot card) — info is in sub-sidebar now.
+       The header is a @persist div before the page content inside fi-page > section */
+    .fi-page > section > div:first-child:has(+ div .site-page-with-sidebar) {
+        display: none !important;
+    }
+
+    /* Also catch fi-page-header if Filament renders a default one */
+    .fi-page-header {
+        display: none !important;
     }
 }
 
