@@ -460,7 +460,6 @@ class SiteResource extends Resource
             'monitoring' => Pages\Monitoring::route('/{record}/monitoring'), 
             'monitors' => Pages\Monitors::route('/{record}/monitoring/monitors'),
 
-            'blacklists' => Pages\Blacklists::route('/{record}/blacklists'), 
             
 
             'performance_history' => Pages\PerformanceHistory::route('/{record}/performance/history'), 
@@ -479,7 +478,6 @@ class SiteResource extends Resource
             'core' => Pages\Core::route('/{record}/core'), 
             
             // Tests
-            'tests' => Pages\Tests::route('/{record}/tests'), 
             // Eror monitoring
             'errors' => Pages\Errors::route('/{record}/errors'),
             
@@ -490,7 +488,7 @@ class SiteResource extends Resource
             'files' => Pages\FileExplorer::route('/{record}/files'),
             'security' => Pages\Security::route('/{record}/security'), 
             // 'checksums' => Pages\SecurityGroup\Checksumss::route('/{record}/security/checksums'),
-            'repos' => Pages\Git::route('/{record}/repos'),
+
             'staging' => Pages\Staging::route('/{record}/staging'), 
             'backups' => Pages\ShowBackups::route('/{record}/backups'), 
             

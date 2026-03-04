@@ -10,7 +10,6 @@ use App\Jobs\External\GetVulnerabilityDatabase;
 use App\Jobs\Domain\BulkDomainExpiry;
 use App\Jobs\Global\CheckAllVulnerabilities;
 
-use App\Jobs\Tests\ScheduleTests;
 
 
 
@@ -46,8 +45,6 @@ return Illuminate\Foundation\Application::configure(basePath: dirname(__DIR__))
         // Domain specific - expiry date, blacklists...
         $schedule->job(new BulkDomainExpiry)->weekly();
        
-        // Performance checks googles lighthouse - @todo test with large amount of sites
-        $schedule->job(new ScheduleTests)->dailyAt('01:00')->onOneServer();
         
         // sSchedule::exec('node /home/forge/script.js')->daily();
     })
