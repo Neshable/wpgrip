@@ -11,7 +11,6 @@
             'title' => 'Tests',
             'icon' => 'heroicon-m-computer-desktop' ])
 
-    @include('site.single.menus.test-page-menu')
     </div>
 
     <x-filament::section> 

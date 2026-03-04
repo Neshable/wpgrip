@@ -53,7 +53,7 @@ class DashboardPanelProvider extends PanelProvider
             ->darkMode(true)
             ->unsavedChangesAlerts()
             ->maxContentWidth('screen-4xl')
-            // ->sidebarFullyCollapsibleOnDesktop()
+            ->sidebarCollapsibleOnDesktop()
             ->userMenuItems([
                 MenuItem::make()
                     ->label(__('Admin Panel'))

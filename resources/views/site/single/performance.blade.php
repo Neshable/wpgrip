@@ -47,7 +47,6 @@
     };
 @endphp
 
-@include('site.single.menus.performance-page-menu')
 
 {{-- Header row: title + Run Test button --}}
 <div class="flex items-center justify-between mb-5 mt-1">

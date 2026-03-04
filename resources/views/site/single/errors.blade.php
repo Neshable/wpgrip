@@ -6,7 +6,6 @@
     $tenant = Filament\Facades\Filament::getTenant(); 
 @endphp
 
-    @include('site.single.menus.security-page-submenu')
 
 
     <x-filament::section>

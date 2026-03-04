@@ -2,7 +2,6 @@
 
 @section('content')
 
-    @include('site.single.menus.updates-page-submenu')
 
     @if ( $this->getRecord()->is_staging )
 

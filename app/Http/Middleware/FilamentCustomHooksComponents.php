@@ -39,6 +39,30 @@ class FilamentCustomHooksComponents
             // PanelsRenderHook::SIDEBAR_NAV_END,
             fn (): View => view('filament/components/subscription-info'),
         );
+
+        // Site sub-sidebar: handle sidebar collapse + active state
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::BODY_END,
+            fn (): string => '<script>
+                function wpgripSiteSidebarInit() {
+                    var hasSub = document.querySelector(".site-sub-sidebar");
+                    if (hasSub) {
+                        if (window.Alpine && Alpine.store("sidebar")) {
+                            Alpine.store("sidebar").close();
+                        }
+                        document.body.classList.add("has-site-sidebar");
+                    } else {
+                        document.body.classList.remove("has-site-sidebar");
+                        if (window.Alpine && Alpine.store("sidebar")) {
+                            Alpine.store("sidebar").open();
+                        }
+                    }
+                }
+                // Run immediately + on SPA navigation
+                wpgripSiteSidebarInit();
+                document.addEventListener("livewire:navigated", wpgripSiteSidebarInit);
+            </script>',
+        );
         
 
         // Top right menu.

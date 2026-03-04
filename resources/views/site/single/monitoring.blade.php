@@ -7,7 +7,6 @@
 
 @section('content')
     <div>
-    @include('site.single.menus.monitor-page-menu')
     </div>
         
     @if (  $monitor )

@@ -6,7 +6,6 @@
     $tenant = Filament\Facades\Filament::getTenant(); 
 @endphp
 
-@include('site.single.menus.performance-page-menu')
 
     
     @livewire(\App\Filament\Dashboard\Resources\SiteResource\Widgets\SitePerformanceHistory::class, [ 'type' => 'desktop' ])

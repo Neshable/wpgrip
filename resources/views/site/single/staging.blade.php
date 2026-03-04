@@ -6,7 +6,6 @@
 
 @section('content')
 
-@include('site.single.menus.tools-page-submenu')
 
 <x-filament::section> 
    
