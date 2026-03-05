@@ -382,15 +382,23 @@ class SiteResource extends Resource
 
             Tables\Columns\TextColumn::make('dir_size')
                 ->label('Files')
-                ->getStateUsing(function (Site $record) {
-                    return $record->getFormatedDBSize();
+                ->getStateUsing(fn (Site $record) => $record->getFormatedDBSize())
+                ->icon(fn (Site $record): ?string => ($record->dir_size && $record->dir_size >= 10240) ? 'heroicon-m-exclamation-triangle' : null)
+                ->color(fn (Site $record): string => match(true) {
+                    !$record->dir_size => 'gray',
+                    $record->dir_size >= 10240 => 'warning',
+                    default => 'success',
                 })
                 ->sortable(),
                 
             Tables\Columns\TextColumn::make('db_size')
                 ->label('DB Size')
-                ->getStateUsing(function (Site $record) {
-                return $record->getDBSize();
+                ->getStateUsing(fn (Site $record) => $record->getDBSize())
+                ->icon(fn (Site $record): ?string => ($record->sitemeta && $record->sitemeta->db_size >= 500) ? 'heroicon-m-exclamation-triangle' : null)
+                ->color(fn (Site $record): string => match(true) {
+                    !$record->sitemeta || !$record->sitemeta->db_size => 'gray',
+                    $record->sitemeta->db_size >= 500 => 'warning',
+                    default => 'success',
                 }),
             // Tables\Columns\TextColumn::make('status')
             //     ->label('Status')
