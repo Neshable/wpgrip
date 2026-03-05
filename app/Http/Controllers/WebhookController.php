@@ -118,12 +118,19 @@ class WebhookController extends Controller
 		$repository = Repository::where( 'webhook', $unique_token )->first();
 
 		if ( ! $repository ) {
-			Log::warning( "Webhook for unknown repository token: {$unique_token}" );
-			return response()->json( array( 'message' => 'Repository not found' ), 404 );
+			Log::warning( "Webhook for unknown repository token: " . substr($unique_token, 0, 12) . '...' );
+			return response()->json(['message' => 'Webhook processed'], 200);
 		}
 
         $provider = $repository->provider;
-        $payload = $request->json()->all();
+
+        try {
+            $payload = $request->json()->all();
+        } catch (\Exception $e) {
+            Log::warning("Invalid JSON payload in webhook for repository ID {$repository->id}");
+            return response()->json(['message' => 'Webhook processed'], 200);
+        }
+
         $branch_name = null;
 
         if ($provider === 'bitbucket') {
@@ -160,6 +167,12 @@ class WebhookController extends Controller
 
                 if( $single_site->pivot->auto_deploy && $site_branch === $branch_name)
                 {
+                    // Skip if already deploying
+                    if ($single_site->pivot->status === \App\Enums\RepoStatus::WORKING->value) {
+                        Log::info("Skipping deploy for site {$single_site->id} — already in progress");
+                        continue;
+                    }
+
                     // Update status to working before dispatch
                     $repository->sites()->updateExistingPivot($single_site->id, [
                         'status' => \App\Enums\RepoStatus::WORKING->value,
@@ -173,10 +186,6 @@ class WebhookController extends Controller
 			}
 		}
 
-		return response()->json([
-            'message' => 'Webhook processed',
-            'deployments_triggered' => $deployedCount,
-            'branch' => $branch_name,
-        ], 200);
+		return response()->json(['message' => 'Webhook processed'], 200);
 	}
 }

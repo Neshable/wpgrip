@@ -234,4 +234,5 @@ Route::get('/invoice/preview', [
 ])->name('invoice.preview');
 
 // Repo webhook trigger
-Route::post('/webhook/git/{unique_token}', [ WebhookController::class, 'handleWebhook' ]);
+Route::post('/webhook/git/{unique_token}', [ WebhookController::class, 'handleWebhook' ])
+    ->middleware('throttle:30,1');

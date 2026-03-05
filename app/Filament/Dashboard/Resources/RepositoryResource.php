@@ -77,7 +77,8 @@ class RepositoryResource extends Resource
                     Forms\Components\ViewField::make('provider')
                         ->label('Provider')
                         ->view('filament.forms.components.provider-select')
-                        ->required(),
+                        ->required()
+                        ->rule('in:bitbucket,github'),
                 ])
                 
                     // ->alpha(),

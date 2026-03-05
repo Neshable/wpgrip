@@ -255,6 +255,7 @@ class SshAndGitPull implements ShouldQueue
         } 
         
         // Otherwise proceed with normal deploy.
+        $connection->ssh->disableQuietMode();
         $output = $this->executeGitCommand($connection);
         
         $success = $connection->getExitStatusBool();
@@ -516,16 +517,19 @@ class SshAndGitPull implements ShouldQueue
      */
     public function failed(\Throwable $exception): void
     {
-        // If the job itself throws an unhandled exception, mark it clearly
-        $this->status = RepoStatus::ERROR->value;
-        $this->status_text = 'Deployment job failed unexpectedly: ' . \Illuminate\Support\Str::limit($exception->getMessage(), 180);
-        
-        if ($this->pivot) {
-            $this->repository->sites()->updateExistingPivot($this->site->id, [
-                'status' => $this->status,
-                'status_text' => $this->status_text,
-                'last_pull' => \Carbon\Carbon::now(),
-            ]);
+        try {
+            $statusText = 'Deployment job failed unexpectedly: ' . \Illuminate\Support\Str::limit($exception->getMessage(), 180);
+            
+            if ($this->pivot && $this->repository && $this->site) {
+                $this->repository->sites()->updateExistingPivot($this->site->id, [
+                    'status' => RepoStatus::ERROR->value,
+                    'status_text' => $statusText,
+                    'last_pull' => \Carbon\Carbon::now(),
+                ]);
+            }
+        } catch (\Throwable $e) {
+            // Don't let the failure handler itself throw
+            report($e);
         }
     }
 }
