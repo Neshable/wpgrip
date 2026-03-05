@@ -165,13 +165,19 @@ class SshAndGitPull implements ShouldQueue
         $this->repository->update(['status' => RepoStatus::WORKING->value]);
    
         // Init a new connection to websites's production server.
-        $connection = new SSHSiteConnect($this->site);
+        try {
+            $connection = new SSHSiteConnect($this->site);
+        } catch (\Exception $e) {
+            $this->status_text = 'SSH connection failed: Could not connect to server ' . ($server->ip ?? 'unknown') . ':' . ($server->port ?? 22) . '. Verify the server is online and accessible.';
+            $this->status = RepoStatus::ERROR->value;
+            $this->saveToDb();
+            return false;
+        }
         
         if (!$connection->active) 
         {
-            $this->status_text = 'SSH connection failed.';
+            $this->status_text = 'SSH authentication failed: Could not login as "' . ($this->site->ssh_user ?? 'unknown') . '" on ' . ($server->ip ?? 'unknown') . '. Ensure the tenant\'s public SSH key is added to the server\'s ~/.ssh/authorized_keys file.';
             $this->status = RepoStatus::ERROR->value;
-            // GripNotifications::getUnauthorizedNotificaiton();
             $this->saveToDb();
             $connection->close();
             return false;
@@ -185,8 +191,8 @@ class SshAndGitPull implements ShouldQueue
             // Check for public key access
             if ( !$this->checkGitPublicKey( $connection ) ) 
             {
-                // GripNotifications::gitNoPublicKey();
-                $this->status_text = 'No public key found.';
+                $providerName = ucfirst($this->repository->provider ?? 'repository provider');
+                $this->status_text = 'Git access denied: The server\'s SSH key is not authorized on ' . $providerName . '. Add the tenant\'s public SSH key to your ' . $providerName . ' repository Access Keys (Settings → Access Keys) and try again.';
                 $this->status = RepoStatus::ERROR->value;
                 $this->saveToDb();
                 $connection->close();
@@ -209,14 +215,22 @@ class SshAndGitPull implements ShouldQueue
                 $this->status = RepoStatus::SUCCESS->value;
                 $this->status_text = 'Git clone success.';
                 $this->saveToDb();
-                // GripNotifications::getGitPulledSuccess();
             }
             else
             {
                 $this->status = RepoStatus::ERROR->value;
-                $this->status_text = 'Git clone failed.';
+                $errorDetail = trim($output ?? '');
+                if (str_contains($errorDetail, 'Permission denied')) {
+                    $providerName = ucfirst($this->repository->provider ?? 'provider');
+                    $this->status_text = 'Git clone failed: Permission denied. Ensure the tenant\'s SSH key is added as an Access Key in ' . $providerName . '.';
+                } elseif (str_contains($errorDetail, 'Repository not found') || str_contains($errorDetail, 'not found')) {
+                    $this->status_text = 'Git clone failed: Repository not found. Verify the remote URL is correct: ' . $this->repository->remote;
+                } elseif (str_contains($errorDetail, 'Could not resolve hostname')) {
+                    $this->status_text = 'Git clone failed: DNS resolution error. The server cannot reach ' . ($this->repository->provider ?? 'the remote host') . '.';
+                } else {
+                    $this->status_text = 'Git clone failed' . ($errorDetail ? ': ' . \Illuminate\Support\Str::limit($errorDetail, 180) : '.');
+                }
                 $this->saveToDb();
-                // GripNotifications::getGitPulledFailed();
             }
  
 
@@ -271,7 +285,19 @@ class SshAndGitPull implements ShouldQueue
         else
         {
             $this->status = RepoStatus::ERROR->value;
-            $this->status_text = 'Git pull failed.';
+            $errorDetail = trim($output ?? '');
+            if (str_contains($errorDetail, 'Permission denied')) {
+                $providerName = ucfirst($this->repository->provider ?? 'provider');
+                $this->status_text = 'Git pull failed: Permission denied by ' . $providerName . '. Verify the SSH key is still authorized in repository Access Keys.';
+            } elseif (str_contains($errorDetail, 'Could not resolve hostname')) {
+                $this->status_text = 'Git pull failed: DNS resolution error. The server cannot reach the remote host.';
+            } elseif (str_contains($errorDetail, 'Connection refused') || str_contains($errorDetail, 'Connection timed out')) {
+                $this->status_text = 'Git pull failed: Network connectivity issue. The server cannot connect to ' . ($this->repository->provider ?? 'the remote') . '.';
+            } elseif (preg_match('/pathspec .+ did not match/', $errorDetail)) {
+                $this->status_text = 'Git pull failed: Branch "' . ($this->pivot->branch ?? 'unknown') . '" not found in remote repository.';
+            } else {
+                $this->status_text = 'Git pull failed' . ($errorDetail ? ': ' . \Illuminate\Support\Str::limit($errorDetail, 180) : '.');
+            }
             $this->saveToDb();
             ActivityLogger::gitAction('git.deploy_failed', $this->site, $this->repository->name ?? 'Repository', [
                 'repo'   => $this->repository->name ?? null,
@@ -485,5 +511,21 @@ class SshAndGitPull implements ShouldQueue
     
     }
 
-    
+    /**
+     * Handle a job failure.
+     */
+    public function failed(\Throwable $exception): void
+    {
+        // If the job itself throws an unhandled exception, mark it clearly
+        $this->status = RepoStatus::ERROR->value;
+        $this->status_text = 'Deployment job failed unexpectedly: ' . \Illuminate\Support\Str::limit($exception->getMessage(), 180);
+        
+        if ($this->pivot) {
+            $this->repository->sites()->updateExistingPivot($this->site->id, [
+                'status' => $this->status,
+                'status_text' => $this->status_text,
+                'last_pull' => \Carbon\Carbon::now(),
+            ]);
+        }
+    }
 }

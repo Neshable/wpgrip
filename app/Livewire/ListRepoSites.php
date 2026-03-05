@@ -86,7 +86,8 @@ class ListRepoSites extends Component implements HasForms, HasTable
                 ->label('Last Status Log')
                 ->sortable()
                 ->wrap()
-                ->limit(50),
+                ->limit(80)
+                ->tooltip(fn ($record) => $record->pivot->status_text),
             Tables\Columns\ToggleColumn::make('auto_deploy')
                 ->label('Push to Deploy')
                 // ->updateState(function ($state) {

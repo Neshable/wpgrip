@@ -74,14 +74,10 @@ class RepositoryResource extends Resource
                         ->helperText(new HtmlString('<strong>The remote SSH URL</strong> of the repo ( e.g. git@bitbucket.org... ).'))  
                         ->required()
                         ->maxLength(255),
-                    Forms\Components\Select::make('provider')
+                    Forms\Components\ViewField::make('provider')
                         ->label('Provider')
-                        ->helperText(new HtmlString('Repository provider'))  
-                        ->required()
-                        ->options([
-                            'bitbucket' => 'BitBucket',
-                            'github' => 'GitHub'
-                        ]),
+                        ->view('filament.forms.components.provider-select')
+                        ->required(),
                 ])
                 
                     // ->alpha(),

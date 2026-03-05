@@ -62,6 +62,7 @@ class WebhookController extends Controller
 
     /**
      * Determine if an IP address falls within a given CIDR range.
+     * Supports both IPv4 and IPv6.
      *
      * @param string $ip
      * @param string $cidr
@@ -70,17 +71,29 @@ class WebhookController extends Controller
     public function ipInRange($ip, $cidr)
     {
         list($subnet, $bits) = explode('/', $cidr);
-        $ip = inet_pton($ip);
-        $subnet = inet_pton($subnet);
+        $bits = (int) $bits;
+        
+        $ipBin = inet_pton($ip);
+        $subnetBin = inet_pton($subnet);
 
-        if ($ip === false || $subnet === false) {
-            return false; // Invalid IP format
+        if ($ipBin === false || $subnetBin === false) {
+            return false;
         }
 
-        $mask = ~((1 << (128 - $bits)) - 1);
-        $mask = pack('J', $mask);
+        // Different address families can't match
+        if (strlen($ipBin) !== strlen($subnetBin)) {
+            return false;
+        }
 
-        return ($ip & $mask) === ($subnet & $mask);
+        // Build a binary mask of the correct byte length
+        $totalBits = strlen($ipBin) * 8; // 32 for IPv4, 128 for IPv6
+        $mask = str_repeat("\xff", (int)floor($bits / 8));
+        if ($bits % 8) {
+            $mask .= chr(0xff << (8 - ($bits % 8)) & 0xff);
+        }
+        $mask = str_pad($mask, strlen($ipBin), "\x00");
+
+        return ($ipBin & $mask) === ($subnetBin & $mask);
     }
 
 	public function handleWebhook( Request $request, $unique_token ) 
@@ -114,9 +127,13 @@ class WebhookController extends Controller
         $branch_name = null;
 
         if ($provider === 'bitbucket') {
-            $branch_name = $payload['push']['changes'][0]['new']['name'] ?? null;
+            // Bitbucket sends push events with changes array
+            $changes = $payload['push']['changes'] ?? [];
+            if (!empty($changes)) {
+                $branch_name = $changes[0]['new']['name'] ?? null;
+            }
         } elseif ($provider === 'github') {
-            // Example ref: "refs/heads/main"
+            // GitHub sends ref as "refs/heads/branch-name"
             $ref = $payload['ref'] ?? null;
             if ($ref && str_starts_with($ref, 'refs/heads/')) {
                 $branch_name = substr($ref, strlen('refs/heads/'));
@@ -124,11 +141,17 @@ class WebhookController extends Controller
         }
 
         if (!$branch_name) {
-            Log::info("Could not determine branch from webhook for repository ID {$repository->id}");
-            return response()->json( array( 'message' => 'Could not determine branch from webhook.' ), 400 );
+            Log::info("Could not determine branch from webhook for repository ID {$repository->id}", [
+                'provider' => $provider,
+                'payload_keys' => array_keys($payload),
+            ]);
+            return response()->json(['message' => 'Could not determine branch from webhook.'], 400);
         }
 
+        Log::info("Webhook received for repository {$repository->name} (ID: {$repository->id}), branch: {$branch_name}, provider: {$provider}");
+
 		// Handle the webhook payload (Bitbucket or GitHub)
+        $deployedCount = 0;
 		if ( $repository->sites ) 
         {
 			foreach ( $repository->sites as $single_site ) 
@@ -137,12 +160,23 @@ class WebhookController extends Controller
 
                 if( $single_site->pivot->auto_deploy && $site_branch === $branch_name)
                 {
-				    // If the signature is valid, process the webhook payload
+                    // Update status to working before dispatch
+                    $repository->sites()->updateExistingPivot($single_site->id, [
+                        'status' => \App\Enums\RepoStatus::WORKING->value,
+                    ]);
+
 				    SshAndGitPull::dispatch( $repository, $single_site, null, 'webhook' );
+                    $deployedCount++;
+
+                    Log::info("Auto-deploy triggered for site {$single_site->name} (ID: {$single_site->id}) on branch {$branch_name}");
                 }
 			}
 		}
 
-		return response()->json( array( 'message' => 'Webhook received and processed' ), 200 );
+		return response()->json([
+            'message' => 'Webhook processed',
+            'deployments_triggered' => $deployedCount,
+            'branch' => $branch_name,
+        ], 200);
 	}
 }

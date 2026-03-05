@@ -23,6 +23,10 @@ return Illuminate\Foundation\Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: '*');
 
+        $middleware->validateCsrfTokens(except: [
+            'webhook/git/*',
+        ]);
+
         $middleware->appendToGroup('web', [
             \App\Http\Middleware\BlockedUser::class,
         ]);
