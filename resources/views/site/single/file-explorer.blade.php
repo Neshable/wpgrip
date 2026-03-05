@@ -4,12 +4,42 @@
 
 <div
     x-data="fileExplorer()"
-    x-init="$nextTick(() => refresh())"
     class="relative"
 >
 
-    {{-- Main container --}}
-    <div class="fe-container">
+    {{-- Connect screen (shown before connection) --}}
+    <div x-show="!connected && !sidebarLoading" class="fe-connect-screen">
+        <div class="fe-connect-card">
+            <div class="fe-connect-icon">
+                <svg class="w-8 h-8 text-primary-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 17.25v-.228a4.5 4.5 0 0 0-.12-1.03l-2.268-9.64a3.375 3.375 0 0 0-3.285-2.602H7.923a3.375 3.375 0 0 0-3.285 2.602l-2.268 9.64a4.5 4.5 0 0 0-.12 1.03v.228m19.5 0a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3m19.5 0a3 3 0 0 0-3-3H5.25a3 3 0 0 0-3 3m16.5 0h.008v.008h-.008v-.008Zm-3 0h.008v.008h-.008v-.008Z" />
+                </svg>
+            </div>
+            <h3 class="text-base font-semibold text-gray-900 dark:text-white mt-4">SSH File Manager</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 mb-5">Connect via SFTP to browse and edit files on the remote server.</p>
+            <button @click="refresh()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary-600 text-white text-sm font-medium hover:bg-primary-500 transition shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 0 0-1.242-7.244l4.5-4.5a4.5 4.5 0 0 1 6.364 6.364l-1.757 1.757" />
+                </svg>
+                Connect
+            </button>
+        </div>
+    </div>
+
+    {{-- Connecting spinner --}}
+    <div x-show="!connected && sidebarLoading" class="fe-connect-screen">
+        <div class="fe-connect-card">
+            <svg class="w-8 h-8 text-primary-500 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            <h3 class="text-base font-semibold text-gray-900 dark:text-white mt-4">Connecting…</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Establishing SFTP connection to the server.</p>
+        </div>
+    </div>
+
+    {{-- Main container (shown after connection) --}}
+    <div x-show="connected" x-cloak class="fe-container">
 
         {{-- ====== SIDEBAR ====== --}}
         <div class="fe-sidebar" :style="'width:' + sidebarWidth + 'px; min-width:' + sidebarWidth + 'px'">

@@ -379,6 +379,37 @@ class FileExplorer extends ViewRecord
     {
         return <<<'CSS'
 <style>
+.fe-connect-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+}
+.fe-connect-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2.5rem;
+    border-radius: 1rem;
+    border: 1px dashed rgb(209 213 219);
+    background: white;
+    max-width: 360px;
+}
+.dark .fe-connect-card {
+    border-color: rgba(255 255 255 / 0.1);
+    background: rgba(255 255 255 / 0.03);
+}
+.fe-connect-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 9999px;
+    background: rgba(63 99 230 / 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .fe-container {
     display: flex;
     height: calc(100vh - 250px);
