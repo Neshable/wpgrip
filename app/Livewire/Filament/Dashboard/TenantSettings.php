@@ -42,6 +42,7 @@ class TenantSettings extends Component implements HasForms
             'avatar' => $tenant->avatar,
             'enable_slack' => $tenant->enable_slack,
             'slack_webhook' => $tenant->slack_webhook,
+            'slack_webhook_deployments' => $tenant->slack_webhook_deployments,
             'enable_email' => $tenant->enable_email,
             'email' => $tenant->email,
         ]);
@@ -79,9 +80,15 @@ class TenantSettings extends Component implements HasForms
                             ->live()
                             ->label(__('Enable Slack Notifications')),
                         TextInput::make('slack_webhook')
-                            ->label(__('Slack URL Webhook'))
+                            ->label(__('Alerts Webhook URL'))
+                            ->placeholder('https://hooks.slack.com/services/...')
                             ->visible(fn(\Filament\Forms\Get $get):bool => $get('enable_slack'))
-                            ->helperText(__('Enter your slack URL webhook')), 
+                            ->helperText(__('Primary channel — receives uptime alerts, SSL warnings, backup notifications, and deployments.')),
+                        TextInput::make('slack_webhook_deployments')
+                            ->label(__('Deployments Webhook URL (optional)'))
+                            ->placeholder('https://hooks.slack.com/services/...')
+                            ->visible(fn(\Filament\Forms\Get $get):bool => $get('enable_slack'))
+                            ->helperText(__('Separate channel for deployment notifications. If empty, deployments go to the alerts channel above.')),
                         Toggle::make('enable_email')
                             ->live()
                             ->label(__('Enable Email Notifications')),

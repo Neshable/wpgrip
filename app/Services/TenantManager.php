@@ -287,6 +287,7 @@ class TenantManager
             'name' => $data['tenant_name'],
             'enable_slack' =>  isset( $data['enable_slack']) ? $data['enable_slack'] : false,
             'slack_webhook' => isset( $data['slack_webhook'] ) ? $data['slack_webhook'] : '',
+            'slack_webhook_deployments' => $data['slack_webhook_deployments'] ?? null,
             'enable_email' => isset( $data['enable_email']) ? $data['enable_email'] : false,
             'email' =>  isset($data['email']) ? $data['email'] : '',
         ];

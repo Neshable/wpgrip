@@ -24,6 +24,7 @@ class Tenant extends Model implements HasAvatar
         'is_name_auto_generated',
         'enable_slack',
         'slack_webhook',
+        'slack_webhook_deployments',
         'enable_email',
         'email',
         'created_by',
