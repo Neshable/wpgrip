@@ -24,7 +24,7 @@ class SlackNotifications {
     {
         $site_id = $monitor->site_id;
         if ( $site_id ) {
-            $site = Site::findOrFail( $site_id );
+            $site = Site::find( $site_id );
             if ( $site ) {
                 // Find the tenant and send them notificaiton.
                 $tenant = $site->tenant;
@@ -79,17 +79,21 @@ class SlackNotifications {
 
     public static function sendBackupSuccess( Backup $backup )
     {
-        // if ( !$monitor )
-        // {
-        //     return;
-        // }
-        // @todo webhook needs to be loaded from the current Team/Workspace related
-        SlackAlert::to('https://hooks.slack.com/services/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')->blocks([
+        $site = $backup->site;
+        if ( !$site ) {
+            return;
+        }
+
+        $tenant = $site->tenant;
+        if ( !$tenant || !$tenant->enable_slack || empty($tenant->slack_webhook) ) {
+            return;
+        }
+
+        SlackAlert::to( $tenant->slack_webhook )->blocks([
             self::addBlock( 'header', ":large_green_circle: Backup complete." ),
-            self::addBlock( 'section', "Backup for site " . $backup->site_id . " completed." ),
+            self::addBlock( 'section', "Backup for site " . ($site->name ?? $backup->site_id) . " completed." ),
             self::addBlock( 'divider' ),
-            self::addBlock( 'section', "Type of backup " . $backup->type ),
-           
+            self::addBlock( 'section', "Type of backup: " . $backup->type ),
             [
                 "type" => "section",
                 "fields" => [
@@ -102,9 +106,8 @@ class SlackNotifications {
                         "text" => "*Destination:*\n" . $backup->provider
                     ]
                 ]
-            ],  
+            ],
             self::addBlock( 'divider' ),
-            self::addBlock( 'section', "<https://example.com|View request>" ),
         ]);
     }
 
@@ -112,7 +115,7 @@ class SlackNotifications {
     {
         $site_id = $monitor->site_id;
         if ( $site_id ) {
-            $site = Site::findOrFail( $site_id );
+            $site = Site::find( $site_id );
             if ( $site ) {
                 // Find the tenant and send them notificaiton.
                 $tenant = $site->tenant;

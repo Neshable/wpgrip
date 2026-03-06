@@ -87,8 +87,10 @@ class Site extends Model
                     ]);
 
                     if ( $monitor->id ) {
-                        // Check the uptime
-                        Artisan::call('monitor:check-uptime');
+                        // Check uptime only for this new site's URL, not all monitors.
+                        Artisan::call('monitor:check-uptime', [
+                            '--url' => trim($site->url, '/'),
+                        ]);
                         Artisan::call('monitor:check-certificate');
                     }
                 }

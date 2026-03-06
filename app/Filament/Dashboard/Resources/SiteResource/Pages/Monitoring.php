@@ -3,21 +3,8 @@
 namespace App\Filament\Dashboard\Resources\SiteResource\Pages;
 
 use App\Filament\Dashboard\Resources\SiteResource;
-use Filament\Pages\Actions;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Pages\Actions\Action;
-
-
-use App\Jobs\SyncSite;
-use App\Jobs\CheckSSLExpiry;
-use App\Jobs\ListAllWPPlugins;
-use App\Jobs\RemoteDBBackup;
-use App\Jobs\CheckDBStructure;
-use App\Jobs;
-
-use Filament\Notifications\Notification; 
 use Illuminate\Support\Facades\Artisan;
-use Filament\Tables\Concerns\InteractsWithTable;
 use Illuminate\Contracts\View\View;
 
 use App\Filament\Dashboard\Resources\SiteResource\Widgets\UptimeChart;
@@ -33,40 +20,34 @@ class Monitoring extends ViewRecord
         return view('site.single.header');
     }
 
-    public function checkUptime()
+    /**
+     * Check uptime only for this site's monitors (not all monitors globally).
+     */
+    public function checkUptime(): void
     {
-         // Run the Artisan command
-         Artisan::call('monitor:check-uptime');
-    }
+        $monitor = $this->getRecord()->get_main_monitor();
 
-
-    public function checkSSL()
-    {
-        Artisan::call('monitor:check-certificate');
-
-        // Optionally, you can capture the output of the command
-        $output = Artisan::output();
-        if ( $output )
-        {
-            // send notification.
+        if ($monitor) {
+            Artisan::call('monitor:check-uptime', [
+                '--url' => (string) $monitor->url,
+            ]);
         }
- 
     }
 
-    // public function getHeaderWidgets(): array
-    // {
-    //     return [
-    //         UptimeChart::class,
-    //     ];
-    // }
+    /**
+     * Check SSL certificate for this site's main URL only.
+     */
+    public function checkSSL(): void
+    {
+        // Certificate check doesn't support --url filtering,
+        // but it's fast and only checks enabled monitors.
+        Artisan::call('monitor:check-certificate');
+    }
 
-      
     protected function getWidgets(): array
     {
         return [
             UptimeChart::class,
         ];
     }
-
-
 }

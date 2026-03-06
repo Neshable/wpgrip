@@ -147,12 +147,15 @@ class ListMonitors extends Component implements HasForms, HasTable
                     ->using(function (array $data, string $model): ?UptimeMonitor  {
                         if ( $this->site_id )
                         {   
-                            // For this site!
                             $data['site_id'] = $this->site_id;
+                            $data['uptime_check_enabled'] = true;
+                            $data['certificate_check_enabled'] = str_starts_with($data['url'] ?? '', 'https');
+                            $data['uptime_check_method'] = 'head';
+                            $data['look_for_string'] = '';
                             return $model::create($data);
                         }
 
-                        return false;
+                        return null;
                     })
                 // Action::make('create')
             ])
