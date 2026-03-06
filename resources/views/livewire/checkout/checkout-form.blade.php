@@ -5,11 +5,11 @@
         @guest()
         <div class="mb-4">
 
-            <x-heading.h2 class="text-primary-900 !text-xl">
+            <x-heading.h2 class="text-primary-400 !text-xl">
                 {{ __('Enter your details') }}
             </x-heading.h2>
 
-            <div class="relative rounded-2xl border border-natural-300 mt-4 overflow-hidden p-6">
+            <div class="relative rounded-2xl border border-white/10 bg-white/[0.03] mt-4 overflow-hidden p-6">
 
                 @if (!empty($intro))
                     <div class="mb-4 text-sm">
@@ -145,14 +145,14 @@
 
         @endguest
 
-        <x-heading.h2 class="text-primary-900 !text-xl">
+        <x-heading.h2 class="text-primary-400 !text-xl">
             {{ __('Pay with') }}
         </x-heading.h2>
 
-        <div class="rounded-2xl border border-natural-300 mt-4 overflow-hidden">
+        <div class="rounded-2xl border border-white/10 bg-white/[0.03] mt-4 overflow-hidden">
 
             @foreach($paymentProviders as $paymentProvider)
-                <div class="border-b border-natural-300 p-4">
+                <div class="border-b border-white/10 p-4">
                     <div class="form-control">
                         <label class="label cursor-pointer">
                                     <span class="label-text ps-4 flex flex-col gap-3">
@@ -192,7 +192,7 @@
         </div>
 
         <p class="text-xs text-neutral-600 p-4">
-            {{ __('By continuing, you agree to our') }} <a target="_blank" href="#" class="text-primary-900 underline">{{ __('Terms of Service') }}</a> {{ __('and') }} <a target="_blank" href="#" class="text-primary-900 underline">{{ __('Privacy Policy') }}</a>.
+            {{ __('By continuing, you agree to our') }} <a target="_blank" href="#" class="text-primary-400 underline">{{ __('Terms of Service') }}</a> {{ __('and') }} <a target="_blank" href="#" class="text-primary-400 underline">{{ __('Privacy Policy') }}</a>.
         </p>
 
         <x-button-link.primary class="inline-block !w-full my-4" elementType="button" type="submit">

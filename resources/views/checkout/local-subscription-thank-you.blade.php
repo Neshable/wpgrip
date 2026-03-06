@@ -8,7 +8,7 @@
         <div class="card max-w-3xl bg-base-100 shadow-xl mx-auto text-center">
             <div class="card-body">
                 @svg('party', 'w-24 h-24 mx-auto text-primary-500 stroke-primary-500')
-                <x-heading.h3 class="text-primary-900">
+                <x-heading.h3 class="text-primary-400">
                     {{ __('We are thrilled to have you on board!') }}
                 </x-heading.h3>
                 <p>
