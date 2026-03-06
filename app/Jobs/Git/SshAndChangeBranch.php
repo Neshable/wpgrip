@@ -184,7 +184,7 @@ class SshAndChangeBranch implements ShouldQueue
         if ( $success )
         {
             // Dispatch event for git pull success
-            event(new GitPullSuccess( $this->repository ) );
+            event(new GitPullSuccess( $this->repository, $this->site, 'manual' ) );
             // Save the db
             $this->status = RepoStatus::SUCCESS->value;
             $this->status_text = 'Git pull success.';

@@ -45,36 +45,100 @@ class SlackNotifications {
     {
         $tenant = $repository->tenant;
 
-        if ( $tenant && $tenant->enable_slack && !empty( $tenant->slack_webhook ) ) {
-            $typeEmoji  = $deployment_type === 'webhook' ? ':arrows_counterclockwise:' : ':bust_in_silhouette:';
-            $typeLabel  = $deployment_type === 'webhook' ? 'Webhook (auto-deploy)' : 'Manual';
-            $siteLabel  = $site ? $site->name . ' — ' . $site->url : 'Unknown site';
+        if ( !$tenant || !$tenant->enable_slack || empty( $tenant->slack_webhook ) ) {
+            return;
+        }
 
-            $fields = [
-                [
-                    "type" => "mrkdwn",
-                    "text" => "*Repository:*\n" . $repository->name
+        // Determine branch from pivot (site <-> repo connection)
+        $branch = null;
+        if ( $site ) {
+            $pivotSite = $repository->sites->firstWhere('id', $site->id);
+            $branch = $pivotSite?->pivot?->branch;
+        }
+
+        // Get the latest deployment commit info
+        $deployment = null;
+        if ( $site ) {
+            $deployment = \App\Models\Deployment::where('repository_id', $repository->id)
+                ->where('site_id', $site->id)
+                ->latest()
+                ->first();
+        }
+
+        $isWebhook = $deployment_type === 'webhook';
+        $title = $isWebhook
+            ? ':arrows_counterclockwise: Auto-deployment successful'
+            : ':rocket: Manual deployment successful';
+
+        $siteLabel = $site
+            ? '<' . rtrim($site->url, '/') . '|' . $site->name . '>'
+            : 'Unknown site';
+
+        $providerIcon = match( $repository->provider ) {
+            'bitbucket' => ':bitbucket:',
+            'github'    => ':github:',
+            default     => ':git:',
+        };
+
+        $blocks = [
+            self::addBlock( 'header', $title ),
+            self::addBlock( 'divider' ),
+            [
+                "type" => "section",
+                "fields" => [
+                    [
+                        "type" => "mrkdwn",
+                        "text" => ":globe_with_meridians: *Site*\n" . $siteLabel
+                    ],
+                    [
+                        "type" => "mrkdwn",
+                        "text" => $providerIcon . " *Repository*\n" . ($repository->name ?? 'Unknown')
+                    ],
                 ],
-                [
-                    "type" => "mrkdwn",
-                    "text" => "*Site:*\n" . $siteLabel
+            ],
+            [
+                "type" => "section",
+                "fields" => [
+                    [
+                        "type" => "mrkdwn",
+                        "text" => ":seedling: *Branch*\n`" . ($branch ?? 'unknown') . "`"
+                    ],
+                    [
+                        "type" => "mrkdwn",
+                        "text" => ":gear: *Trigger*\n" . ($isWebhook ? 'Push webhook' : 'Dashboard')
+                    ],
                 ],
-                [
+            ],
+        ];
+
+        // Add commit info if available
+        if ( $deployment && $deployment->commit ) {
+            $shortHash = substr($deployment->commit, 0, 7);
+            $commitMsg = $deployment->message ? \Illuminate\Support\Str::limit($deployment->message, 80) : 'No message';
+            $author = $deployment->committer ?? 'Unknown';
+
+            $blocks[] = self::addBlock( 'divider' );
+            $blocks[] = [
+                "type" => "section",
+                "text" => [
                     "type" => "mrkdwn",
-                    "text" => "*Triggered by:*\n" . $typeEmoji . ' ' . $typeLabel
+                    "text" => ":memo: *Latest commit*\n`" . $shortHash . "` — " . $commitMsg . "\n_by " . $author . "_"
                 ],
             ];
-
-            SlackAlert::to( $tenant->slack_webhook )->blocks([
-                self::addBlock( 'header', ":white_check_mark: Deployment successful" ),
-                self::addBlock( 'divider' ),
-                [
-                    "type" => "section",
-                    "fields" => $fields,
-                ],
-                self::addBlock( 'divider' ),
-            ]);
         }
+
+        $blocks[] = self::addBlock( 'divider' );
+        $blocks[] = [
+            "type" => "context",
+            "elements" => [
+                [
+                    "type" => "mrkdwn",
+                    "text" => "Deployed via <" . rtrim(config('app.url'), '/') . "|WPGrip> at " . now()->format('H:i, M j Y')
+                ],
+            ],
+        ];
+
+        SlackAlert::to( $tenant->slack_webhook )->blocks( $blocks );
     }
 
     public static function sendBackupSuccess( Backup $backup )
