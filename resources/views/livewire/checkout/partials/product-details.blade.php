@@ -3,7 +3,7 @@
         {{ __('Product Details') }}
     </x-heading.h2>
 
-    <div class="rounded-2xl border border-white/10 bg-white/[0.03] mt-4 overflow-hidden p-6">
+    <div class="rounded-2xl border border-neutral-200 bg-white text-neutral-900 mt-4 overflow-hidden p-6">
         @php
             $cartItem = $cartDto->items[0];
         @endphp
@@ -40,7 +40,7 @@
 
         </div>
 
-        <div class="text-primary-400 my-4">
+        <div class="text-primary-600 my-4">
             {{ __('What you get:') }}
         </div>
         <div>

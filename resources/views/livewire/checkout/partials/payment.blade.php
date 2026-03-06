@@ -2,10 +2,10 @@
     {{ __('Pay with') }}
 </x-heading.h2>
 
-<div class="rounded-2xl border border-white/10 bg-white/[0.03] mt-4 overflow-hidden">
+<div class="rounded-2xl border border-neutral-200 bg-white text-neutral-900 mt-4 overflow-hidden">
 
     @foreach($paymentProviders as $paymentProvider)
-        <div class="border-b border-white/10 p-4">
+        <div class="border-b border-neutral-200 p-4">
             <div class="form-control">
                 <label class="label cursor-pointer">
                     <span class="label-text ps-4 flex flex-col gap-3 me-2">

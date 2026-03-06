@@ -8,7 +8,7 @@
         {{ __('Plan details') }}
     </x-heading.h2>
 
-    <div class="rounded-2xl border border-white/10 bg-white/[0.03] mt-4 overflow-hidden p-6">
+    <div class="rounded-2xl border border-neutral-200 bg-white text-neutral-900 mt-4 overflow-hidden p-6">
 
         <div class="flex flex-row gap-3">
             <div class="rounded-2xl text-5xl bg-primary-50 p-2 text-center w-24 h-24 text-primary-500 justify-self-center self-center min-w-[5rem]">
@@ -52,7 +52,7 @@
 
         </div>
 
-        <div class="text-primary-400 my-4">
+        <div class="text-primary-600 my-4">
             {{ __('What you get:') }}
         </div>
         <div>

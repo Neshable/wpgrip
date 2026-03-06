@@ -5,7 +5,7 @@
             {{ __('Enter your details') }}
         </x-heading.h2>
 
-        <div class="relative rounded-2xl border border-white/10 bg-white/[0.03] mt-4 overflow-hidden p-6">
+        <div class="relative rounded-2xl border border-neutral-200 bg-white text-neutral-900 mt-4 overflow-hidden p-6">
 
             @if (!empty($intro))
                 <div class="mb-4 text-sm">

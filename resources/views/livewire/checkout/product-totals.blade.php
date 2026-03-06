@@ -50,20 +50,20 @@
 
     <hr class="mb-6 mt-2">
     <div class="flex flex-row justify-between">
-        <div class="text-primary-400">
+        <div class="text-primary-600">
             {{ __('Price') }}
         </div>
-        <div class="text-primary-400">
+        <div class="text-primary-600">
             @money($subtotal, $currencyCode)
         </div>
     </div>
 
     @if($discountAmount > 0)
         <div class="flex flex-row justify-between">
-            <div class="text-primary-400">
+            <div class="text-primary-600">
                 {{ __('Discount') }}
             </div>
-            <div class="text-primary-400">
+            <div class="text-primary-600">
                 @money($discountAmount, $currencyCode)
             </div>
         </div>
@@ -71,10 +71,10 @@
         <hr class="my-6">
 
         <div class="flex flex-row justify-between">
-            <div class="text-primary-400">
+            <div class="text-primary-600">
                 {{ __('Total') }}
             </div>
-            <div class="text-primary-400">
+            <div class="text-primary-600">
                 @money($amountDue, $currencyCode)
             </div>
         </div>

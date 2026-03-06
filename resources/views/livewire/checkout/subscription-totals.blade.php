@@ -56,10 +56,10 @@
 
     @if ($subtotal > 0)
         <div class="flex flex-row justify-between">
-            <div class="text-primary-400">
+            <div class="text-primary-600">
                 {{ __('Subscription price') }}
             </div>
-            <div class="text-primary-400">
+            <div class="text-primary-600">
                 @money($subtotal, $currencyCode)
             </div>
         </div>
@@ -67,19 +67,19 @@
 
     @if ($planPriceType === \App\Constants\PlanPriceType::USAGE_BASED_PER_UNIT->value)
         <div class="flex flex-row justify-between mt-2">
-            <div class="text-primary-400">
+            <div class="text-primary-600">
                 {{ __('Price / ') }} {{ __($unitMeterName) }}
             </div>
-            <div class="text-primary-400">
+            <div class="text-primary-600">
                 @money($pricePerUnit, $currencyCode)
             </div>
         </div>
     @elseif($planPriceType === \App\Constants\PlanPriceType::USAGE_BASED_TIERED_VOLUME->value || $planPriceType === \App\Constants\PlanPriceType::USAGE_BASED_TIERED_GRADUATED->value)
-        <div class="text-primary-400 font-medium mt-3">
+        <div class="text-primary-600 font-medium mt-3">
             {{ __('Tiered pricing') }}
         </div>
         <div class="flex flex-row justify-between mt-2">
-            <div class="text-primary-400">
+            <div class="text-primary-600">
                 @php $start = 0; $startingPhrase = __('From'); @endphp
                 @foreach($tiers as $tier)
                     <div class="">
@@ -107,10 +107,10 @@
 
     @if($discountAmount > 0)
         <div class="flex flex-row justify-between">
-            <div class="text-primary-400">
+            <div class="text-primary-600">
                 {{ __('Discount') }}
             </div>
-            <div class="text-primary-400">
+            <div class="text-primary-600">
                 @money($discountAmount, $currencyCode)
             </div>
         </div>
@@ -118,10 +118,10 @@
         <hr class="my-6">
 
         <div class="flex flex-row justify-between">
-            <div class="text-primary-400">
+            <div class="text-primary-600">
                 {{ __('Total') }}
             </div>
-            <div class="text-primary-400">
+            <div class="text-primary-600">
                 @money($amountDue, $currencyCode)
             </div>
         </div>
