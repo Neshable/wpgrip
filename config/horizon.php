@@ -214,11 +214,17 @@ return [
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
             ],
+            'supervisor-longrunning' => [
+                'maxProcesses' => 3,
+            ],
         ],
 
         'local' => [
             'supervisor-1' => [
                 'maxProcesses' => 3,
+            ],
+            'supervisor-longrunning' => [
+                'maxProcesses' => 1,
             ],
         ],
     ],
