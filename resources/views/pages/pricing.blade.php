@@ -144,10 +144,16 @@
                 </ul>
 
                 {{-- CTA --}}
+                @if(config('app.checkout_enabled', true))
                 <a href="{{ Auth::check() ? route('checkout.subscription', $plan['slug']) : '/register' }}"
                    class="inline-flex items-center justify-center h-10 w-full rounded-lg border text-sm font-medium transition-all duration-200 {{ $popular ? 'border-blue-500 bg-blue-600 text-white hover:bg-blue-500' : 'border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white' }}">
                     Start free trial
                 </a>
+                @else
+                <span class="inline-flex items-center justify-center h-10 w-full rounded-lg border text-sm font-medium border-white/10 bg-white/5 text-neutral-500 cursor-not-allowed">
+                    Coming soon
+                </span>
+                @endif
             </div>
             @endforeach
         </div>

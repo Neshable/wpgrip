@@ -228,4 +228,16 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Checkout Enabled
+    |--------------------------------------------------------------------------
+    |
+    | Set to false to temporarily disable all checkout/subscription routes.
+    | Users will be redirected to the pricing page.
+    |
+    */
+
+    'checkout_enabled' => env('CHECKOUT_ENABLED', true),
+
 ];

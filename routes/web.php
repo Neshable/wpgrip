@@ -121,12 +121,12 @@ Route::get('/auth/{provider}/callback', [OAuthController::class, 'callback'])
 Route::get('/checkout/plan/{planSlug}', [
     App\Http\Controllers\SubscriptionCheckoutController::class,
     'subscriptionCheckout',
-])->name('checkout.subscription');
+])->name('checkout.subscription')->middleware('checkout.enabled');
 
 Route::get('/checkout/convert-subscription/{subscriptionUuid}', [
     App\Http\Controllers\SubscriptionCheckoutController::class,
     'convertLocalSubscriptionCheckout',
-])->name('checkout.convert-local-subscription');
+])->name('checkout.convert-local-subscription')->middleware('checkout.enabled');
 
 Route::get('/already-subscribed', function () {
     return view('checkout.already-subscribed');
@@ -201,7 +201,7 @@ Route::get('/cart/clear', [
 Route::get('/checkout/product', [
     App\Http\Controllers\ProductCheckoutController::class,
     'productCheckout',
-])->name('checkout.product');
+])->name('checkout.product')->middleware('checkout.enabled');
 
 Route::get('/checkout/product/success', [
     App\Http\Controllers\ProductCheckoutController::class,
