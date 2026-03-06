@@ -54,6 +54,13 @@ class SiteResource extends Resource
                 Forms\Components\Wizard\Step::make('Main Info')
                     // ->icon('heroicon-o-shopping-bag')
                     ->schema([
+                        Forms\Components\ViewField::make('ssh_key_instructions')
+                            ->view('filament.forms.components.ssh-key-instructions')
+                            ->viewData([
+                                'sshPublicKey' => Filament::getTenant()?->getPublicKey() ?? null,
+                            ])
+                            ->columnSpanFull()
+                            ->dehydrated(false),
                         Forms\Components\Toggle::make('is_staging')
                             ->label('Will this be a staging site?')
                             ->helperText(new HtmlString('Enable the staging mode if this is a staging site.'))
