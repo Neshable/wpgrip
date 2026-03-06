@@ -22,7 +22,7 @@
     <div id="app">
         <x-layouts.app.header />
 
-        <div class="mx-auto my-6 md:my-10 max-w-4xl px-4">
+        <div class="mx-auto mt-24 md:mt-28 mb-6 md:mb-10 max-w-4xl px-4">
             {{ $slot }}
         </div>
 
