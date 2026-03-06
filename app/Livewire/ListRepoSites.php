@@ -116,7 +116,11 @@ class ListRepoSites extends Component implements HasForms, HasTable
                     // ->model( Repository::class )
                     ->label('Connect a site')
                     ->tooltip('Connect a site to this repository.')
-                    ->form([                
+                    ->form([     
+                            Forms\Components\ViewField::make('git_ssh_key_instructions')
+                                ->view('filament.forms.components.git-ssh-key-instructions')
+                                ->columnSpanFull()
+                                ->dehydrated(false),
                             Forms\Components\Select::make('site_id')
                                 ->label('Choose a site')
                                 ->helperText('You can select production or staging site.')
