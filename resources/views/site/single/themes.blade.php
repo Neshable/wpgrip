@@ -24,7 +24,7 @@
     @else
    
 
-    @livewire('list-themes', ['site_model' => $this->getRecord() ] )
+    @livewire('themes-panel', ['site_model' => $this->getRecord() ] )
 
     @endif
 

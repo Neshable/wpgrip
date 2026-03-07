@@ -69,7 +69,6 @@
                                     </ul>
                                 </x-slot>
                             </x-plans.one>
-                            <x-plans.one :plan="$plan" />
                         </x-section.column>
                     @endforeach
                 </x-section.columns>

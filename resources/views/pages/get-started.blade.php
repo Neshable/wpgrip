@@ -55,7 +55,7 @@
 
         </div>
 
-        <div id="plans" class="py-16 bg-white overflow-hidden lg:pt-24 lg:pb-8">
+        <div id="plans" class="py-16 overflow-hidden lg:pt-24 lg:pb-8">
             <x-plans.all calculate-saving-rates="true" preselected-interval="month"></x-plans.all>
         </div>
     </div>
