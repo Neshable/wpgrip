@@ -29,6 +29,11 @@ class MonitorLog extends Model
         'uptime_check_additional_headers',
         'uptime_check_response_checker',
         'response_time_ms',
+        'dns_time_ms',
+        'connect_time_ms',
+        'tls_time_ms',
+        'ttfb_ms',
+        'transfer_time_ms',
         'response_status_code',
         'response_body',
     ];
@@ -39,11 +44,14 @@ class MonitorLog extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        // 'certificate_expiration_date' => 'datetime',
-        // 'uptime_check_payload' => 'array',
-        // 'uptime_check_additional_headers' => 'array',
-        // 'response_time_ms' => 'integer',
-        // 'response_status_code' => 'integer',
+        'certificate_expiration_date' => 'datetime',
+        'response_time_ms' => 'integer',
+        'dns_time_ms' => 'float',
+        'connect_time_ms' => 'float',
+        'tls_time_ms' => 'float',
+        'ttfb_ms' => 'float',
+        'transfer_time_ms' => 'float',
+        'response_status_code' => 'integer',
     ];
 
     /**

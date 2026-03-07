@@ -7,6 +7,7 @@ use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Contracts\View\View;
 
+use App\Filament\Dashboard\Resources\SiteResource\Widgets\ResponseTimeChart;
 use App\Filament\Dashboard\Resources\SiteResource\Widgets\UptimeChart;
 
 class Monitoring extends ViewRecord
@@ -48,6 +49,7 @@ class Monitoring extends ViewRecord
     {
         return [
             UptimeChart::class,
+            ResponseTimeChart::class,
         ];
     }
 }

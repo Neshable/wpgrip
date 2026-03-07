@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Filament\Resources\MonitorResource;
+use App\Models\MonitorLog;
 use App\Models\UptimeMonitor;
 
 use Filament\Tables\Actions;
@@ -78,6 +79,28 @@ class ListMonitors extends Component implements HasForms, HasTable
                 TextColumn::make('uptime_check_failure_reason')
                     ->label('Errors')
                     ->wrap(),
+                TextColumn::make('response_time')
+                    ->label('Response')
+                    ->getStateUsing(function (UptimeMonitor $record) {
+                        $log = MonitorLog::where('site_id', $record->site_id)
+                            ->where('url', (string) $record->url)
+                            ->whereNotNull('response_time_ms')
+                            ->latest()
+                            ->first();
+                        return $log ? $log->response_time_ms . 'ms' : '—';
+                    })
+                    ->color(function (UptimeMonitor $record) {
+                        $log = MonitorLog::where('site_id', $record->site_id)
+                            ->where('url', (string) $record->url)
+                            ->whereNotNull('response_time_ms')
+                            ->latest()
+                            ->first();
+                        if (! $log) return 'gray';
+                        if ($log->response_time_ms <= 500) return 'success';
+                        if ($log->response_time_ms <= 1000) return 'warning';
+                        return 'danger';
+                    })
+                    ->badge(),
                 TextColumn::make('uptime_last_check_date')
                     ->label('Last checked')
                     ->since()

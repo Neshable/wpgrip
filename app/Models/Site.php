@@ -165,8 +165,15 @@ class Site extends Model
      */
     public function monitors()
     {
-       
         return $this->hasMany(UptimeMonitor::class);
+    }
+
+    /**
+     * Get monitor logs (response timing history).
+     */
+    public function monitorLogs()
+    {
+        return $this->hasMany(MonitorLog::class);
     }
 
 

@@ -353,6 +353,10 @@ class SiteResource extends Resource
             ->label('Status')
             ->view('filament.tables.columns.siteinfo'),
 
+            Tables\Columns\ViewColumn::make('response_time')
+            ->label('Response')
+            ->view('filament.tables.columns.response-time'),
+
             // Tables\Columns\TextColumn::make('server.provider')
             //     ->label('Hosted')
             //     ->badge(),
