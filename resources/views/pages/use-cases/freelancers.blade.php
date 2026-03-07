@@ -16,7 +16,7 @@
             You're one person.<br><span class="text-violet-400">Manage like a team.</span>
         </h1>
         <p class="mt-6 text-lg text-neutral-400 font-light max-w-xl leading-relaxed">
-            You built the sites. Now you maintain them. WPGrip handles the monitoring, updates, backups, and vulnerability scanning across all your client sites — so you can focus on building, not babysitting.
+            You built the sites. Now you maintain them. WPGrip handles the monitoring, updates, database backups, and vulnerability scanning across all your client sites — so you can focus on building, not babysitting.
         </p>
         <div class="mt-10 flex flex-col sm:flex-row items-center gap-3">
             <a href="/register" class="inline-flex items-center justify-center h-11 px-6 rounded-lg border border-violet-500 bg-violet-600 text-violet-50 hover:bg-violet-500 font-medium text-sm transition-all duration-200 shadow-lg shadow-violet-900/40">
@@ -97,7 +97,7 @@
                 ['icon' => '📱', 'title' => 'Uptime monitoring', 'desc' => 'Know the moment a client site goes down. Get alerts on Slack or email with enough detail to act.'],
                 ['icon' => '🔄', 'title' => 'One-click updates', 'desc' => 'Update plugins, themes, and core across all sites from one place. WP-CLI handles it over SSH — fast and reliable.'],
                 ['icon' => '🛡️', 'title' => 'Vulnerability alerts', 'desc' => 'Know which client sites have vulnerable plugins before they get exploited. Daily checks against the WPScan database.'],
-                ['icon' => '🗄️', 'title' => 'Automated backups', 'desc' => 'Encrypted database backups on a schedule. Restore with one click. Peace of mind for you and your clients.'],
+                ['icon' => '🗄️', 'title' => 'Automated DB backups', 'desc' => 'Encrypted database backups on a schedule. Restore with one click. File backups stay with your hosting provider — we handle the database.'],
                 ['icon' => '🚀', 'title' => 'Git deployments', 'desc' => 'Push to GitHub or Bitbucket and your changes deploy to any connected site. No more SFTP.'],
                 ['icon' => '🤖', 'title' => 'AI assistant', 'desc' => 'Ask the AI about any site — it knows the stack, the plugins, the performance history. It can even run commands to investigate.'],
             ];

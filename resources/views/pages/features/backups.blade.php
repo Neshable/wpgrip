@@ -1,5 +1,5 @@
 <x-layouts.app>
-<x-slot name="title">WordPress Backups — Encrypted, Automated, One-Click Restore</x-slot>
+<x-slot name="title">WordPress Database Backups — Encrypted, Automated, One-Click Restore</x-slot>
 
 {{-- HERO --}}
 <section class="relative w-full overflow-hidden bg-neutral-950">
@@ -13,10 +13,10 @@
             Backups
         </div>
         <h1 class="text-5xl md:text-6xl font-semibold tracking-tight text-white text-balance leading-tight max-w-3xl">
-            Encrypted backups.<br>One-click restore.
+            Encrypted DB backups.<br>One-click restore.
         </h1>
         <p class="mt-6 text-lg text-neutral-400 font-light max-w-xl leading-relaxed">
-            WPGrip backs up your WordPress databases over SSH using mysqldump. Encrypted, compressed, and stored in the cloud. When you need to restore, it takes one click.
+            WPGrip backs up your WordPress databases over SSH using mysqldump. Encrypted, compressed, and stored in the cloud. When you need to restore, it takes one click. File backups are your hosting provider's job — we focus on the data that matters most.
         </p>
         <div class="mt-10 flex flex-col sm:flex-row items-center gap-3">
             <a href="/register" class="inline-flex items-center justify-center h-11 px-6 rounded-lg border border-blue-500 bg-blue-600 text-blue-50 hover:bg-blue-500 font-medium text-sm transition-all duration-200 shadow-lg shadow-blue-900/40">
@@ -36,14 +36,14 @@
             <div>
                 <div class="inline-flex items-center px-2.5 py-1 rounded-md border border-amber-900 bg-amber-950 text-amber-300 text-xs font-mono mb-6">Backup History</div>
                 <h2 class="text-3xl md:text-4xl font-semibold text-white tracking-tight leading-tight">
-                    Every backup. Dated, sized, restorable.
+                    Every database backup. Dated, sized, restorable.
                 </h2>
                 <p class="mt-4 text-base text-neutral-400 font-light leading-relaxed">
-                    Your backup dashboard shows every backup for every site — when it ran, how large it is, and whether it completed. Pick any backup and restore it with a single click.
+                    Your dashboard shows every database backup for every site — when it ran, how large the dump is, and whether it completed. Pick any backup and restore your database with a single click.
                 </p>
                 <ul class="mt-8 space-y-3">
                     @foreach([
-                        'Full backup history with dates and file sizes',
+                        'Full database backup history with dates and sizes',
                         'Status indicator for each backup — completed or failed',
                         'One-click restore from any point in time',
                         'Download backups directly to your machine',

@@ -16,7 +16,7 @@
             50 client sites.<br><span class="text-blue-400">One dashboard.</span>
         </h1>
         <p class="mt-6 text-lg text-neutral-400 font-light max-w-xl leading-relaxed">
-            Managing WordPress sites across multiple clients, servers, and hosting providers is chaotic without the right tool. WPGrip gives your team a single pane of glass for monitoring, updates, deployments, and backups — without installing plugins on client sites.
+            Managing WordPress sites across multiple clients, servers, and hosting providers is chaotic without the right tool. WPGrip gives your team a single pane of glass for monitoring, updates, deployments, and database backups — without installing plugins on client sites.
         </p>
         <div class="mt-10 flex flex-col sm:flex-row items-center gap-3">
             <a href="/register" class="inline-flex items-center justify-center h-11 px-6 rounded-lg border border-blue-500 bg-blue-600 text-blue-50 hover:bg-blue-500 font-medium text-sm transition-all duration-200 shadow-lg shadow-blue-900/40">
@@ -75,7 +75,7 @@
                 ['icon' => '🔔', 'title' => 'Uptime and SSL alerts', 'desc' => 'Get Slack or email alerts the moment a site goes down or an SSL certificate is about to expire. Act before your client notices.'],
                 ['icon' => '🚀', 'title' => 'Git deployments', 'desc' => 'Push your agency theme or plugin to GitHub and it deploys across every connected site. One repo, many sites.'],
                 ['icon' => '🛡️', 'title' => 'Vulnerability scanning', 'desc' => 'Every plugin and theme checked against the WPScan database daily. Know which client sites have vulnerable components before they get exploited.'],
-                ['icon' => '🗄️', 'title' => 'Automated backups', 'desc' => 'Encrypted database backups on a schedule. One-click restore. Offsite cloud storage so nothing depends on the client\'s server.'],
+                ['icon' => '🗄️', 'title' => 'Automated DB backups', 'desc' => 'Encrypted database backups on a schedule. One-click restore to any point. File backups are your hosting provider\'s responsibility — we protect the data that matters most.'],
                 ['icon' => '👥', 'title' => 'Team collaboration', 'desc' => 'Invite your team members to the workspace. Everyone sees the same dashboard, same alerts, same deployment logs.'],
             ];
             @endphp

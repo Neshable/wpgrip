@@ -17,12 +17,31 @@
             </div>
 
             {{-- Footer links --}}
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-10">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-10">
                 <div class="space-y-5">
                     <h4 class="text-sm font-medium text-white">Product</h4>
                     <nav class="flex flex-col gap-4">
                         <a href="{{ route('features') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Features</a>
                         <a href="{{ route('pricing') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Pricing</a>
+                        <a href="{{ route('why-ssh') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Why SSH</a>
+                    </nav>
+                </div>
+                <div class="space-y-5">
+                    <h4 class="text-sm font-medium text-white">Features</h4>
+                    <nav class="flex flex-col gap-4">
+                        <a href="{{ route('features.uptime-monitoring') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Uptime Monitoring</a>
+                        <a href="{{ route('features.backups') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Database Backups</a>
+                        <a href="{{ route('features.git-deployments') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Git Deployments</a>
+                        <a href="{{ route('features.security') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Security Scanning</a>
+                        <a href="{{ route('features.performance') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Performance Testing</a>
+                    </nav>
+                </div>
+                <div class="space-y-5">
+                    <h4 class="text-sm font-medium text-white">Use Cases</h4>
+                    <nav class="flex flex-col gap-4">
+                        <a href="{{ route('for-agencies') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">For Agencies</a>
+                        <a href="{{ route('for-freelancers') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">For Freelancers</a>
+                        <a href="{{ route('for-hosting-companies') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">For Hosting Companies</a>
                     </nav>
                 </div>
                 <div class="space-y-5">
