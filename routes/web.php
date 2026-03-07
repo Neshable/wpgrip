@@ -39,6 +39,45 @@ Route::get('/features', function () {
     return view('pages.features');
 })->name('features');
 
+// Feature pages
+Route::get('/features/uptime-monitoring', function () {
+    return view('pages.features.uptime-monitoring');
+})->name('features.uptime-monitoring');
+
+Route::get('/features/backups', function () {
+    return view('pages.features.backups');
+})->name('features.backups');
+
+Route::get('/features/git-deployments', function () {
+    return view('pages.features.git-deployments');
+})->name('features.git-deployments');
+
+Route::get('/features/security', function () {
+    return view('pages.features.security');
+})->name('features.security');
+
+Route::get('/features/performance', function () {
+    return view('pages.features.performance');
+})->name('features.performance');
+
+// Use-case pages
+Route::get('/for-agencies', function () {
+    return view('pages.use-cases.agencies');
+})->name('for-agencies');
+
+Route::get('/for-freelancers', function () {
+    return view('pages.use-cases.freelancers');
+})->name('for-freelancers');
+
+Route::get('/for-hosting-companies', function () {
+    return view('pages.use-cases.hosting');
+})->name('for-hosting-companies');
+
+// Why SSH
+Route::get('/why-ssh', function () {
+    return view('pages.why-ssh');
+})->name('why-ssh');
+
 // Normal dashboard
 Route::get('/dashboard', function (UserDashboardManager $dashboardManager) {
     return redirect($dashboardManager->getUserDashboardUrl(Auth::user()));
