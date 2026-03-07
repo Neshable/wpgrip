@@ -2,50 +2,62 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Models\Snapshot;
-use App\Models\Deployment;
-use Illuminate\Support\Facades\Bus;
 use App\Jobs\Backup\DeleteOldSnapshots;
+use App\Models\Deployment;
+use App\Models\MonitorLog;
+use App\Models\PerformanceData;
+use App\Models\Snapshot;
+use Illuminate\Console\Command;
 
 class DeleteExpiredRecords extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'delete:expired-records';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Delete records that have reached their deletion date';
 
     /**
-     * Execute the console command.
+     * Number of days to retain time-series / history data.
      */
-    public function handle()
-    {
-         // Step 1: Fetch expired snapshots
-         $expiredSnapshots = Snapshot::where('deletion_date', '<=', now() )->get();
+    protected int $retentionDays = 30;
 
-         // Step 2: Dispatch jobs for each expired snapshot
-         foreach ($expiredSnapshots as $snapshot) {
-            DeleteOldSnapshots::dispatch( $snapshot );
-            //  Bus::chain([
-            //      new \App\Jobs\DeleteRemoteFileAndRecordJob($snapshot),
-            //  ])->onQueue('longrunning')->dispatch();
-         }
- 
-        // Prune deployment logs: keep only the 50 most recent per site-repository connection
+    public function handle(): void
+    {
+        $this->deleteExpiredSnapshots();
+        $this->pruneDeploymentLogs();
+        $this->pruneMonitorLogs();
+        $this->prunePerformanceData();
+
+        $this->info('Expired records have been scheduled for deletion.');
+    }
+
+    /**
+     * Dispatch deletion jobs for snapshots past their deletion_date.
+     */
+    protected function deleteExpiredSnapshots(): void
+    {
+        $expired = Snapshot::where('deletion_date', '<=', now())->get();
+
+        foreach ($expired as $snapshot) {
+            DeleteOldSnapshots::dispatch($snapshot);
+        }
+
+        if ($expired->count()) {
+            $this->line("Scheduled {$expired->count()} expired snapshot(s) for deletion.");
+        }
+    }
+
+    /**
+     * Keep only the 50 most recent deployments per site-repository pivot.
+     */
+    protected function pruneDeploymentLogs(): void
+    {
         $pivotIds = Deployment::whereNotNull('pivot_id')
             ->select('pivot_id')
             ->groupBy('pivot_id')
             ->havingRaw('COUNT(*) > 50')
             ->pluck('pivot_id');
+
+        $totalDeleted = 0;
 
         foreach ($pivotIds as $pivotId) {
             $idsToKeep = Deployment::where('pivot_id', $pivotId)
@@ -53,11 +65,37 @@ class DeleteExpiredRecords extends Command
                 ->limit(50)
                 ->pluck('id');
 
-            Deployment::where('pivot_id', $pivotId)
+            $totalDeleted += Deployment::where('pivot_id', $pivotId)
                 ->whereNotIn('id', $idsToKeep)
                 ->delete();
         }
 
-        $this->info('Expired records have been scheduled for deletion.');
+        if ($totalDeleted) {
+            $this->line("Pruned {$totalDeleted} old deployment log(s).");
+        }
+    }
+
+    /**
+     * Delete monitor_logs older than the retention period.
+     */
+    protected function pruneMonitorLogs(): void
+    {
+        $deleted = MonitorLog::where('created_at', '<', now()->subDays($this->retentionDays))->delete();
+
+        if ($deleted) {
+            $this->line("Deleted {$deleted} monitor log(s) older than {$this->retentionDays} days.");
+        }
+    }
+
+    /**
+     * Delete performance_data (Lighthouse results) older than the retention period.
+     */
+    protected function prunePerformanceData(): void
+    {
+        $deleted = PerformanceData::where('created_at', '<', now()->subDays($this->retentionDays))->delete();
+
+        if ($deleted) {
+            $this->line("Deleted {$deleted} performance data record(s) older than {$this->retentionDays} days.");
+        }
     }
 }
