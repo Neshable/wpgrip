@@ -17,7 +17,8 @@ class SiteMeta extends Model
     protected $table = 'sites_meta';
 
     protected $fillable = [
-        'site_id'
+        'site_id',
+        'is_vulnerable',
 	];
 
     /**

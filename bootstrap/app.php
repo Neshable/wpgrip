@@ -45,7 +45,7 @@ return Illuminate\Foundation\Application::configure(basePath: dirname(__DIR__))
         $schedule->job(new SyncAllSitesStats)->daily();
         $schedule->job(new GetVulnerabilityDatabase)->dailyAt('13:00')->onOneServer();
 
-        // $schedule->job(new CheckAllVulnerabilities)->dailyAt('14:00');
+        $schedule->job(new CheckAllVulnerabilities)->dailyAt('14:00')->onOneServer();
 
         // Domain specific - expiry date, blacklists...
         $schedule->job(new BulkDomainExpiry)->weekly();

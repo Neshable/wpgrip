@@ -11,9 +11,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
-class CheckPluginVulnerabilities implements ShouldQueue
+class CheckThemeVulnerabilities implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -30,18 +29,18 @@ class CheckPluginVulnerabilities implements ShouldQueue
             return;
         }
 
-        $plugins = $this->site->plugins;
+        $themes = $this->site->themes;
 
-        foreach ($plugins as $plugin) {
-            $currentVersion = $plugin->pivot->version;
+        foreach ($themes as $theme) {
+            $currentVersion = $theme->pivot->version;
 
             if (! $currentVersion) {
                 continue;
             }
 
-            // Find all vulnerabilities for this plugin slug.
-            $vulnerabilities = Vulnerability::where('type', 'plugin')
-                ->where('slug', $plugin->name)
+            // Find all vulnerabilities for this theme slug.
+            $vulnerabilities = Vulnerability::where('type', 'theme')
+                ->where('slug', $theme->name)
                 ->get();
 
             $isVulnerable = false;
@@ -54,7 +53,7 @@ class CheckPluginVulnerabilities implements ShouldQueue
                 }
             }
 
-            $plugin->pivot->update([
+            $theme->pivot->update([
                 'is_vulnerable' => $isVulnerable,
                 'vuln_ids'      => json_encode($vulnIds),
             ]);

@@ -232,7 +232,7 @@ class Site extends Model
     public function plugins(): BelongsToMany
     {
         return $this->belongsToMany(Plugin::class, 'plugin_site')
-            ->withPivot( ['version', 'update_version', 'status'] );
+            ->withPivot( ['version', 'update_version', 'status', 'is_vulnerable', 'vuln_ids'] );
     }
 
     /**
@@ -241,7 +241,7 @@ class Site extends Model
     public function themes(): BelongsToMany
     {
         return $this->belongsToMany(Theme::class, 'theme_site')
-            ->withPivot( ['version', 'update_version', 'status'] );
+            ->withPivot( ['version', 'update_version', 'status', 'is_vulnerable', 'vuln_ids'] );
     }
 
     /**

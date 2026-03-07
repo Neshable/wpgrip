@@ -22,7 +22,7 @@ class Theme extends Model
      */
     public function sites(): BelongsToMany
     {
-        return $this->belongsToMany(Site::class, 'plugin_site')
+        return $this->belongsToMany(Site::class, 'theme_site')
             ->withPivot(['version', 'update_version', 'status', 'is_vulnerable', 'vuln_ids']);
     }
 }
