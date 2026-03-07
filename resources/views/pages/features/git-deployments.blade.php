@@ -16,7 +16,7 @@
             Push to deploy.<br>Across every site.
         </h1>
         <p class="mt-6 text-lg text-neutral-400 font-light max-w-xl leading-relaxed">
-            Connect your GitHub, GitLab, or Bitbucket repos to your WordPress sites. Push to your branch, and WPGrip pulls the code to every connected site over SSH. One repo can deploy to dozens of sites at once.
+            Connect your GitHub or Bitbucket repos to your WordPress sites. Push to your branch, and WPGrip pulls the code to every connected site over SSH. One repo can deploy to dozens of sites at once.
         </p>
         <div class="mt-10 flex flex-col sm:flex-row items-center gap-3">
             <a href="/register" class="inline-flex items-center justify-center h-11 px-6 rounded-lg border border-blue-500 bg-blue-600 text-blue-50 hover:bg-blue-500 font-medium text-sm transition-all duration-200 shadow-lg shadow-blue-900/40">
@@ -107,7 +107,7 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             @php
             $steps = [
-                ['step' => '01', 'title' => 'Connect your repo', 'desc' => 'Link your GitHub, GitLab, or Bitbucket repository. WPGrip sets up the webhook automatically.'],
+                ['step' => '01', 'title' => 'Connect your repo', 'desc' => 'Link your GitHub or Bitbucket repository. WPGrip sets up the webhook automatically.'],
                 ['step' => '02', 'title' => 'Pick your branch', 'desc' => 'Choose which branch to track — main, production, staging. Different sites can follow different branches.'],
                 ['step' => '03', 'title' => 'Link your sites', 'desc' => 'Connect one or more WordPress sites to the repo. A theme repo can power 20 client sites at once.'],
                 ['step' => '04', 'title' => 'Push and deploy', 'desc' => 'Push to your branch. The webhook fires. WPGrip pulls the code to every linked site over SSH.'],
