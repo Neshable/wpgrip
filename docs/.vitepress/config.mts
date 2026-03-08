@@ -111,10 +111,6 @@ export default defineConfig({
       ],
     },
 
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/wpgrip' },
-    ],
-
     footer: {
       message: 'All your WordPress sites. One powerful control panel.',
       copyright: `© ${new Date().getFullYear()} WPGrip. All rights reserved.`,
@@ -124,9 +120,6 @@ export default defineConfig({
       provider: 'local',
     },
 
-    editLink: {
-      pattern: 'https://github.com/wpgrip/docs/edit/main/:path',
-      text: 'Suggest edits to this page',
-    },
+
   },
 })
