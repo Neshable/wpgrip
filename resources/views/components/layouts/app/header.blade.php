@@ -23,6 +23,7 @@
             <a href="{{ route('features') }}" class="text-sm font-light text-neutral-400 hover:text-white transition-colors duration-200">Features</a>
             <a href="{{ route('pricing') }}" class="text-sm font-light text-neutral-400 hover:text-white transition-colors duration-200">Pricing</a>
             <a href="{{ route('why-ssh') }}" class="text-sm font-light text-neutral-400 hover:text-white transition-colors duration-200">Why SSH</a>
+            <a href="{{ config('app.docs_url', '/docs') }}" class="text-sm font-light text-neutral-400 hover:text-white transition-colors duration-200">Docs</a>
             @auth
                 <a href="{{ route('dashboard') }}" class="text-sm font-medium text-white hover:text-blue-400 transition-colors duration-200">Dashboard</a>
             @endauth
@@ -52,6 +53,7 @@
             <a href="{{ route('features') }}" class="px-3 py-3 text-neutral-400 hover:text-white text-sm">Features</a>
             <a href="{{ route('pricing') }}" class="px-3 py-3 text-neutral-400 hover:text-white text-sm">Pricing</a>
             <a href="{{ route('why-ssh') }}" class="px-3 py-3 text-neutral-400 hover:text-white text-sm">Why SSH</a>
+            <a href="{{ config('app.docs_url', '/docs') }}" class="px-3 py-3 text-neutral-400 hover:text-white text-sm">Docs</a>
             @auth
                 <a href="{{ route('dashboard') }}" class="px-3 py-3 text-white text-sm font-medium">Dashboard</a>
             @else

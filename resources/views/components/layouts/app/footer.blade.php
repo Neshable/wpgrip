@@ -24,6 +24,7 @@
                         <a href="{{ route('features') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Features</a>
                         <a href="{{ route('pricing') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Pricing</a>
                         <a href="{{ route('why-ssh') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Why SSH</a>
+                        <a href="{{ config('app.docs_url', '/docs') }}" class="text-sm text-neutral-400 hover:text-white transition-colors">Documentation</a>
                     </nav>
                 </div>
                 <div class="space-y-5">

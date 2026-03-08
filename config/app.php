@@ -58,6 +58,8 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'docs_url' => env('DOCS_URL', 'https://docs.wpgrip.com'),
+
     'asset_url' => env('ASSET_URL'),
 
     /*
