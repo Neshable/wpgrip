@@ -1,0 +1,248 @@
+/* ==========================================================================
+   WPGrip Docs — Custom VitePress Theme
+   Matches the WPGrip marketing site: dark neutral-950 bg, Poppins font,
+   blue-600 accents, glass-morphism cards.
+   ========================================================================== */
+
+/* ---------- Fonts ---------- */
+:root {
+  --vp-font-family-base: 'Poppins', ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --vp-font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo,
+    Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
+/* ---------- Brand Colors (dark-first, matching neutral-950 bg) ---------- */
+:root {
+  /* Blue accent — matches bg-blue-600 / text-blue-400 on the marketing site */
+  --vp-c-brand-1: #3b82f6; /* blue-500 */
+  --vp-c-brand-2: #2563eb; /* blue-600 */
+  --vp-c-brand-3: #1d4ed8; /* blue-700 */
+  --vp-c-brand-soft: rgba(59, 130, 246, 0.14);
+}
+
+.dark {
+  --vp-c-brand-1: #60a5fa; /* blue-400 */
+  --vp-c-brand-2: #3b82f6; /* blue-500 */
+  --vp-c-brand-3: #2563eb; /* blue-600 */
+  --vp-c-brand-soft: rgba(96, 165, 250, 0.14);
+
+  /* Backgrounds — matches rgb(10,10,10) body + rgb(17,17,17) footer */
+  --vp-c-bg: #0a0a0a;
+  --vp-c-bg-alt: #111111;
+  --vp-c-bg-elv: #171717;
+  --vp-c-bg-soft: #171717;
+
+  /* Borders — matches border-white/10 */
+  --vp-c-divider: rgba(255, 255, 255, 0.08);
+  --vp-c-gutter: rgba(255, 255, 255, 0.05);
+
+  /* Text — matches text-neutral-400 / text-neutral-300 / text-white */
+  --vp-c-text-1: rgba(255, 255, 255, 0.95);
+  --vp-c-text-2: rgba(163, 163, 163, 1);
+  --vp-c-text-3: rgba(115, 115, 115, 1);
+
+  /* Sidebar */
+  --vp-sidebar-bg-color: #0a0a0a;
+
+  /* Code blocks */
+  --vp-code-block-bg: #111111;
+  --vp-code-tab-bg: #111111;
+  --vp-code-tab-active-bar-color: #3b82f6;
+}
+
+/* ---------- Force dark mode as default (matches WPGrip = dark-only) ---------- */
+html {
+  color-scheme: dark;
+}
+
+/* ---------- Navbar glass-morphism ---------- */
+.dark .VPNav {
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .VPNavBar {
+  background: rgba(10, 10, 10, 0.85) !important;
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+}
+
+.dark .VPNavBar.has-sidebar .divider {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* ---------- Sidebar ---------- */
+.dark .VPSidebar {
+  background: #0a0a0a !important;
+  border-right-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark .VPSidebarItem.level-0 .text {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ---------- Content typography ---------- */
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Ensure markdown list styles survive Tailwind preflight resets */
+.vp-doc ul {
+  list-style-type: disc;
+  padding-left: 1.25em;
+}
+
+.vp-doc ol {
+  list-style-type: decimal;
+  padding-left: 1.25em;
+}
+
+.vp-doc ul > li,
+.vp-doc ol > li {
+  margin-top: 0.5em;
+}
+
+.vp-doc h1 {
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.vp-doc a {
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.vp-doc a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Hero (landing page) ---------- */
+.dark .VPHero .name {
+  background: linear-gradient(135deg, #fff 40%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dark .VPHero .text {
+  color: rgba(163, 163, 163, 1);
+}
+
+.dark .VPHero .tagline {
+  color: rgba(115, 115, 115, 1);
+}
+
+/* ---------- Feature cards (glass style) ---------- */
+.dark .VPFeature {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  border-radius: 12px !important;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.dark .VPFeature:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+.dark .VPFeature .title {
+  color: rgba(255, 255, 255, 0.95) !important;
+  font-weight: 600;
+}
+
+.dark .VPFeature .details {
+  color: rgba(163, 163, 163, 1) !important;
+}
+
+/* ---------- Home action buttons ---------- */
+.dark .VPButton.brand {
+  background-color: #2563eb !important;
+  border-color: #3b82f6 !important;
+  color: #eff6ff !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.dark .VPButton.brand:hover {
+  background-color: #3b82f6 !important;
+}
+
+.dark .VPButton.alt {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #d4d4d4 !important;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.dark .VPButton.alt:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+}
+
+/* ---------- Footer ---------- */
+.dark .VPFooter {
+  background: #111111 !important;
+  border-top-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark .VPFooter .message,
+.dark .VPFooter .copyright {
+  color: rgba(115, 115, 115, 1);
+}
+
+/* ---------- Custom container / callouts ---------- */
+.dark .vp-doc .custom-block.tip {
+  border-color: #2563eb;
+  background-color: rgba(37, 99, 235, 0.08);
+}
+
+.dark .vp-doc .custom-block.warning {
+  border-color: #f59e0b;
+  background-color: rgba(245, 158, 11, 0.08);
+}
+
+.dark .vp-doc .custom-block.danger {
+  border-color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.08);
+}
+
+.dark .vp-doc .custom-block.info {
+  border-color: rgba(255, 255, 255, 0.12);
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+/* ---------- Scrollbar ---------- */
+.dark ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ---------- Search modal ---------- */
+.dark .DocSearch-Modal {
+  background: #111111 !important;
+}
+
+/* ---------- Logo sizing in nav ---------- */
+.VPNavBarTitle .logo {
+  height: 28px;
+  width: auto;
+}
