@@ -41,9 +41,24 @@ export default defineConfig({
           text: 'Getting Started',
           items: [
             { text: 'Introduction', link: '/guide/getting-started' },
-            { text: 'Adding Your First Site', link: '/guide/adding-your-first-site' },
             { text: 'SSH Connection', link: '/guide/ssh-connection' },
             { text: 'Dashboard Overview', link: '/guide/dashboard-overview' },
+          ],
+        },
+        {
+          text: 'Sites',
+          items: [
+            { text: 'Adding a Site', link: '/guide/adding-a-site' },
+            { text: 'Monitoring Setup', link: '/guide/monitoring-setup' },
+            { text: 'Creating Backups', link: '/guide/creating-backups' },
+          ],
+        },
+        {
+          text: 'Git Deployments',
+          items: [
+            { text: 'Adding a Repository', link: '/guide/adding-a-repository' },
+            { text: 'Connecting Repo to Site', link: '/guide/connecting-repository-to-site' },
+            { text: 'Deploying with Git', link: '/guide/deploying-with-git' },
           ],
         },
         {

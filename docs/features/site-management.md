@@ -4,7 +4,7 @@ Sites are the core resource in WPGrip. Each site represents a WordPress installa
 
 ## Adding a Site
 
-See the [Adding Your First Site](/guide/adding-your-first-site) guide for a detailed walkthrough.
+See the [Adding a Site](/guide/adding-a-site) guide for a detailed walkthrough.
 
 ## Site Overview
 

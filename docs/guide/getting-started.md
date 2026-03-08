@@ -54,6 +54,9 @@ The first sync usually takes 10–30 seconds depending on your server’s SSH re
 
 ## Next Steps
 
-- [Add your first site](/guide/adding-your-first-site) — detailed walkthrough
+- [Add your first site](/guide/adding-a-site) — detailed walkthrough with SSH key setup
 - [SSH connection guide](/guide/ssh-connection) — key setup, troubleshooting
 - [Dashboard overview](/guide/dashboard-overview) — navigate the interface
+- [Set up Git deployments](/guide/adding-a-repository) — push-to-deploy from GitHub or Bitbucket
+- [Create backups](/guide/creating-backups) — on-demand MySQL backups
+- [Monitoring](/guide/monitoring-setup) — uptime, response times, SSL, domain checks
