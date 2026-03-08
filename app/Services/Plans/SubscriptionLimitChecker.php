@@ -109,6 +109,7 @@ class SubscriptionLimitChecker
             'ultimate-monthly'   => 50,
             'ultimate-yearly'    => 50,
             'enterprise-monthly' => PHP_INT_MAX,
+            'enterprise-yearly'  => PHP_INT_MAX,
         ],
         'repository' => [
             'basic-monthly'      => 0,
@@ -118,6 +119,7 @@ class SubscriptionLimitChecker
             'ultimate-monthly'   => PHP_INT_MAX,
             'ultimate-yearly'    => PHP_INT_MAX,
             'enterprise-monthly' => PHP_INT_MAX,
+            'enterprise-yearly'  => PHP_INT_MAX,
         ],
         'backup' => [
             'basic-monthly'      => 20,
@@ -127,6 +129,7 @@ class SubscriptionLimitChecker
             'ultimate-monthly'   => PHP_INT_MAX,
             'ultimate-yearly'    => PHP_INT_MAX,
             'enterprise-monthly' => PHP_INT_MAX,
+            'enterprise-yearly'  => PHP_INT_MAX,
         ],
     ];
 
@@ -175,7 +178,7 @@ class SubscriptionLimitChecker
     {
         // Priority order — enterprise-monthly first so it isn't shadowed by ultimate check
         $priority = [
-            'enterprise-monthly',
+            'enterprise-yearly',  'enterprise-monthly',
             'ultimate-yearly', 'ultimate-monthly',
             'pro-yearly',      'pro-monthly',
             'basic-yearly',    'basic-monthly',

@@ -3,6 +3,7 @@
 namespace App\Validator;
 
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 
 class RegisterValidator
 {
@@ -11,7 +12,7 @@ class RegisterValidator
         $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8'],
+            'password' => ['required', 'string', Password::min(8)->mixedCase()->numbers()->uncompromised()],
         ];
 
         if ($passwordConfirmed) {

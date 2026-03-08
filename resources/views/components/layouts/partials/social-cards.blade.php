@@ -14,6 +14,6 @@
 @endif
 
 <meta property="og:title" content="{{ !empty($title) ? $title : config('app.name', 'SaaSykit') }}" />
-<meta property="og:url" content="{{route('home')}}" />
+<meta property="og:url" content="{{url()->current()}}" />
 
 <meta property="og:description" content="{{ !empty($description) ? $description : config('app.description', 'SaaSykit') }}" />

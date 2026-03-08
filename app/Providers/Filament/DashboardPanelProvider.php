@@ -27,8 +27,10 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
+use App\Http\Middleware\EnsureSubscribed;
 use App\Http\Middleware\FilamentCustomHooksComponents;
 use App\Filament\Dashboard\Widgets as DashboardWidgets;
 
@@ -227,10 +229,15 @@ class DashboardPanelProvider extends PanelProvider
             ->renderHook(PanelsRenderHook::BODY_START,
                 fn (): string => Blade::render("@livewire('announcement.view', ['placement' => '".AnnouncementPlacement::USER_DASHBOARD->value."'])")
             )
+            ->emailVerification()
             ->authMiddleware([
                 Authenticate::class,
+                EnsureSubscribed::class,
             ])->plugins([
                 BreezyCore::make()
+                    ->passwordUpdateRules(
+                        Password::min(8)->mixedCase()->numbers()->uncompromised()
+                    )
                     ->myProfile(
                         shouldRegisterUserMenu: true, // Sets the 'account' link in the panel User Menu (default = true)
                         shouldRegisterNavigation: false, // Adds a main navigation item for the My Profile page (default = false)

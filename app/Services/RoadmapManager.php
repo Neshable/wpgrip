@@ -97,6 +97,9 @@ class RoadmapManager
             return '';
         }
 
+        // Escape all HTML entities first to prevent XSS
+        $string = e($string);
+
         // turn urls into <a> tags with rel="noopener noreferrer nofollow ugc" for SEO
         $string = preg_replace(
             '/(https?:\/\/[^\s]+)/',

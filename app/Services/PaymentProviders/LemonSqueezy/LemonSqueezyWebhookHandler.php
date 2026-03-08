@@ -40,8 +40,8 @@ class LemonSqueezyWebhookHandler
         $payloadString = $request->getContent();
         $signature = $request->header('x-signature');
 
-        if ($this->isValidSignature($payloadString, $signature)) {
-            return response()->json(['error' => 'Invalid signature'], 400);
+        if (! $this->isValidSignature($payloadString, $signature)) {
+            return response()->json(['error' => 'Invalid signature'], 403);
         }
 
         $paymentProvider = PaymentProvider::where('slug', PaymentProviderConstants::LEMON_SQUEEZY_SLUG)->firstOrFail();
@@ -369,15 +369,20 @@ class LemonSqueezyWebhookHandler
 
     }
 
-    private function isValidSignature(string $payload, ?string $signature)
+    private function isValidSignature(string $payload, ?string $signature): bool
     {
-
-        if ($signature === null) {
+        if ($signature === null || $signature === '') {
             return false;
         }
 
-        $hash = hash_hmac('sha256', $payload, config('services.lemon-squeezy.signing_secret'));
+        $secret = config('services.lemon-squeezy.signing_secret');
 
-        return ! hash_equals($hash, $signature);
+        if (empty($secret)) {
+            return false;
+        }
+
+        $hash = hash_hmac('sha256', $payload, $secret);
+
+        return hash_equals($hash, $signature);
     }
 }

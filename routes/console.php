@@ -53,5 +53,5 @@ Schedule::call(function () {
 })->weekly()->sundays()->at('02:00')->name('weekly-site-screenshots')->withoutOverlapping();
 
 // Laravel General Commands
-// Flush the failed jobs queue
-Schedule::command('queue:flush')->daily();
+// Prune failed jobs older than 7 days (keeps them for debugging)
+Schedule::command('queue:prune-failed --hours=168')->daily();

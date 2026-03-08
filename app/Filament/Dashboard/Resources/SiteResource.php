@@ -20,7 +20,6 @@ use App\Enums\HostingProvider;
 use App\Enums\ServerType;
 use App\Enums\BoardType;
 
-use Illuminate\Support\Facades\Auth;
 
 use App\Jobs\Site\SyncSiteStats;
 use App\Jobs\Site\TakeHomeScreenshot;
@@ -434,37 +433,6 @@ class SiteResource extends Resource
             //
         ];
     }
-
-    protected function beforeCreate(): void
-    {
-        $user = Auth::user();
-        $this->halt();
-        $tenant = Filament::getTenant(); 
-        
-        $siteCount = Site::where('tenant_id', $tenant->id)->count();
-            if ($siteCount >= 1) {
-                Notification::make()
-                ->warning()
-                ->title('You don\'t have an active subscription!')
-                ->body('Choose a plan to continue.')
-                ->persistent()
-                ->actions([
-                    Action::make('subscribe')
-                        ->button()
-                        ->url(route('subscribe'), shouldOpenInNewTab: true),
-                ])
-                ->send();
-        
-                $this->halt();
-            }
-        
-
-        // if (! auth()->user()->team->subscribed()) {
-           
-        // }
-
-    }
-
 
     public static function getPages(): array
     {

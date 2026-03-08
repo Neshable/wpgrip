@@ -108,9 +108,6 @@ task('provision:fix-aws-ssh', function () {
 desc('Generate sitemap');
 task('deploy:sitemap', artisan('app:generate-sitemap', ['skipIfNoEnv']));
 
-// seed database
-after('artisan:migrate', 'artisan:db:seed');
-
 // npm
 after('artisan:migrate', 'npm:build');
 
@@ -120,6 +117,9 @@ after('provision:verify', 'provision:supervisor');
 after('provision:deployer', 'provision:fix-aws-ssh');
 
 after('deploy:success', 'artisan:horizon:terminate'); // to restart horizon after deploy
+after('deploy:success', 'artisan:config:cache');
+after('deploy:success', 'artisan:route:cache');
+after('deploy:success', 'artisan:view:cache');
 after('deploy:success', 'crontab:sync');
 after('deploy:success', 'deploy:sitemap');
 

@@ -3,4 +3,4 @@ Disallow:
 
 
 
-Sitemap: http://localhost/sitemap.xml
+Sitemap: https://wpgrip.com/sitemap.xml

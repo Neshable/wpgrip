@@ -96,6 +96,10 @@ Route::get('/get-started', function () {
 
 Auth::routes(['register' => false]);
 
+// Waitlist / Coming Soon registration page
+Route::get('/register', [App\Http\Controllers\WaitlistController::class, 'show'])->name('register');
+Route::post('/register', [App\Http\Controllers\WaitlistController::class, 'store']);
+
 // Stricter rate-limit on the login POST on top of ThrottlesLogins trait
 Route::middleware('throttle:login')->group(function () {
     Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
