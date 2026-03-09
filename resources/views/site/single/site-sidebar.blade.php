@@ -28,7 +28,7 @@
         'errors' => \App\Filament\Dashboard\Resources\SiteResource\Pages\Errors::class,
         'access' => \App\Filament\Dashboard\Resources\SiteResource\Pages\Access::class,
         'insights' => \App\Filament\Dashboard\Resources\SiteResource\Pages\Insights::class,
-        'performance_history' => \App\Filament\Dashboard\Resources\SiteResource\Pages\PerformanceHistory::class,
+
     ];
     $isActive = fn(string $name) => isset($pageRouteMap[$name]) && $currentPageClass === $pageRouteMap[$name];
 
@@ -56,7 +56,6 @@
                 ['label' => 'Themes', 'route' => 'themes'],
                 ['label' => 'Core Updates', 'route' => 'core'],
                 ['label' => 'Performance', 'route' => 'performance'],
-                ['label' => 'Performance History', 'route' => 'performance_history'],
             ]),
         ],
         [

@@ -365,7 +365,6 @@ class SiteResource extends Resource
 
             
 
-            'performance_history' => Pages\PerformanceHistory::route('/{record}/performance/history'), 
 
             'access' => Pages\Access::route('/{record}/access'), 
             'database' => Pages\Database::route('/{record}/database'), 
