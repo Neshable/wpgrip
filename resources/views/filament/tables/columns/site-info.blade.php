@@ -39,21 +39,31 @@
         <span class="truncate">{{ $record->url ?? 'n/a' }}</span>
     </a>
 
-    {{-- Row 3: WP version + PHP version --}}
+    {{-- Row 3: WP version + PHP version + WP-CLI version --}}
     <div class="flex items-center gap-x-3">
-        <span class="inline-flex items-center gap-x-1 text-xs text-gray-400 dark:text-gray-500">
+        <span class="inline-flex items-center gap-x-1 text-xs text-gray-400 dark:text-gray-500"
+              title="WordPress version">
             <x-filament::icon
                 icon="icon-wordpress"
                 class="h-3.5 w-3.5 shrink-0"
             />
             {{ $record->wp_ver ?? 'n/a' }}
         </span>
-        <span class="inline-flex items-center gap-x-1 text-xs text-gray-400 dark:text-gray-500">
+        <span class="inline-flex items-center gap-x-1 text-xs text-gray-400 dark:text-gray-500"
+              title="PHP version">
             <x-filament::icon
                 icon="icon-php"
                 class="h-3.5 w-3.5 shrink-0"
             />
             {{ $record->php_ver ?? 'n/a' }}
+        </span>
+        <span class="inline-flex items-center gap-x-1 text-xs text-gray-400 dark:text-gray-500"
+              title="WP-CLI version">
+            <x-filament::icon
+                icon="heroicon-m-command-line"
+                class="h-3.5 w-3.5 shrink-0"
+            />
+            {{ $record->cli_ver ?? 'n/a' }}
         </span>
     </div>
 </div>

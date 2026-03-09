@@ -319,16 +319,18 @@ class SiteResource extends Resource
                 ->searchable()
                 ->view('filament.tables.columns.site-info'),
 
-            Tables\Columns\TextColumn::make('server.name')
+            Tables\Columns\ViewColumn::make('server.name')
                 ->label('Server')
                 ->searchable()
-                ->sortable()
-                ->tooltip(fn (Site $record): string => $record->server?->ip ?? '')
-                ->copyable(),
+                ->view('filament.tables.columns.site-server'),
 
             Tables\Columns\ViewColumn::make('health')
                 ->label('Health')
                 ->view('filament.tables.columns.site-health'),
+
+            Tables\Columns\ViewColumn::make('response_time')
+                ->label('Response')
+                ->view('filament.tables.columns.response-time'),
 
             Tables\Columns\ViewColumn::make('storage')
                 ->label('Storage')
