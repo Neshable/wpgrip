@@ -205,6 +205,18 @@ return [
             'timeout' => 1800, // 30 minutes for SSH dump + S3 upload
             'nice' => 5,
         ],
+        'supervisor-staging' => [
+            'connection' => 'redis',
+            'queue' => ['staging'],
+            'balance' => 'simple',
+            'maxProcesses' => 2,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 512,
+            'tries' => 1,
+            'timeout' => 3600, // 1 hour max for large syncs
+            'nice' => 5,
+        ],
     ],
 
     'environments' => [
@@ -217,6 +229,9 @@ return [
             'supervisor-longrunning' => [
                 'maxProcesses' => 3,
             ],
+            'supervisor-staging' => [
+                'maxProcesses' => 2,
+            ],
         ],
 
         'local' => [
@@ -224,6 +239,9 @@ return [
                 'maxProcesses' => 3,
             ],
             'supervisor-longrunning' => [
+                'maxProcesses' => 1,
+            ],
+            'supervisor-staging' => [
                 'maxProcesses' => 1,
             ],
         ],

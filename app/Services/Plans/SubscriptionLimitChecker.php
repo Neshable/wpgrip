@@ -24,6 +24,11 @@ class SubscriptionLimitChecker
     protected static array $aiPlans = ['pro', 'ultimate'];
 
     /**
+     * Product slugs that include Production → Staging Sync.
+     */
+    protected static array $stagingSyncPlans = ['ultimate'];
+
+    /**
      * Return true if the current tenant's plan includes Git deployments.
      * Shows an upgrade notification when returning false.
      */
@@ -87,6 +92,42 @@ class SubscriptionLimitChecker
         $tenant = Filament::getTenant();
 
         foreach (static::$aiPlans as $plan) {
+            if ($user->isSubscribed($plan, $tenant)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Return true if the current tenant's plan includes Production → Staging Sync.
+     * Shows an upgrade notification when returning false.
+     */
+    public static function canUseStagingSync(): bool
+    {
+        if (static::canUseStagingSyncSilent()) {
+            return true;
+        }
+
+        static::showLimitReachedNotification(
+            'Production → Staging Sync not available',
+            'Upgrade to Agency or higher to use Production → Staging Sync.'
+        );
+
+        return false;
+    }
+
+    /**
+     * Return true if the current tenant's plan includes Production → Staging Sync (no notification).
+     * Safe to call from Blade nav-visibility checks.
+     */
+    public static function canUseStagingSyncSilent(): bool
+    {
+        $user   = Auth::user();
+        $tenant = Filament::getTenant();
+
+        foreach (static::$stagingSyncPlans as $plan) {
             if ($user->isSubscribed($plan, $tenant)) {
                 return true;
             }
