@@ -16,6 +16,7 @@ use App\Events\Git\GitPullSuccess;
 use Carbon\Carbon;
 use Deployer\Deployer;
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Cache;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -120,9 +121,28 @@ class SshAndGitPull implements ShouldQueue
     /**
      * Execute the job.
      *
+     * Uses a cache lock to serialize deploys for the same site+repo.
+     * If another deploy is already running, this job waits up to 90s
+     * for it to finish before proceeding — ensuring every push gets
+     * its own deployment log entry and Slack notification.
+     *
      * @return void
      */
     public function handle()
+    {
+        $lockKey = "deploy:{$this->repository->id}:{$this->site->id}";
+
+        // Wait up to 90 seconds for any in-flight deploy to finish,
+        // then hold the lock for up to 120 seconds while we run.
+        Cache::lock($lockKey, 120)->block(90, function () {
+            $this->runDeploy();
+        });
+    }
+
+    /**
+     * The actual deploy logic, executed under a cache lock.
+     */
+    protected function runDeploy()
     {
         // Cache the pivot table in the class constructor.
         $temp_site = $this->repository->sites->firstWhere('id', $this->site->id);

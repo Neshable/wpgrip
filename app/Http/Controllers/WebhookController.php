@@ -167,17 +167,15 @@ class WebhookController extends Controller
 
                 if( $single_site->pivot->auto_deploy && $site_branch === $branch_name)
                 {
-                    // Skip if already deploying
-                    if ($single_site->pivot->status === \App\Enums\RepoStatus::WORKING->value) {
-                        Log::info("Skipping deploy for site {$single_site->id} — already in progress");
-                        continue;
-                    }
-
                     // Update status to working before dispatch
                     $repository->sites()->updateExistingPivot($single_site->id, [
                         'status' => \App\Enums\RepoStatus::WORKING->value,
                     ]);
 
+                    // Always dispatch — the job uses a cache lock to prevent
+                    // concurrent deploys on the same site+repo. If a deploy is
+                    // already running, this job will wait (up to 90s) for it
+                    // to finish, then run with the latest commits.
 				    SshAndGitPull::dispatch( $repository, $single_site, null, 'webhook' );
                     $deployedCount++;
 
