@@ -51,14 +51,24 @@ class LoginController extends Controller
 
     public function redirectPath()
     {
-        return Redirect::getIntendedUrl() ?? route('home');
+        return Redirect::getIntendedUrl() ?? route('dashboard');
     }
 
     public function showLoginForm()
     {
-        // 'register' route is disabled — skip that check entirely
+        // Only set intended URL if it was a meaningful page (not home/login/register)
         if (Redirect::getIntendedUrl() === null) {
-            Redirect::setIntendedUrl(url()->previous()); // make sure we redirect back to the page we came from
+            $previous = url()->previous();
+            $ignoredUrls = [
+                route('home'),
+                route('login'),
+                route('register'),
+                url('/'),
+            ];
+
+            if (! in_array($previous, $ignoredUrls)) {
+                Redirect::setIntendedUrl($previous);
+            }
         }
 
         return view('auth.login');
@@ -73,6 +83,8 @@ class LoginController extends Controller
                 'email' => 'Your account has been blocked. Please contact support.',
             ]);
         }
+
+        return redirect()->intended(route('dashboard'));
     }
 
     protected function validateLogin(Request $request)
