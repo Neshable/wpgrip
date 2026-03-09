@@ -20,18 +20,15 @@ class RepositoryListener
     }
 
     /**
-     * Handle the event.
+     * Handle the GitPullSuccess event.
+     *
+     * Registered explicitly in EventServiceProvider as
+     * RepositoryListener@handleGitPullSuccessful — do NOT add a generic
+     * handle(GitPullSuccess) method or Laravel's auto-discovery will
+     * fire the notification a second time.
      */
-    public function handle(GitPullSuccess $event): void
+    public function handleGitPullSuccessful(GitPullSuccess $event): void
     {
-        SlackNotifications::sendGitPullSuccess( $event->repository, $event->site, $event->deployment_type );
-    }
-
-    /**
-     * Handle the UptimeCheckSucceeded event.
-     */
-    public function handleGitPullSuccessful( GitPullSuccess $event ): void
-    {
-        SlackNotifications::sendGitPullSuccess( $event->repository, $event->site, $event->deployment_type );
+        SlackNotifications::sendGitPullSuccess($event->repository, $event->site, $event->deployment_type);
     }
 }
