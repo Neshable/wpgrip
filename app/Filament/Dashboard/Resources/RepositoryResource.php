@@ -105,34 +105,42 @@ class RepositoryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ViewColumn::make('name')
+                Tables\Columns\IconColumn::make('type')
+                    ->label('')
+                    ->icon(fn (string $state): string => match ($state) {
+                        'plugin' => 'icon-plugins',
+                        'theme' => 'icon-wordpress',
+                        'other' => 'icon-wordpress',
+                        default => 'icon-wordpress'
+                    })
+                    ->tooltip(fn (string $state): string => ucfirst($state))
+                    ->sortable(),
+
+                Tables\Columns\IconColumn::make('provider')
+                    ->label('')
+                    ->icon(fn (string $state): string => match ($state) {
+                        'bitbucket' => 'icon-bitbucket',
+                        'github' => 'icon-github',
+                        default => 'icon-wordpress'
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'bitbucket' => 'info',
+                        'github' => 'gray',
+                        default => 'primary'
+                    })
+                    ->tooltip(fn (string $state): string => ucfirst($state))
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('name')
                     ->label('Repository')
+                    ->description(fn (Repository $record): string => $record->remote)
                     ->searchable(['name', 'remote'])
-                    ->sortable()
-                    ->view('filament.tables.columns.repo-name'),
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('sites_count')
                     ->badge()
                     ->label('Connected Sites')
-                    ->counts('sites')
-                    ->alignment('center'),
-
-                Tables\Columns\IconColumn::make('webhook')
-                    ->label('Webhook')
-                    ->boolean()
-                    ->getStateUsing(fn (Repository $record): bool => !empty($record->webhook))
-                    ->trueIcon('heroicon-o-check-circle')
-                    ->falseIcon('heroicon-o-x-circle')
-                    ->trueColor('success')
-                    ->falseColor('danger')
-                    ->tooltip(fn (Repository $record): string => $record->webhook ? 'Webhook configured' : 'No webhook set up')
-                    ->alignment('center'),
-
-                Tables\Columns\TextColumn::make('last_pull')
-                    ->label('Last Deploy')
-                    ->since()
-                    ->placeholder('Never')
-                    ->sortable(),
+                    ->counts('sites'),
             ])
             ->recordUrl(
                 fn (Repository $record): string => Pages\ViewRepository::getUrl([$record->id]),
@@ -155,6 +163,15 @@ class RepositoryResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('view_repository')
+                    ->label('Repo Source')
+                    ->icon('heroicon-o-link')
+                    ->url(fn ($record) => match($record->provider) {
+                        'github' => str_replace(['git@github.com:', '.git'], ['https://github.com/', ''], $record->remote),
+                        'bitbucket' => str_replace(['git@bitbucket.org:', '.git'], ['https://bitbucket.org/', ''], $record->remote),
+                        default => null,
+                    })
+                    ->openUrlInNewTab(),
             ])
             ->defaultPaginationPageOption(25)
             ->bulkActions([
