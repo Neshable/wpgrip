@@ -314,116 +314,31 @@ class SiteResource extends Resource
      */
     public static function inputTable(): array {
         return [
-            // Grid::make(),
-            // Tables\Columns\ImageColumn::make('screenshot_path')->disk('local')
-            //     ->label('Screenshot')
-            //     ->extraImgAttributes(['loading' => 'lazy'])
-            //     ->width(250)
-            //     ->height(150),
-          
-            // Tables\Columns\IconColumn::make('ssh_connection')
-            //     ->label(false)
-            //     ->boolean()
-            //     ->size(Tables\Columns\IconColumn\IconColumnSize::Small)
-            //     ->tooltip(fn (Site $record): string => $record->ssh_connection ? 'Connected' : 'Issue with SSH connection' )
-            //     ->trueIcon('heroicon-o-check-circle')
-            //     ->falseIcon('heroicon-o-exclamation-circle'),
-            Tables\Columns\ImageColumn::make('')
-                ->circular()
-                ->size(20)
-                ->defaultImageUrl(fn (Site $record): string => url('https://s2.googleusercontent.com/s2/favicons?domain=' . $record->url)),
-
-                Tables\Columns\ViewColumn::make('name')
+            Tables\Columns\ViewColumn::make('name')
+                ->label('Site')
                 ->searchable()
-                ->view('filament.tables.columns.sitename'),
-     
+                ->view('filament.tables.columns.site-info'),
+
             Tables\Columns\TextColumn::make('server.name')
-                ->label('Server/Hosting')
+                ->label('Server')
                 ->searchable()
-                ->description(fn (Site $record): string => $record->server->ip )
-                ->copyable()
-                ->sortable(),
-            Tables\Columns\ViewColumn::make('stack')
-                ->label('Stack')
-                ->view('filament.tables.columns.stack'),
-            //Tables\Columns\ViewColumn::make('performance')->view('filament.tables.columns.sitespeed'),
-            
-            Tables\Columns\ViewColumn::make('status')
-            ->label('Status')
-            ->view('filament.tables.columns.siteinfo'),
+                ->sortable()
+                ->tooltip(fn (Site $record): string => $record->server?->ip ?? '')
+                ->copyable(),
 
-            Tables\Columns\ViewColumn::make('response_time')
-            ->label('Response')
-            ->view('filament.tables.columns.response-time'),
+            Tables\Columns\ViewColumn::make('health')
+                ->label('Health')
+                ->view('filament.tables.columns.site-health'),
 
-            // Tables\Columns\TextColumn::make('server.provider')
-            //     ->label('Hosted')
-            //     ->badge(),
-        
-            // Tables\Columns\TextColumn::make('wp_ver')
-            //     ->icon('icon-wordpress')
-            //     ->weight(FontWeight::Bold)
-            //     ->label('WP'),
-            // Tables\Columns\TextColumn::make('php_ver')
-            //     ->weight(FontWeight::Bold)
-            //     ->label('PHP'),
-            
-            // Tables\Columns\ViewColumn::make('stack')->view('filament.tables.columns.stackinfo'), 
-            // Tables\Columns\ViewColumn::make('PHP')
-            //     ->label('PHP')
-            //     ->view('filament.tables.columns.phpversion'),  
-            // Tables\Columns\TextColumn::make('client.name')->label('Owner')->sortable(),
-            // Tables\Columns\IconColumn::make('status')
-            //     ->icon(fn (string $state): string => match ($state) {
-            //         'draft' => 'heroicon-o-pencil',
-            //         'reviewing' => 'heroicon-o-clock',
-            //         'published' => 'heroicon-o-check-circle',
-            //     }),
-            // Tables\Columns\TextColumn::make('url')->label('URL'),
-            // Tables\Columns\ToggleColumn::make('uptime_monitor'),
-            // Tables\Columns\ToggleColumn::make('active_webhook_slack')->label('Slack Notifications'),
-            // Tables\Columns\TextColumn::make('backups_count')
-            //     ->counts('backups')
-            //     ->label('Backups'),
-           
-           
-            // Tables\Columns\TextColumn::make('php_ver')->label('PHP'),
-          
+            Tables\Columns\ViewColumn::make('storage')
+                ->label('Storage')
+                ->view('filament.tables.columns.site-storage')
+                ->visibleFrom('md'),
 
-            Tables\Columns\TextColumn::make('dir_size')
-                ->label('Files')
-                ->getStateUsing(fn (Site $record) => $record->getFormatedDBSize())
-                ->icon(fn (Site $record): ?string => ($record->dir_size && $record->dir_size >= 10240) ? 'heroicon-m-exclamation-triangle' : null)
-                ->color(fn (Site $record): string => match(true) {
-                    !$record->dir_size => 'gray',
-                    $record->dir_size >= 10240 => 'warning',
-                    default => 'success',
-                })
-                ->sortable(),
-                
-            Tables\Columns\TextColumn::make('db_size')
-                ->label('DB Size')
-                ->getStateUsing(fn (Site $record) => $record->getDBSize())
-                ->icon(fn (Site $record): ?string => ($record->sitemeta && $record->sitemeta->db_size >= 500) ? 'heroicon-m-exclamation-triangle' : null)
-                ->color(fn (Site $record): string => match(true) {
-                    !$record->sitemeta || !$record->sitemeta->db_size => 'gray',
-                    $record->sitemeta->db_size >= 500 => 'warning',
-                    default => 'success',
-                }),
-            // Tables\Columns\TextColumn::make('status')
-            //     ->label('Status')
-            //     ->getStateUsing(function (Site $record) {
-            //         return $record->status;
-            //     }),
             Tables\Columns\TextColumn::make('last_sync')
-                ->label('Last sync')
+                ->label('Last Sync')
                 ->since()
-
-            // IconColumn::make('is_ssl_active')
-            // ->boolean()
-            // ->trueIcon('')
-            // ->falseIcon('heroicon-o-x-circle'),
-            // ViewColumn::make('')->view('filament.tables.columns.allinfo'),
+                ->visibleFrom('lg'),
         ];
     }
 
