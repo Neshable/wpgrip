@@ -6,6 +6,7 @@
     $tenantUuid = $tenant->uuid;
     $canAI  = \App\Services\Plans\SubscriptionLimitChecker::canUseAiSilent();
     $canGit = \App\Services\Plans\SubscriptionLimitChecker::canUseGitSilent();
+    $isStaging = (bool) $site->is_staging;
 
     // Helper to build route + check active
     $r = fn(string $name) => route("filament.dashboard.resources.sites.{$name}", ['record' => $recordId, 'tenant' => $tenantUuid]);
@@ -55,24 +56,24 @@
                 ['label' => 'Plugins', 'route' => 'plugins'],
                 ['label' => 'Themes', 'route' => 'themes'],
                 ['label' => 'Core Updates', 'route' => 'core'],
-                ['label' => 'Performance', 'route' => 'performance'],
+                !$isStaging ? ['label' => 'Performance', 'route' => 'performance'] : null,
             ]),
         ],
         [
             'label' => 'Development',
             'items' => array_filter([
                 $canGit ? ['label' => 'Repositories', 'route' => 'repositories'] : null,
-                ['label' => 'Staging', 'route' => 'staging'],
+                !$isStaging ? ['label' => 'Staging', 'route' => 'staging'] : null,
                 ['label' => 'Dev Tools', 'route' => 'tools'],
             ]),
         ],
-        [
+        !$isStaging ? [
             'label' => 'Security',
             'items' => [
                 ['label' => 'Security', 'route' => 'security'],
                 ['label' => 'Errors', 'route' => 'errors'],
             ],
-        ],
+        ] : null,
     ];
 @endphp
 
@@ -109,7 +110,7 @@
 
     {{-- Navigation groups --}}
     <nav class="site-sub-sidebar-nav">
-        @foreach($groups as $group)
+        @foreach(array_filter($groups) as $group)
             @if(count($group['items']) > 0)
                 <div class="site-sub-sidebar-group">
                     @if($group['label'])
