@@ -14,6 +14,7 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Anthropic\Laravel\Facades\Anthropic;
 use App\Services\Plans\SubscriptionLimitChecker;
+use App\Models\AiTokenUsage;
 
 class AiAssistant extends ViewRecord
 {
@@ -31,6 +32,8 @@ class AiAssistant extends ViewRecord
     public bool   $loading     = false;
     public string $aiError     = '';
     public string $siteMdAge   = '';   // shown in UI so user knows how fresh the context is
+    public int    $tokensUsed  = 0;
+    public int    $tokensLimit = AiTokenUsage::MONTHLY_LIMIT;
 
     // -------------------------------------------------------------------------
 
@@ -50,6 +53,11 @@ class AiAssistant extends ViewRecord
 
         // Pre-compute the age of SITE.md so the view can show it
         $this->siteMdAge = $this->getSiteMdAge();
+
+        // Token usage for the current month
+        $tenant = \Filament\Facades\Filament::getTenant();
+        $this->tokensUsed  = AiTokenUsage::monthlyUsage($tenant->uuid);
+        $this->tokensLimit = AiTokenUsage::MONTHLY_LIMIT;
 
         FilamentView::registerRenderHook(
             PanelsRenderHook::HEAD_END,
@@ -75,6 +83,15 @@ class AiAssistant extends ViewRecord
             return ['error' => 'Empty message.'];
         }
 
+        // Check monthly token limit
+        $tenant = \Filament\Facades\Filament::getTenant();
+        if (AiTokenUsage::hasExceededLimit($tenant->uuid)) {
+            return [
+                'error' => 'Monthly AI token limit reached (5M tokens). Resets on the 1st of next month.',
+                'limitReached' => true,
+            ];
+        }
+
         $this->aiError = '';
         $this->messages[] = ['role' => 'user', 'content' => $text];
 
@@ -91,7 +108,11 @@ class AiAssistant extends ViewRecord
         $html = (string) Str::of($reply)
             ->markdown(['html_input' => 'escape', 'allow_unsafe_links' => false]);
 
-        return ['content' => $reply, 'html' => $html];
+        return [
+            'content' => $reply,
+            'html' => $html,
+            'tokensUsed' => $this->tokensUsed,
+        ];
     }
 
     /**
@@ -149,10 +170,37 @@ SYSTEM;
         );
 
         $response = Anthropic::messages()->create([
-            'model'      => 'claude-opus-4-5',
+            'model'      => 'claude-sonnet-4-20250514',
             'max_tokens' => 2048,
             'system'     => $system,
             'messages'   => $anthropicMessages,
+        ]);
+
+        // Track token usage
+        $inputTokens  = $response->usage->inputTokens ?? 0;
+        $outputTokens = $response->usage->outputTokens ?? 0;
+        $totalTokens  = $inputTokens + $outputTokens;
+
+        $tenant = \Filament\Facades\Filament::getTenant();
+
+        AiTokenUsage::create([
+            'tenant_id'     => $tenant->uuid,
+            'user_id'       => auth()->id(),
+            'site_id'       => $site->id,
+            'input_tokens'  => $inputTokens,
+            'output_tokens' => $outputTokens,
+            'total_tokens'  => $totalTokens,
+            'model'         => 'claude-sonnet-4-20250514',
+        ]);
+
+        $this->tokensUsed = AiTokenUsage::monthlyUsage($tenant->uuid);
+
+        Log::info('AI token usage', [
+            'tenant' => $tenant->uuid,
+            'input'  => $inputTokens,
+            'output' => $outputTokens,
+            'total'  => $totalTokens,
+            'monthly_total' => $this->tokensUsed,
         ]);
 
         $text = '';
@@ -192,7 +240,10 @@ SYSTEM;
                 draft: '',
                 loading: false,
                 refreshing: false,
+                limitReached: false,
                 siteMdAge: '',
+                tokensUsed: 0,
+                tokensLimit: 5000000,
                 suggestions: [
                     'Which plugins have updates available?',
                     'What WordPress and PHP version is this site running?',
@@ -202,11 +253,23 @@ SYSTEM;
                     'List all inactive plugins',
                 ],
 
+                get usagePercent() {
+                    return this.tokensLimit > 0 ? (this.tokensUsed / this.tokensLimit) * 100 : 0;
+                },
+
+                get usageLabel() {
+                    const fmt = (n) => n >= 1000000 ? (n / 1000000).toFixed(1) + 'M' : n >= 1000 ? (n / 1000).toFixed(0) + 'K' : String(n);
+                    return fmt(this.tokensUsed) + ' / ' + fmt(this.tokensLimit) + ' tokens';
+                },
+
                 init(rootEl) {
                     const seed = document.getElementById('ai-chat-seed');
                     if (seed) {
                         try { this.messages = JSON.parse(seed.dataset.messages || '[]'); } catch(e) { this.messages = []; }
                         this.siteMdAge = seed.dataset.age || '';
+                        this.tokensUsed = parseInt(seed.dataset.tokensUsed || '0', 10);
+                        this.tokensLimit = parseInt(seed.dataset.tokensLimit || '5000000', 10);
+                        this.limitReached = this.tokensUsed >= this.tokensLimit;
                     }
                     this.$nextTick(() => this.scrollToBottom());
                 },
@@ -228,8 +291,23 @@ SYSTEM;
                     this.$wire.sendMessage(text)
                         .then((result) => {
                             this.loading = false;
+                            if (result && result.limitReached) {
+                                this.limitReached = true;
+                                this.messages.pop(); // remove the user message we just added
+                                return;
+                            }
+                            if (result && result.error) {
+                                // Show error as a system message
+                                this.messages.push({ role: 'assistant', content: result.error, html: '<p class="text-red-600">' + result.error + '</p>' });
+                                this.$nextTick(() => this.scrollToBottom());
+                                return;
+                            }
                             if (result && result.html) {
                                 this.messages.push({ role: 'assistant', content: result.content, html: result.html });
+                                if (result.tokensUsed !== undefined) {
+                                    this.tokensUsed = result.tokensUsed;
+                                    this.limitReached = this.tokensUsed >= this.tokensLimit;
+                                }
                                 this.$nextTick(() => this.scrollToBottom());
                             }
                         })

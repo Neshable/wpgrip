@@ -143,62 +143,79 @@
     </div>
 
     {{-- Input row: textarea with embedded send button --}}
-    <div
-        class="mt-3 flex items-end rounded-xl border bg-white dark:bg-gray-900 overflow-hidden"
-        style="border-color:#d1d5db; box-shadow:0 1px 2px rgba(0,0,0,.06); transition:border-color .15s, box-shadow .15s;"
-        @focusin="$el.style.borderColor='#7c3aed'; $el.style.boxShadow='0 0 0 2px rgba(124,58,237,.25)'"
-        @focusout="$el.style.borderColor='#d1d5db'; $el.style.boxShadow='0 1px 2px rgba(0,0,0,.06)'"
-    >
-        <textarea
-            x-ref="input"
-            x-model="draft"
-            @keydown="handleKeydown($event)"
-            @input="autoResize($el)"
-            :disabled="loading"
-            rows="1"
-            placeholder="Ask about this site…  (Shift+Enter for new line)"
-            style="
-                flex:1; resize:none; border:none; outline:none;
-                padding:.75rem 1rem;
-                font-size:.875rem; line-height:1.5;
-                background:transparent; color:#111827;
-                max-height:140px; overflow-y:auto;
-            "
-            class="dark:text-gray-100"
-        ></textarea>
-        <div class="flex-shrink-0 flex items-end p-2">
+    <template x-if="!limitReached">
+        <div
+            class="mt-3 flex items-end gap-2 rounded-xl border bg-white dark:bg-gray-900 px-3 py-2"
+            style="border-color:#d1d5db; box-shadow:0 1px 2px rgba(0,0,0,.06); transition:border-color .15s, box-shadow .15s;"
+            @focusin="$el.style.borderColor='#7c3aed'; $el.style.boxShadow='0 0 0 2px rgba(124,58,237,.25)'"
+            @focusout="$el.style.borderColor='#d1d5db'; $el.style.boxShadow='0 1px 2px rgba(0,0,0,.06)'"
+        >
+            <textarea
+                x-ref="input"
+                x-model="draft"
+                @keydown="handleKeydown($event)"
+                @input="autoResize($el)"
+                :disabled="loading"
+                rows="1"
+                placeholder="Ask about this site…  (Shift+Enter for new line)"
+                class="flex-1 resize-none border-0 outline-none bg-transparent text-sm leading-relaxed text-gray-900 dark:text-gray-100 placeholder-gray-400 p-0 focus:ring-0"
+                style="max-height:140px; overflow-y:auto;"
+            ></textarea>
             <button
                 type="button"
                 @click="submit()"
                 :disabled="loading || !draft.trim()"
-                class="flex items-center justify-center rounded-lg transition-all duration-150"
-                style="width:2.25rem; height:2.25rem; border:none; cursor:pointer;"
-                :style="(loading || !draft.trim())
-                    ? 'background:#c4b5fd; cursor:not-allowed; opacity:.7;'
-                    : 'background:#7c3aed;'"
-                @mouseover="if(!loading && draft.trim()) $el.style.background='#6d28d9'"
-                @mouseout="$el.style.background=(loading || !draft.trim()) ? '#c4b5fd' : '#7c3aed'"
+                class="flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-150"
+                :class="(loading || !draft.trim())
+                    ? 'bg-violet-300 dark:bg-violet-800 cursor-not-allowed opacity-70'
+                    : 'bg-violet-600 hover:bg-violet-700 cursor-pointer'"
                 title="Send"
             >
                 <template x-if="!loading">
-                    <svg xmlns="http://www.w3.org/2000/svg" style="width:1rem;height:1rem;color:#fff;" viewBox="0 0 24 24" fill="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
                     </svg>
                 </template>
                 <template x-if="loading">
-                    <svg style="width:1rem;height:1rem;color:#fff;" class="animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 12 0 12 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                 </template>
             </button>
         </div>
+    </template>
+
+    {{-- Limit reached banner --}}
+    <template x-if="limitReached">
+        <div class="mt-3 rounded-xl border border-amber-200 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 px-4 py-3 flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+            </svg>
+            <div>
+                <p class="text-sm font-medium text-amber-800 dark:text-amber-200">Monthly token limit reached</p>
+                <p class="text-xs text-amber-700 dark:text-amber-300 mt-0.5">Your workspace has used all 5M tokens this month. Resets on the 1st of next month.</p>
+            </div>
+        </div>
+    </template>
+
+    {{-- Footer: usage bar + disclaimer --}}
+    <div class="mt-2 flex items-center justify-between px-1">
+        <div class="flex items-center gap-2 min-w-0">
+            <div class="w-24 h-1.5 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden flex-shrink-0" title="Monthly token usage">
+                <div
+                    class="h-full rounded-full transition-all duration-300"
+                    :class="usagePercent > 90 ? 'bg-red-500' : usagePercent > 70 ? 'bg-amber-500' : 'bg-violet-500'"
+                    :style="'width:' + Math.min(usagePercent, 100) + '%'"
+                ></div>
+            </div>
+            <span class="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap" x-text="usageLabel"></span>
+        </div>
+        <p class="text-xs text-gray-400 dark:text-gray-500 truncate ml-3">
+            Answers based on cached snapshot.
+        </p>
     </div>
 
-    <p class="mt-2 text-xs text-center" style="color:#9ca3af;">
-        Answers are based on the cached site snapshot. Use “Refresh context” to pull the latest DB data.
-    </p>
-</div>
 
 {{-- Seed data for aiChat() Alpine component --}}
 <div
@@ -212,6 +229,8 @@
             : '',
     ], $messages))) }}"
     data-age="{{ e($siteMdAge) }}"
+    data-tokens-used="{{ $tokensUsed }}"
+    data-tokens-limit="{{ $tokensLimit }}"
     style="display:none;"
 ></div>
 
