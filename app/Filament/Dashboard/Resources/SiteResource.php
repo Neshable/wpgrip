@@ -387,7 +387,6 @@ class SiteResource extends Resource
             'performance' => Pages\Performance::route('/{record}/tests/performance'), 
             
             'tools' => Pages\Tools::route('/{record}/tools'), 
-            'ai-assistant' => Pages\AiAssistant::route('/{record}/ai-assistant'),
             'agent-mode' => Pages\AgentMode::route('/{record}/agent-mode'),
             'files' => Pages\FileExplorer::route('/{record}/files'),
             'security' => Pages\Security::route('/{record}/security'), 

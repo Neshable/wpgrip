@@ -205,12 +205,12 @@
     </div>
 </section>
 
-{{-- ---- AI ASSISTANT ---- --}}
+{{-- ---- AI AGENT MODE ---- --}}
 <section class="py-24 border-t border-white/5" style="background: linear-gradient(180deg, #0a0a0a 0%, #0d1220 100%)">
     <div class="max-w-screen-xl mx-auto px-6">
         <div class="grid md:grid-cols-2 gap-16 items-center">
             <div>
-                <div class="inline-flex items-center px-2.5 py-1 rounded-md border border-blue-900 bg-blue-950 text-blue-300 text-xs font-mono mb-6">AI Assistant</div>
+                <div class="inline-flex items-center px-2.5 py-1 rounded-md border border-blue-900 bg-blue-950 text-blue-300 text-xs font-mono mb-6">AI Agent Mode</div>
                 <h2 class="text-3xl md:text-4xl font-semibold text-white tracking-tight leading-tight">
                     Your WordPress expert.<br>Available 24/7.
                 </h2>
@@ -239,7 +239,7 @@
             <div class="rounded-xl border border-white/10 bg-neutral-900 overflow-hidden">
                 <div class="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-neutral-800/50">
                     <div class="h-2 w-2 rounded-full bg-blue-400 animate-pulse"></div>
-                    <span class="text-xs text-neutral-400">AI Assistant — client-site.com</span>
+                    <span class="text-xs text-neutral-400">AI Agent — client-site.com</span>
                 </div>
                 <div class="p-5 space-y-4">
                     <div class="flex gap-3">
@@ -338,7 +338,7 @@
                 ['icon' => '🌐', 'tag' => 'Monitoring',   'title' => 'Domain Expiry Alerts',      'desc' => 'Track domain registration expiry across your entire portfolio in one place.'],
                 ['icon' => '⚡', 'tag' => 'Performance',  'title' => 'PageSpeed Tracking',        'desc' => 'Google PageSpeed scores for mobile and desktop, with full history and regression alerts.'],
                 ['icon' => '🛡️', 'tag' => 'Security',   'title' => 'Vulnerability Scanning',    'desc' => 'Continuously updated database detects vulnerable plugins, themes, and WP core versions.'],
-                ['icon' => '🤖', 'tag' => 'AI',          'title' => 'AI Assistant',              'desc' => 'Context-aware AI that knows your site and can run SSH commands to diagnose issues.'],
+                ['icon' => '🤖', 'tag' => 'AI',          'title' => 'AI Agent Mode',             'desc' => 'Context-aware AI that knows your site and can run SSH commands to diagnose issues.'],
                 ['icon' => '🚀', 'tag' => 'Deployments', 'title' => 'Git Deployments',           'desc' => 'GitHub, GitLab, Bitbucket. Webhook-triggered or manual. One repo across many sites.'],
                 ['icon' => '🗄️', 'tag' => 'Backups',    'title' => 'Database Backups',          'desc' => 'Encrypted, automated, offsite. Schedule backups and restore with one click.'],
                 ['icon' => '🔄', 'tag' => 'Management', 'title' => 'One-Click Updates',         'desc' => 'Update plugins, themes, and core via WP-CLI across all sites simultaneously.'],

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
  * Generates a SITE.md snapshot for a given site from DB data only,
  * then persists it to storage/app/sites/{id}/SITE.md.
  *
- * This file is the sole context source for the AI Assistant — no SSH,
+ * This file is the sole context source for AI Agent Mode — no SSH,
  * no live DB queries at chat time.
  */
 class SiteMdService

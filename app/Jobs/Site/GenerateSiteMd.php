@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Log;
  *
  * Dispatched automatically after any sync job completes
  * (SyncSiteStats, GetAllPlugins, GetAllThemes, CheckDomainStats).
- * Can also be dispatched manually from the AI Assistant UI.
+ * Can also be dispatched manually from the AI Agent Mode UI.
  */
 class GenerateSiteMd implements ShouldQueue
 {

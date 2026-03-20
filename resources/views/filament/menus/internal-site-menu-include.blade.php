@@ -1,6 +1,5 @@
 @php
     $tenant = Filament\Facades\Filament::getTenant();
-    $canAI  = \App\Services\Plans\SubscriptionLimitChecker::canUseAiSilent();
     $canGit = \App\Services\Plans\SubscriptionLimitChecker::canUseGitSilent();
 @endphp
     
@@ -18,22 +17,6 @@
 >
     Overview  
 </x-filament::tabs.item>
-
-@if($canAI)
-<x-filament::tabs.item 
-    :href="route( 'filament.dashboard.resources.sites.ai-assistant', [
-        'record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 
-        'tenant' => $tenant->uuid
-        ] )" 
-    :wire:navigate
-    tag="a"
-    icon="heroicon-m-sparkles"
-    :active="request()->getRequestUri() === \URL::route('filament.dashboard.resources.sites.ai-assistant', ['record' => $this->getRecord()->id ? $this->getRecord()->id : '2', 'tenant' => $tenant->uuid], false)"
->
-    AI Assistant  
-</x-filament::tabs.item>
-
-@endif
 
 
 <x-filament::tabs.item

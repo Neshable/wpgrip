@@ -18,7 +18,7 @@ class SubscriptionLimitChecker
     protected static array $gitPlans = ['pro', 'ultimate'];
 
     /**
-     * Product slugs that include the AI Assistant.
+     * Product slugs that include AI Agent Mode.
      * Note: "enterprise" plan belongs to the "ultimate" product in DB — no separate enterprise product.
      */
     protected static array $aiPlans = ['pro', 'ultimate'];
@@ -65,7 +65,7 @@ class SubscriptionLimitChecker
     }
 
     /**
-     * Return true if the current tenant's plan includes the AI Assistant.
+     * Return true if the current tenant's plan includes AI Agent Mode.
      * Shows an upgrade notification when returning false.
      */
     public static function canUseAi(): bool
@@ -75,15 +75,15 @@ class SubscriptionLimitChecker
         }
 
         static::showLimitReachedNotification(
-            'AI Assistant not available',
-            'Upgrade to Pro or higher to use the AI Assistant.'
+            'AI Agent not available',
+            'Upgrade to Pro or higher to use the AI Agent.'
         );
 
         return false;
     }
 
     /**
-     * Return true if the current tenant's plan includes the AI Assistant (no notification).
+     * Return true if the current tenant's plan includes AI Agent Mode (no notification).
      * Safe to call from Blade nav-visibility checks.
      */
     public static function canUseAiSilent(): bool

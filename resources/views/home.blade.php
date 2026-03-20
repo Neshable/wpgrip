@@ -326,12 +326,12 @@
     </div>
 </section>
 
-{{-- Feature 3: AI Assistant --}}
+{{-- Feature 3: AI Agent Mode --}}
 <section class="py-24 border-t border-white/5" style="background: linear-gradient(180deg, #0a0a0a 0%, #0d1220 100%)">
     <div class="max-w-screen-xl mx-auto px-6">
         <div class="grid md:grid-cols-2 gap-12 items-center">
             <div>
-                <div class="inline-flex items-center px-2.5 py-1 rounded-md border border-blue-900 bg-blue-950 text-blue-300 text-xs font-mono mb-6">AI Assistant</div>
+                <div class="inline-flex items-center px-2.5 py-1 rounded-md border border-blue-900 bg-blue-950 text-blue-300 text-xs font-mono mb-6">AI Agent Mode</div>
                 <h2 class="text-3xl md:text-4xl font-medium text-white tracking-tight text-balance leading-tight">
                     An AI that knows your sites inside out.
                 </h2>
@@ -352,7 +352,7 @@
             <div class="rounded-xl border border-white/10 bg-neutral-900 overflow-hidden">
                 <div class="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-neutral-800/50">
                     <div class="h-2 w-2 rounded-full bg-blue-400 animate-pulse"></div>
-                    <span class="text-xs text-neutral-400 font-medium">WPGrip AI — client-site.com</span>
+                    <span class="text-xs text-neutral-400 font-medium">WPGrip AI Agent — client-site.com</span>
                 </div>
                 <div class="p-5 space-y-4">
                     <div class="flex gap-3">
@@ -413,7 +413,7 @@
                 ['icon' => '🔒', 'title' => 'SSL & Domain Tracking', 'desc' => 'Automated expiry warnings weeks in advance. Never get caught out.'],
                 ['icon' => '⚡', 'title' => 'Performance Scores', 'desc' => 'Google PageSpeed tracking for mobile and desktop, with full history.'],
                 ['icon' => '🛡️', 'title' => 'Vulnerability Scanning', 'desc' => 'Continuously updated CVE database flags vulnerable plugins, themes, and WP core.'],
-                ['icon' => '🤖', 'title' => 'AI Assistant', 'desc' => 'Powered by Claude. Knows your site context and can run commands to investigate.'],
+                ['icon' => '🤖', 'title' => 'AI Agent Mode', 'desc' => 'Powered by Claude. Knows your site context and can run commands to investigate.'],
                 ['icon' => '🚀', 'title' => 'Git Deployments', 'desc' => 'GitHub, GitLab, Bitbucket. Deploy on push, webhook, or on demand.'],
                 ['icon' => '🗄️', 'title' => 'Database Backups', 'desc' => 'Scheduled encrypted backups. One-click restore.'],
                 ['icon' => '👥', 'title' => 'Team Collaboration', 'desc' => 'Invite team members with role-based access across workspaces.'],
@@ -445,7 +445,7 @@
                 ['q' => 'What are the minimum requirements?', 'a' => 'SSH access and WP-CLI on the server. That\'s it.'],
                 ['q' => 'Can I manage sites across different hosts?', 'a' => 'Yes. WPGrip is hosting-agnostic — mix and match any providers in one dashboard.'],
                 ['q' => 'How are my credentials kept secure?', 'a' => 'SSH key-based auth only — no passwords stored. Keys are encrypted at rest. Your WordPress admin credentials are never needed or stored.'],
-                ['q' => 'Can I use WPGrip without SSH access?', 'a' => 'Monitoring features (uptime, SSL, domain, PageSpeed) work without SSH. Management features — updates, deployments, AI assistant, backups — require SSH.'],
+                ['q' => 'Can I use WPGrip without SSH access?', 'a' => 'Monitoring features (uptime, SSL, domain, PageSpeed) work without SSH. Management features — updates, deployments, AI agent, backups — require SSH.'],
             ];
             @endphp
             @foreach($faqs as $i => $faq)
