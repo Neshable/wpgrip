@@ -3,6 +3,7 @@
 namespace App\Ai\Agents;
 
 use App\Ai\Middleware\TrackTokenUsage;
+use App\Ai\SshSessionManager;
 use App\Ai\Tools\ClearCache;
 use App\Ai\Tools\GetBackupHistory;
 use App\Ai\Tools\GetPerformanceData;
@@ -10,6 +11,7 @@ use App\Ai\Tools\GetSiteInfo;
 use App\Ai\Tools\GetUptimeStatus;
 use App\Ai\Tools\ListPlugins;
 use App\Ai\Tools\ListThemes;
+use App\Ai\Tools\RunSshCommand;
 use App\Ai\Tools\RunWpCliCommand;
 use App\Ai\Tools\TogglePlugin;
 use App\Ai\Tools\TriggerBackup;
@@ -44,10 +46,30 @@ class SiteAgent implements Agent, Conversational, HasTools, HasMiddleware
 {
     use Promptable, RemembersConversations;
 
+    private ?SshSessionManager $sshSession = null;
+
     public function __construct(
         public Site $site,
         public ?AgentPromptTemplate $promptTemplate = null,
     ) {}
+
+    /**
+     * Attach a persistent SSH session to share across tools.
+     */
+    public function withSshSession(SshSessionManager $session): static
+    {
+        $this->sshSession = $session;
+
+        return $this;
+    }
+
+    /**
+     * Get the SSH session (if attached).
+     */
+    public function sshSession(): ?SshSessionManager
+    {
+        return $this->sshSession;
+    }
 
     /**
      * Get the instructions that the agent should follow.
@@ -75,8 +97,10 @@ class SiteAgent implements Agent, Conversational, HasTools, HasMiddleware
      */
     public function tools(): iterable
     {
+        $s = $this->sshSession;
+
         return [
-            // Read-only tools
+            // Read-only tools (DB-based, no SSH)
             new GetSiteInfo($this->site),
             new ListPlugins($this->site),
             new ListThemes($this->site),
@@ -84,14 +108,17 @@ class SiteAgent implements Agent, Conversational, HasTools, HasMiddleware
             new GetPerformanceData($this->site),
             new GetBackupHistory($this->site),
 
-            // Write/action tools
-            new TogglePlugin($this->site),
-            new UpdatePlugin($this->site),
-            new UpdateTheme($this->site),
-            new ClearCache($this->site),
-            new RunWpCliCommand($this->site),
+            // SSH-based tools (share the persistent session)
+            new TogglePlugin($this->site, $s),
+            new UpdatePlugin($this->site, $s),
+            new UpdateTheme($this->site, $s),
+            new ClearCache($this->site, $s),
+            new RunWpCliCommand($this->site, $s),
             new TriggerBackup($this->site),
             new TriggerSync($this->site),
+
+            // General SSH command tool — uses persistent session
+            ...($s ? [new RunSshCommand($s)] : []),
         ];
     }
 
@@ -125,8 +152,22 @@ You have tools to inspect and modify this WordPress site:
 - Clear caches
 - Trigger backups and site syncs
 - Run safe WP-CLI commands
+- **SSH access**: You have a persistent SSH session to the server. You can run
+  shell commands for diagnostics, log inspection, disk usage, process checks,
+  database queries (read-only via WP-CLI), file inspection, and more.
+  The session stays open across tool calls, so you can build on previous results.
 
-## Guidelines
+## SSH Guidelines
+- Use the RunSshCommand tool for any shell-level inspection: `ls`, `cat`, `head`,
+  `tail`, `grep`, `find`, `du`, `df`, `ps`, `top -bn1`, `wp db query`, etc.
+- Pipes (`|`) are allowed: `wp plugin list --format=csv | grep inactive`
+- Stay non-destructive: never delete files, modify configs directly, or install packages.
+- If you need to understand a problem, check logs first: `tail -n 50 ~/logs/error.log` or
+  `wp log` if the site uses a logging plugin.
+- For database inspection, use `wp db query "SELECT ..."` — always read-only.
+- When exploring the filesystem, start from the site root and be methodical.
+
+## General Guidelines
 - Always explain what you're about to do before using a write/action tool.
 - For destructive operations (updates, search-replace), summarize the expected impact first and ask for confirmation.
 - Use read tools to gather information before recommending actions.

@@ -2,6 +2,7 @@
 
 namespace App\Ai\Tools;
 
+use App\Ai\SshSessionManager;
 use App\Models\Site;
 use App\Services\SSHSiteConnect;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -77,7 +78,7 @@ class RunWpCliCommand implements Tool
         '`',
     ];
 
-    public function __construct(private Site $site) {}
+    public function __construct(private Site $site, private ?SshSessionManager $session = null) {}
 
     public function description(): Stringable|string
     {
@@ -113,6 +114,18 @@ class RunWpCliCommand implements Tool
 
         if (!$allowed) {
             return "Error: Command not in the allowlist. Allowed command prefixes: " . implode(', ', array_slice(self::ALLOWED_COMMANDS, 0, 10)) . '...';
+        }
+
+        if ($this->session) {
+            $result = $this->session->execInSiteDir($cmd);
+
+            if ($result['success']) {
+                $output = $result['output'];
+                $truncated = strlen($output) > 8000 ? substr($output, 0, 8000) . "\n\n... (output truncated)" : $output;
+                return "Command executed successfully.\nOutput:\n" . ($truncated ?: '(no output)');
+            }
+
+            return "Command failed.\nOutput:\n" . ($result['output'] ?: ($result['error'] ?? '(no output)'));
         }
 
         $connection = new SSHSiteConnect($this->site);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Agent;
 
 use App\Ai\Agents\SiteAgent;
+use App\Ai\SshSessionManager;
 use App\Models\AiTokenUsage;
 use App\Models\Site;
 use App\Models\Tenant;
@@ -63,8 +64,12 @@ class AgentStreamController
                 ob_end_clean();
             }
 
+            // Create a persistent SSH session for the entire streaming request
+            $sshSession = new SshSessionManager($site);
+
             try {
-                $agent = new SiteAgent($site);
+                $agent = (new SiteAgent($site))
+                    ->withSshSession($sshSession);
 
                 if ($conversationId) {
                     $agent->continue($conversationId, as: $user);
@@ -162,6 +167,9 @@ class AgentStreamController
                 ]) . "\n\n";
                 flush();
             }
+
+            // Close the persistent SSH session
+            $sshSession->disconnect();
 
             echo "data: [DONE]\n\n";
             flush();
