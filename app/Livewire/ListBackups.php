@@ -26,6 +26,7 @@ use Filament\Tables\Columns\ViewColumn;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Storage;
 
+use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
@@ -54,6 +55,7 @@ class ListBackups extends Component implements HasForms, HasTable
 {
     use InteractsWithTable;
     use InteractsWithForms;
+    use InteractsWithActions;
 
     public $site_id;
     

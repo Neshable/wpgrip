@@ -5,7 +5,7 @@ namespace App\Livewire;
 use App\Filament\Resources\MonitorResource;
 use App\Models\BlacklistMonitor;
 
-use Filament\Tables\Actions;
+use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Support\Enums\MaxWidth;
 
@@ -21,6 +21,7 @@ use Filament\Tables\Table;
 
 use Illuminate\Support\HtmlString;
 
+use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
@@ -40,6 +41,7 @@ class ListBlacklistMonitors extends Component implements HasForms, HasTable
 {
     use InteractsWithTable;
     use InteractsWithForms;
+    use InteractsWithActions;
 
     public $site_id;
 

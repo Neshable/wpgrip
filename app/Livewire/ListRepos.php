@@ -4,6 +4,7 @@ namespace App\Livewire;
  
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Repository;
+use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\TextInput;
@@ -45,6 +46,7 @@ class ListRepos extends Component implements HasForms, HasTable
 {
     use InteractsWithTable;
     use InteractsWithForms;
+    use InteractsWithActions;
 
     public $site_model;
     

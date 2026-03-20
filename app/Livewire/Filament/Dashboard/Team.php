@@ -7,6 +7,7 @@ use App\Services\ActivityLogger;
 use App\Services\TenantManager;
 use App\Services\TenantPermissionManager;
 use Filament\Facades\Filament;
+use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
@@ -26,6 +27,7 @@ class Team extends Component implements HasForms, HasTable
 {
     use InteractsWithForms;
     use InteractsWithTable;
+    use InteractsWithActions;
 
     public function table(Table $table): Table
     {

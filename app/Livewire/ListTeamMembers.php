@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\User;
 
+use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
@@ -26,6 +27,7 @@ class ListTeamMembers extends Component implements HasForms, HasTable
 {
     use InteractsWithTable;
     use InteractsWithForms;
+    use InteractsWithActions;
 
     public function table(Table $table): Table
     {

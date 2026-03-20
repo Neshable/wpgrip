@@ -4,6 +4,7 @@ namespace App\Livewire;
  
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Repository;
+use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\TextInput;
@@ -40,6 +41,7 @@ class ListNotifications extends Component implements HasForms, HasTable
 {
     use InteractsWithTable;
     use InteractsWithForms;
+    use InteractsWithActions;
 
     public $repo_model;
     

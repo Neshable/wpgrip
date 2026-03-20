@@ -6,7 +6,6 @@ use App\Models\UptimeMonitor;
 use App\Models\PHPLog;
 use App\Models\Site;
 
-use Filament\Tables\Actions;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
@@ -24,6 +23,7 @@ use Filament\Tables\Table;
 
 use Illuminate\Support\HtmlString;
 
+use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
@@ -41,6 +41,7 @@ class ListErrors extends Component implements HasForms, HasTable
 {
     use InteractsWithTable;
     use InteractsWithForms;
+    use InteractsWithActions;
 
     public $site_id;
 

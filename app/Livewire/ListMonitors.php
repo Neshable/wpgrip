@@ -7,10 +7,10 @@ use App\Models\MonitorLog;
 use App\Models\UptimeMonitor;
 
 use Filament\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 
 use App\Jobs\RemoteDBBackup;
 use App\Jobs\Backup\RemoteFilesBackup;
@@ -24,6 +24,7 @@ use Filament\Tables\Table;
 
 use Illuminate\Support\HtmlString;
 
+use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
@@ -46,6 +47,7 @@ class ListMonitors extends Component implements HasForms, HasTable
 {
     use InteractsWithTable;
     use InteractsWithForms;
+    use InteractsWithActions;
 
     public $site_id;
 

@@ -14,6 +14,7 @@ use Filament\Actions;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Storage;
 
+use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
@@ -32,6 +33,7 @@ class ListScreenshots extends Component implements HasForms, HasTable
 {
     use InteractsWithTable;
     use InteractsWithForms;
+    use InteractsWithActions;
 
     public $site_id = 8899;
     
