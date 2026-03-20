@@ -6,7 +6,6 @@ use App\Models\AiTokenUsage;
 use Closure;
 use Filament\Facades\Filament;
 use Laravel\Ai\Prompts\AgentPrompt;
-use Laravel\Ai\Responses\AgentResponse;
 
 class TrackTokenUsage
 {
@@ -15,7 +14,7 @@ class TrackTokenUsage
      */
     public function handle(AgentPrompt $prompt, Closure $next)
     {
-        $tenant = Filament::getTenant();
+        $tenant = $this->resolveTenant();
 
         // Check monthly token limit before proceeding
         if ($tenant && AiTokenUsage::hasExceededLimit($tenant->uuid)) {
@@ -24,22 +23,50 @@ class TrackTokenUsage
             );
         }
 
-        return $next($prompt)->then(function (AgentResponse $response) use ($prompt, $tenant) {
+        return $next($prompt)->then(function ($response) use ($prompt, $tenant) {
             if (! $tenant) {
                 return;
             }
 
             $site = $prompt->agent->site ?? null;
+            $usage = $response->usage ?? null;
+
+            $inputTokens = $usage->promptTokens ?? 0;
+            $outputTokens = $usage->completionTokens ?? 0;
 
             AiTokenUsage::create([
                 'tenant_id'     => $tenant->uuid,
                 'user_id'       => auth()->id(),
                 'site_id'       => $site?->id,
-                'input_tokens'  => $response->usage->promptTokens ?? 0,
-                'output_tokens' => $response->usage->completionTokens ?? 0,
-                'total_tokens'  => ($response->usage->promptTokens ?? 0) + ($response->usage->completionTokens ?? 0),
+                'input_tokens'  => $inputTokens,
+                'output_tokens' => $outputTokens,
+                'total_tokens'  => $inputTokens + $outputTokens,
                 'model'         => $response->meta->model ?? 'unknown',
             ]);
         });
+    }
+
+    /**
+     * Resolve the current tenant from Filament or from the authenticated user.
+     */
+    private function resolveTenant(): ?object
+    {
+        // Try Filament context first
+        try {
+            $tenant = Filament::getTenant();
+            if ($tenant) {
+                return $tenant;
+            }
+        } catch (\Throwable $e) {
+            // Not in Filament panel context
+        }
+
+        // Fallback: get tenant from authenticated user
+        $user = auth()->user();
+        if ($user && method_exists($user, 'tenants')) {
+            return $user->tenants()->first();
+        }
+
+        return null;
     }
 }

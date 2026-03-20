@@ -81,83 +81,34 @@ class AgentMode extends ViewRecord
     }
 
     /**
-     * Send a message to the AI agent.
+     * Called after a streaming response completes to sync state.
      */
-    public function sendMessage(string $text): array
+    public function syncAfterStream(string $conversationId, int $tokensUsed): array
     {
-        $text = trim($text);
-        if (empty($text)) {
-            return ['error' => 'Empty message.'];
-        }
+        $this->conversationId = $conversationId;
+        $this->tokensUsed = $tokensUsed;
 
+        $sessionKey = 'agent_conversation_' . $this->record->id;
+        session([$sessionKey => $conversationId]);
+
+        $this->loadConversationHistory();
+
+        return [
+            'conversations' => $this->conversations,
+            'tokensUsed' => $this->tokensUsed,
+        ];
+    }
+
+    /**
+     * Get the SSE stream URL for the frontend.
+     */
+    public function getStreamUrl(): string
+    {
         $tenant = Filament::getTenant();
-        if (AiTokenUsage::hasExceededLimit($tenant->uuid)) {
-            return [
-                'error' => 'Monthly AI token limit reached (5M tokens). Resets on the 1st of next month.',
-                'limitReached' => true,
-            ];
-        }
-
-        $this->aiError = '';
-
-        try {
-            $agent = new SiteAgent($this->record);
-            $user = auth()->user();
-
-            if ($this->conversationId) {
-                $agent->continue($this->conversationId, as: $user);
-            } else {
-                $agent->forUser($user);
-            }
-
-            $response = $agent->prompt($text);
-
-            // Store conversation ID
-            if ($response->conversationId) {
-                $this->conversationId = $response->conversationId;
-                $sessionKey = 'agent_conversation_' . $this->record->id;
-                session([$sessionKey => $this->conversationId]);
-            }
-
-            $reply = $response->text;
-
-            // Update token usage display
-            $this->tokensUsed = AiTokenUsage::monthlyUsage($tenant->uuid);
-
-            $html = (string) Str::of($reply)
-                ->markdown(['html_input' => 'escape', 'allow_unsafe_links' => false]);
-
-            // Collect tool usage info
-            $toolsUsed = [];
-            foreach ($response->toolCalls as $toolCall) {
-                $toolsUsed[] = [
-                    'name' => $toolCall->name,
-                    'result' => null,
-                ];
-            }
-            foreach ($response->toolResults as $i => $result) {
-                if (isset($toolsUsed[$i])) {
-                    $toolsUsed[$i]['result'] = Str::limit((string) ($result->content ?? ''), 200);
-                }
-            }
-
-            // Refresh conversations list
-            $this->loadConversationHistory();
-
-            return [
-                'content' => $reply,
-                'html' => $html,
-                'tokensUsed' => $this->tokensUsed,
-                'conversationId' => $this->conversationId,
-                'toolsUsed' => $toolsUsed,
-                'steps' => $response->steps->count(),
-                'conversations' => $this->conversations,
-            ];
-        } catch (\Throwable $e) {
-            Log::error('Agent Mode error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            $this->aiError = 'Agent error: ' . $e->getMessage();
-            return ['error' => $e->getMessage()];
-        }
+        return route('agent.stream', [
+            'tenant' => $tenant->uuid,
+            'site' => $this->record->id,
+        ]);
     }
 
     /**
@@ -346,6 +297,8 @@ class AgentMode extends ViewRecord
                 conversationId: null,
                 conversations: [],
                 showHistory: false,
+                currentActivity: '',
+                streamUrl: '',
                 suggestions: [
                     'Which plugins have updates available?',
                     'Are there any security vulnerabilities?',
@@ -373,6 +326,7 @@ class AgentMode extends ViewRecord
                         this.conversationId = seed.dataset.conversationId || null;
                         try { this.conversations = JSON.parse(seed.dataset.conversations || '[]'); } catch(e) { this.conversations = []; }
                         this.limitReached = this.tokensUsed >= this.tokensLimit;
+                        this.streamUrl = seed.dataset.streamUrl || '';
                     }
                     this.$nextTick(() => this.scrollToBottom());
                 },
@@ -381,51 +335,207 @@ class AgentMode extends ViewRecord
                     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.submit(); }
                 },
 
-                submit() {
+                async submit() {
                     const text = this.draft.trim();
                     if (!text || this.loading) return;
                     this.messages.push({ role: 'user', content: text, html: '' });
                     this.draft = '';
                     this.loading = true;
+                    this.currentActivity = '';
                     this.$nextTick(() => {
                         if (this.$refs.input) this.$refs.input.style.height = 'auto';
                         this.scrollToBottom();
                     });
-                    this.$wire.sendMessage(text)
-                        .then((result) => {
-                            this.loading = false;
-                            if (result && result.limitReached) {
-                                this.limitReached = true;
-                                this.messages.pop();
-                                return;
+
+                    // Build the assistant message placeholder
+                    const assistantMsg = {
+                        role: 'assistant',
+                        content: '',
+                        html: '',
+                        tools: '',
+                        toolsList: [],
+                        steps: 0,
+                        reasoning: '',
+                        isStreaming: true,
+                    };
+                    this.messages.push(assistantMsg);
+                    const msgIdx = this.messages.length - 1;
+
+                    try {
+                        const response = await fetch(this.streamUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content || '',
+                                'Accept': 'text/event-stream',
+                            },
+                            body: JSON.stringify({
+                                message: text,
+                                conversation_id: this.conversationId,
+                            }),
+                        });
+
+                        if (!response.ok) {
+                            const errText = await response.text();
+                            throw new Error(errText || `HTTP ${response.status}`);
+                        }
+
+                        const reader = response.body.getReader();
+                        const decoder = new TextDecoder();
+                        let buffer = '';
+
+                        while (true) {
+                            const { done, value } = await reader.read();
+                            if (done) break;
+
+                            buffer += decoder.decode(value, { stream: true });
+                            const lines = buffer.split('\n');
+                            buffer = lines.pop(); // keep incomplete line
+
+                            for (const line of lines) {
+                                if (!line.startsWith('data: ')) continue;
+                                const payload = line.slice(6).trim();
+                                if (payload === '[DONE]') continue;
+
+                                let evt;
+                                try { evt = JSON.parse(payload); } catch { continue; }
+
+                                this.handleStreamEvent(evt, msgIdx);
                             }
-                            if (result && result.error) {
-                                this.messages.push({ role: 'assistant', content: result.error, html: '<p class="text-red-400">' + this.escapeHtml(result.error) + '</p>' });
-                                this.$nextTick(() => this.scrollToBottom());
-                                return;
+                        }
+                    } catch (err) {
+                        this.messages[msgIdx].html = '<p class="text-red-400">' + this.escapeHtml(err.message) + '</p>';
+                        this.messages[msgIdx].content = err.message;
+                    } finally {
+                        this.loading = false;
+                        this.currentActivity = '';
+                        this.messages[msgIdx].isStreaming = false;
+                        this.$nextTick(() => this.scrollToBottom());
+                    }
+                },
+
+                handleStreamEvent(evt, msgIdx) {
+                    const msg = this.messages[msgIdx];
+                    switch (evt.type) {
+                        case 'stream_start':
+                            this.currentActivity = 'Connecting to ' + (evt.model || 'AI') + '...';
+                            break;
+
+                        case 'reasoning_start':
+                            this.currentActivity = 'Thinking...';
+                            msg.reasoning = '';
+                            break;
+
+                        case 'reasoning_delta':
+                            msg.reasoning += evt.delta;
+                            this.currentActivity = 'Thinking: ' + msg.reasoning.slice(-60);
+                            break;
+
+                        case 'reasoning_end':
+                            this.currentActivity = '';
+                            break;
+
+                        case 'tool_call':
+                            msg.toolsList.push({ name: evt.tool_name, status: 'running', result: null });
+                            msg.tools = msg.toolsList.map(t => (t.status === 'running' ? '\u23F3' : '\u2705') + ' ' + t.name).join(', ');
+                            msg.steps++;
+                            this.currentActivity = 'Running ' + this.formatToolName(evt.tool_name) + '...';
+                            this.$nextTick(() => this.scrollToBottom());
+                            break;
+
+                        case 'tool_result':
+                            const tool = msg.toolsList.find(t => t.name === evt.tool_name && t.status === 'running');
+                            if (tool) {
+                                tool.status = evt.successful ? 'done' : 'error';
+                                tool.result = evt.result;
                             }
-                            if (result && result.html) {
-                                let toolInfo = '';
-                                if (result.toolsUsed && result.toolsUsed.length > 0) {
-                                    toolInfo = result.toolsUsed.map(t => '\uD83D\uDD27 ' + t.name).join(', ');
-                                }
-                                this.messages.push({
-                                    role: 'assistant',
-                                    content: result.content,
-                                    html: result.html,
-                                    tools: toolInfo,
-                                    steps: result.steps || 0,
-                                });
-                                if (result.conversationId) this.conversationId = result.conversationId;
-                                if (result.conversations) this.conversations = result.conversations;
-                                if (result.tokensUsed !== undefined) {
-                                    this.tokensUsed = result.tokensUsed;
-                                    this.limitReached = this.tokensUsed >= this.tokensLimit;
-                                }
-                                this.$nextTick(() => this.scrollToBottom());
+                            msg.tools = msg.toolsList.map(t => (t.status === 'running' ? '\u23F3' : t.status === 'done' ? '\u2705' : '\u274C') + ' ' + t.name).join(', ');
+                            this.currentActivity = evt.successful
+                                ? this.formatToolName(evt.tool_name) + ' complete'
+                                : this.formatToolName(evt.tool_name) + ' failed';
+                            break;
+
+                        case 'text_start':
+                            this.currentActivity = 'Writing response...';
+                            break;
+
+                        case 'text_delta':
+                            msg.content += evt.delta;
+                            // Render markdown incrementally
+                            msg.html = this.renderMarkdown(msg.content);
+                            this.currentActivity = '';
+                            this.$nextTick(() => this.scrollToBottom());
+                            break;
+
+                        case 'text_end':
+                            msg.html = this.renderMarkdown(msg.content);
+                            break;
+
+                        case 'stream_end':
+                            // Final render
+                            msg.html = this.renderMarkdown(msg.content);
+                            break;
+
+                        case 'done':
+                            if (evt.conversation_id) this.conversationId = evt.conversation_id;
+                            if (evt.tokens_used !== undefined) {
+                                this.tokensUsed = evt.tokens_used;
+                                this.limitReached = this.tokensUsed >= this.tokensLimit;
                             }
-                        })
-                        .catch(() => { this.loading = false; });
+                            // Sync with Livewire to update conversation list
+                            if (evt.conversation_id) {
+                                this.$wire.syncAfterStream(evt.conversation_id, evt.tokens_used || 0)
+                                    .then(r => {
+                                        if (r && r.conversations) this.conversations = r.conversations;
+                                    });
+                            }
+                            break;
+
+                        case 'error':
+                            msg.html = '<p class="text-red-400">' + this.escapeHtml(evt.message) + '</p>';
+                            msg.content = evt.message;
+                            break;
+                    }
+                },
+
+                formatToolName(name) {
+                    // Convert PascalCase/snake_case to readable
+                    return name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ').trim().replace(/^ /, '');
+                },
+
+                renderMarkdown(text) {
+                    if (!text) return '';
+                    // Simple markdown to HTML (tables, bold, code, lists)
+                    // For production, use a proper markdown lib; this handles basics
+                    let html = this.escapeHtml(text);
+                    // Code blocks
+                    html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+                    // Inline code
+                    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+                    // Bold
+                    html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+                    // Headers
+                    html = html.replace(/^### (.+)$/gm, '<h4 class="font-semibold mt-2">$1</h4>');
+                    html = html.replace(/^## (.+)$/gm, '<h3 class="font-semibold text-base mt-3">$1</h3>');
+                    // Table
+                    html = html.replace(/^\|(.+)\|$/gm, (match) => {
+                        const cells = match.split('|').filter(c => c.trim()).map(c => c.trim());
+                        if (cells.every(c => /^[-:]+$/.test(c))) return ''; // separator row
+                        const tag = 'td';
+                        return '<tr>' + cells.map(c => '<' + tag + '>' + c + '</' + tag + '>').join('') + '</tr>';
+                    });
+                    // Wrap table rows
+                    if (html.includes('<tr>')) {
+                        html = html.replace(/((?:<tr>.*?<\/tr>\s*)+)/gs, '<table class="w-full border-collapse text-xs my-2">$1</table>');
+                    }
+                    // Bullet lists
+                    html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+                    html = html.replace(/((?:<li>.*?<\/li>\s*)+)/gs, '<ul class="list-disc ml-4 space-y-0.5">$1</ul>');
+                    // Line breaks
+                    html = html.replace(/\n/g, '<br>');
+                    // Clean up double breaks
+                    html = html.replace(/(<br>)+/g, '<br>');
+                    return html;
                 },
 
                 newConversation() {

@@ -205,26 +205,30 @@
                 </div>
             </template>
 
-            {{-- Typing / thinking indicator --}}
-            <template x-if="loading">
-                <div class="flex items-start gap-3 agent-msg">
-                    <div class="flex-shrink-0 rounded-full p-1.5 mt-0.5 bg-violet-100 dark:bg-violet-900/30">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h9a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0015.75 4.5h-9A2.25 2.25 0 004.5 6.75v10.5A2.25 2.25 0 006.75 19.5z" />
-                        </svg>
+                {{-- Live activity indicator (shows during streaming when no text yet) --}}
+            <template x-if="loading && currentActivity && messages[messages.length - 1]?.isStreaming && !messages[messages.length - 1]?.content">
+                <div class="flex items-center gap-2.5 px-2 py-1.5 agent-msg">
+                    <div class="flex gap-1 items-center">
+                        <span class="agent-dot inline-block w-1.5 h-1.5 rounded-full bg-violet-500"></span>
+                        <span class="agent-dot inline-block w-1.5 h-1.5 rounded-full bg-violet-500"></span>
+                        <span class="agent-dot inline-block w-1.5 h-1.5 rounded-full bg-violet-500"></span>
                     </div>
-                    <div class="rounded-2xl rounded-tl-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-white/10 px-4 py-3.5 shadow-sm">
-                        <div class="flex items-center gap-2">
-                            <div class="flex gap-1.5 items-center" style="height:1.1rem;">
-                                <span class="agent-dot inline-block w-2 h-2 rounded-full bg-violet-500"></span>
-                                <span class="agent-dot inline-block w-2 h-2 rounded-full bg-violet-500"></span>
-                                <span class="agent-dot inline-block w-2 h-2 rounded-full bg-violet-500"></span>
-                            </div>
-                            <span class="text-xs text-gray-400 dark:text-gray-500">Agent is thinking…</span>
-                        </div>
-                    </div>
+                    <span class="text-xs text-violet-500 dark:text-violet-400 font-medium truncate" x-text="currentActivity"></span>
                 </div>
             </template>
+        </div>
+
+        {{-- Activity status bar (visible during streaming) --}}
+        <div
+            x-show="loading && currentActivity"
+            x-transition
+            class="mt-2 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800"
+        >
+            <svg class="w-3.5 h-3.5 text-violet-500 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span class="text-xs text-violet-600 dark:text-violet-400 truncate" x-text="currentActivity"></span>
         </div>
 
         {{-- Input row --}}
@@ -314,6 +318,7 @@
     data-tokens-limit="{{ $tokensLimit }}"
     data-conversation-id="{{ e($conversationId ?? '') }}"
     data-conversations="{{ e(json_encode($conversations)) }}"
+    data-stream-url="{{ $this->getStreamUrl() }}"
     style="display:none;"
 ></div>
 

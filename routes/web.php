@@ -279,3 +279,8 @@ Route::get('/invoice/preview', [
 // Repo webhook trigger
 Route::post('/webhook/git/{unique_token}', [ WebhookController::class, 'handleWebhook' ])
     ->middleware('throttle:30,1');
+
+// Agent Mode SSE streaming endpoint
+Route::post('/dashboard/{tenant:uuid}/agent/stream/{site}', [
+    \App\Http\Controllers\Agent\AgentStreamController::class, 'stream',
+])->middleware(['auth', 'throttle:30,1'])->name('agent.stream');
