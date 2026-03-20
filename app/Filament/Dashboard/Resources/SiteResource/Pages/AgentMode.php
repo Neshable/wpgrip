@@ -85,8 +85,21 @@ class AgentMode extends ViewRecord
      */
     public function syncAfterStream(string $conversationId, int $tokensUsed): array
     {
+        // Verify the conversation belongs to the current user
+        $exists = \DB::table('agent_conversations')
+            ->where('id', $conversationId)
+            ->where('user_id', auth()->id())
+            ->exists();
+
+        if (! $exists) {
+            return ['conversations' => $this->conversations, 'tokensUsed' => $this->tokensUsed];
+        }
+
         $this->conversationId = $conversationId;
-        $this->tokensUsed = $tokensUsed;
+
+        // Re-read token usage from the DB instead of trusting client value
+        $tenant = Filament::getTenant();
+        $this->tokensUsed = $tenant ? AiTokenUsage::monthlyUsage($tenant->uuid) : $tokensUsed;
 
         $sessionKey = 'agent_conversation_' . $this->record->id;
         session([$sessionKey => $conversationId]);
@@ -134,6 +147,16 @@ class AgentMode extends ViewRecord
      */
     public function resumeConversation(string $conversationId): array
     {
+        // Verify ownership
+        $exists = \DB::table('agent_conversations')
+            ->where('id', $conversationId)
+            ->where('user_id', auth()->id())
+            ->exists();
+
+        if (! $exists) {
+            return ['ok' => false, 'error' => 'Conversation not found.'];
+        }
+
         $this->conversationId = $conversationId;
         $this->messages = [];
         $this->aiError = '';
@@ -214,6 +237,15 @@ class AgentMode extends ViewRecord
     public function deleteConversation(string $conversationId): array
     {
         try {
+            $exists = \DB::table('agent_conversations')
+                ->where('id', $conversationId)
+                ->where('user_id', auth()->id())
+                ->exists();
+
+            if (! $exists) {
+                return ['ok' => false, 'error' => 'Conversation not found.'];
+            }
+
             \DB::table('agent_conversation_messages')
                 ->where('conversation_id', $conversationId)
                 ->delete();
@@ -299,6 +331,7 @@ class AgentMode extends ViewRecord
                 showHistory: false,
                 currentActivity: '',
                 streamUrl: '',
+                _renderPending: false,
                 suggestions: [
                     'Which plugins have updates available?',
                     'Are there any security vulnerabilities?',
@@ -443,8 +476,8 @@ class AgentMode extends ViewRecord
                             this.$nextTick(() => this.scrollToBottom());
                             break;
 
-                        case 'tool_result':
-                            const tool = msg.toolsList.find(t => t.name === evt.tool_name && t.status === 'running');
+                        case 'tool_result': {
+                            const tool = [...msg.toolsList].reverse().find(t => t.name === evt.tool_name && t.status === 'running');
                             if (tool) {
                                 tool.status = evt.successful ? 'done' : 'error';
                                 tool.result = evt.result;
@@ -454,6 +487,7 @@ class AgentMode extends ViewRecord
                                 ? this.formatToolName(evt.tool_name) + ' complete'
                                 : this.formatToolName(evt.tool_name) + ' failed';
                             break;
+                        }
 
                         case 'text_start':
                             this.currentActivity = 'Writing response...';
@@ -461,10 +495,16 @@ class AgentMode extends ViewRecord
 
                         case 'text_delta':
                             msg.content += evt.delta;
-                            // Render markdown incrementally
-                            msg.html = this.renderMarkdown(msg.content);
                             this.currentActivity = '';
-                            this.$nextTick(() => this.scrollToBottom());
+                            // Throttle markdown rendering to avoid O(n²) on rapid deltas
+                            if (!this._renderPending) {
+                                this._renderPending = true;
+                                requestAnimationFrame(() => {
+                                    msg.html = this.renderMarkdown(msg.content);
+                                    this._renderPending = false;
+                                    this.$nextTick(() => this.scrollToBottom());
+                                });
+                            }
                             break;
 
                         case 'text_end':
@@ -690,7 +730,9 @@ class AgentMode extends ViewRecord
 
                 scrollToBottom() {
                     const el = this.$refs.msgList;
-                    if (el) el.scrollTop = el.scrollHeight;
+                    if (!el) return;
+                    const nearBottom = (el.scrollHeight - el.scrollTop - el.clientHeight) < 150;
+                    if (nearBottom || this.loading) el.scrollTop = el.scrollHeight;
                 },
             };
         }

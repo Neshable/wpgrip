@@ -44,6 +44,10 @@ class AgentStreamController
             abort(403);
         }
 
+        if (! $user->tenants()->where('tenants.id', $tenantModel->id)->exists()) {
+            abort(403);
+        }
+
         // Set Filament tenant context if possible
         try {
             Filament::setTenant($tenantModel);
@@ -60,7 +64,7 @@ class AgentStreamController
 
         return new StreamedResponse(function () use ($site, $user, $message, $conversationId, $tenantModel) {
             // Disable output buffering for real streaming
-            if (ob_get_level()) {
+            while (ob_get_level()) {
                 ob_end_clean();
             }
 
@@ -78,7 +82,6 @@ class AgentStreamController
                 }
 
                 $stream = $agent->stream($message);
-                $newConversationId = null;
 
                 foreach ($stream as $event) {
                     $data = match (true) {
@@ -151,7 +154,6 @@ class AgentStreamController
                     'type' => 'done',
                     'conversation_id' => $conversationId,
                     'tokens_used' => $tokensUsed,
-                    'full_text' => $stream->text,
                 ]) . "\n\n";
                 flush();
 
@@ -163,7 +165,7 @@ class AgentStreamController
 
                 echo 'data: ' . json_encode([
                     'type' => 'error',
-                    'message' => $e->getMessage(),
+                    'message' => 'An internal error occurred. Please try again.',
                 ]) . "\n\n";
                 flush();
             }

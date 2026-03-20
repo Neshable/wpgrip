@@ -100,6 +100,18 @@ class RunSshCommand implements Tool
         'ruby ',
         'node ',
         'php -r',
+
+        // Shell interpreters / execution
+        'bash ',
+        '/bin/bash',
+        'sh -c',
+        '/bin/sh',
+        'eval ',
+        'source ',
+        'xargs ',
+        'exec ',
+        'base64 ',
+        '<<<',
     ];
 
     /**
@@ -114,6 +126,8 @@ class RunSshCommand implements Tool
         '$(',   // subshell
         '>>',   // append redirect (could modify files)
         '> ',   // output redirect (could overwrite files) — note trailing space
+        '<(',   // process substitution
+        '>(',   // process substitution
     ];
 
     /**
@@ -162,6 +176,11 @@ DESC;
         $cmd = trim($request['command'] ?? '');
         if (empty($cmd)) {
             return 'Error: No command provided.';
+        }
+
+        // Security: reject commands with embedded newlines
+        if (preg_match('/[\r\n]/', $cmd)) {
+            return '⛔ Blocked: command contains newline characters.';
         }
 
         // Security: check blocked patterns (case-insensitive)
