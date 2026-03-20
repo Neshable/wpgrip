@@ -331,7 +331,7 @@ class AgentMode extends ViewRecord
                 showHistory: false,
                 currentActivity: '',
                 streamUrl: '',
-                _renderPending: false,
+                _renderTimer: null,
                 suggestions: [
                     'Which plugins have updates available?',
                     'Are there any security vulnerabilities?',
@@ -496,23 +496,22 @@ class AgentMode extends ViewRecord
                         case 'text_delta':
                             msg.content += evt.delta;
                             this.currentActivity = '';
-                            // Throttle markdown rendering to avoid O(n²) on rapid deltas
-                            if (!this._renderPending) {
-                                this._renderPending = true;
-                                requestAnimationFrame(() => {
-                                    msg.html = this.renderMarkdown(msg.content);
-                                    this._renderPending = false;
-                                    this.$nextTick(() => this.scrollToBottom());
-                                });
-                            }
+                            // Batch rapid deltas and render at ~20fps for smooth streaming
+                            clearTimeout(this._renderTimer);
+                            this._renderTimer = setTimeout(() => {
+                                msg.html = this.renderMarkdown(msg.content);
+                                this.$nextTick(() => this.scrollToBottom());
+                            }, 50);
                             break;
 
                         case 'text_end':
+                            clearTimeout(this._renderTimer);
                             msg.html = this.renderMarkdown(msg.content);
+                            this.$nextTick(() => this.scrollToBottom());
                             break;
 
                         case 'stream_end':
-                            // Final render
+                            clearTimeout(this._renderTimer);
                             msg.html = this.renderMarkdown(msg.content);
                             break;
 

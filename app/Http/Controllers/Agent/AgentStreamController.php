@@ -63,10 +63,17 @@ class AgentStreamController
         $conversationId = $request->input('conversation_id');
 
         return new StreamedResponse(function () use ($site, $user, $message, $conversationId, $tenantModel) {
-            // Disable output buffering for real streaming
+            // Disable ALL output buffering for real-time SSE delivery
             while (ob_get_level()) {
                 ob_end_clean();
             }
+
+            // Ensure PHP flushes immediately (supplements ini settings)
+            if (function_exists('apache_setenv')) {
+                apache_setenv('no-gzip', '1');
+            }
+            ini_set('zlib.output_compression', '0');
+            ini_set('implicit_flush', '1');
 
             // Create a persistent SSH session for the entire streaming request
             $sshSession = new SshSessionManager($site);
