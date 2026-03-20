@@ -308,16 +308,16 @@
 {{-- Seed data for agentChat() Alpine component --}}
 <div
     id="agent-chat-seed"
-    data-messages="{{ e(json_encode(array_map(fn($m) => [
+    data-messages="{{ json_encode(array_map(fn($m) => [
         'role'    => $m['role'],
         'content' => $m['content'],
         'html'    => $m['html'] ?? '',
-    ], $messages))) }}"
+    ], $messages)) }}"
     data-age="{{ e($siteMdAge) }}"
     data-tokens-used="{{ $tokensUsed }}"
     data-tokens-limit="{{ $tokensLimit }}"
-    data-conversation-id="{{ e($conversationId ?? '') }}"
-    data-conversations="{{ e(json_encode($conversations)) }}"
+    data-conversation-id="{{ $conversationId ?? '' }}"
+    data-conversations="{{ json_encode($conversations) }}"
     data-stream-url="{{ $this->getStreamUrl() }}"
     style="display:none;"
 ></div>

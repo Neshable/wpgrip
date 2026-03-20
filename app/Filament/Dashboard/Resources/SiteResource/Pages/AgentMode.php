@@ -359,9 +359,13 @@ class AgentMode extends ViewRecord
                         this.conversationId = seed.dataset.conversationId || null;
                         try { this.conversations = JSON.parse(seed.dataset.conversations || '[]'); } catch(e) { this.conversations = []; }
                         this.limitReached = this.tokensUsed >= this.tokensLimit;
-                        this.streamUrl = seed.dataset.streamUrl || '';
-                    }
-                    this.$nextTick(() => this.scrollToBottom());
+                    this.streamUrl = seed.dataset.streamUrl || '';
+                }
+                // Auto-show history sidebar if there are previous conversations
+                if (this.conversations.length > 0) {
+                    this.showHistory = true;
+                }
+                this.$nextTick(() => this.scrollToBottom());
                 },
 
                 handleKeydown(e) {
@@ -523,10 +527,12 @@ class AgentMode extends ViewRecord
                             }
                             // Sync with Livewire to update conversation list
                             if (evt.conversation_id) {
-                                this.$wire.syncAfterStream(evt.conversation_id, evt.tokens_used || 0)
-                                    .then(r => {
+                                const result = this.$wire.syncAfterStream(evt.conversation_id, evt.tokens_used || 0);
+                                if (result && typeof result.then === 'function') {
+                                    result.then(r => {
                                         if (r && r.conversations) this.conversations = r.conversations;
-                                    });
+                                    }).catch(() => {});
+                                }
                             }
                             break;
 
@@ -715,7 +721,7 @@ class AgentMode extends ViewRecord
 
                 fillSuggestion(s) {
                     this.draft = s;
-                    this.$nextTick(() => this.$refs.input && this.$refs.input.focus());
+                    this.$nextTick(() => this.submit());
                 },
 
                 escapeHtml(str) {
