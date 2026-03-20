@@ -15,6 +15,7 @@
     $pageRouteMap = [
         'view' => \App\Filament\Dashboard\Resources\SiteResource\Pages\ViewSite::class,
         'ai-assistant' => \App\Filament\Dashboard\Resources\SiteResource\Pages\AiAssistant::class,
+        'agent-mode' => \App\Filament\Dashboard\Resources\SiteResource\Pages\AgentMode::class,
         'files' => \App\Filament\Dashboard\Resources\SiteResource\Pages\FileExplorer::class,
         'monitoring' => \App\Filament\Dashboard\Resources\SiteResource\Pages\Monitoring::class,
         'backups' => \App\Filament\Dashboard\Resources\SiteResource\Pages\ShowBackups::class,
@@ -45,6 +46,7 @@
             'label' => 'Management',
             'items' => array_filter([
                 $canAI ? ['label' => 'AI Assistant', 'route' => 'ai-assistant'] : null,
+                $canAI ? ['label' => 'Agent Mode', 'route' => 'agent-mode'] : null,
                 ['label' => 'File Manager', 'route' => 'files'],
                 ['label' => 'Monitoring', 'route' => 'monitoring'],
                 ['label' => 'Backups', 'route' => 'backups'],
