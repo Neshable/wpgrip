@@ -39,7 +39,7 @@ class AgentStreamController
 
         // Resolve tenant from route parameter (UUID)
         $tenantModel = Tenant::where('uuid', $tenant)->first();
-        if (! $tenantModel || $site->tenant_id !== $tenantModel->uuid) {
+        if (! $tenantModel || $site->tenant_id !== $tenantModel->id) {
             abort(403);
         }
 
@@ -131,8 +131,16 @@ class AgentStreamController
                 }
 
                 // After streaming completes, send conversation metadata
-                $conversationId = $stream->conversationId;
+                // Note: conversationId is on the agent (set by RememberConversation middleware),
+                // not on the StreamableAgentResponse (which passes it to StreamedAgentResponse).
+                $conversationId = $agent->currentConversation() ?? $stream->conversationId;
                 $tokensUsed = AiTokenUsage::monthlyUsage($tenantModel->uuid);
+
+                Log::info('Agent stream completed', [
+                    'conversation_id' => $conversationId,
+                    'tokens_used' => $tokensUsed,
+                    'text_length' => strlen($stream->text ?? ''),
+                ]);
 
                 echo 'data: ' . json_encode([
                     'type' => 'done',
