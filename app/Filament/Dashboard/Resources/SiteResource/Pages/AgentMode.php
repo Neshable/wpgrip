@@ -151,6 +151,7 @@ class AgentMode extends ViewRecord
                 'conversationId' => $this->conversationId,
                 'toolsUsed' => $toolsUsed,
                 'steps' => $response->steps->count(),
+                'conversations' => $this->conversations,
             ];
         } catch (\Throwable $e) {
             Log::error('Agent Mode error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
@@ -160,7 +161,7 @@ class AgentMode extends ViewRecord
     }
 
     /**
-     * Start a fresh conversation.
+     * Start a fresh conversation (preserves old ones in history).
      */
     public function startNewConversation(): array
     {
@@ -171,7 +172,10 @@ class AgentMode extends ViewRecord
         $sessionKey = 'agent_conversation_' . $this->record->id;
         session()->forget($sessionKey);
 
-        return ['ok' => true];
+        // Refresh the conversation list so the old one appears
+        $this->loadConversationHistory();
+
+        return ['ok' => true, 'conversations' => $this->conversations];
     }
 
     /**
@@ -187,10 +191,12 @@ class AgentMode extends ViewRecord
         session([$sessionKey => $conversationId]);
 
         $this->loadMessages();
+        $this->loadConversationHistory();
 
         return [
             'ok' => true,
             'messages' => $this->messages,
+            'conversations' => $this->conversations,
         ];
     }
 
@@ -252,20 +258,59 @@ class AgentMode extends ViewRecord
     }
 
     /**
+     * Delete a conversation.
+     */
+    public function deleteConversation(string $conversationId): array
+    {
+        try {
+            \DB::table('agent_conversation_messages')
+                ->where('conversation_id', $conversationId)
+                ->delete();
+            \DB::table('agent_conversations')
+                ->where('id', $conversationId)
+                ->where('user_id', auth()->id())
+                ->delete();
+
+            // If we just deleted the active conversation, reset
+            if ($this->conversationId === $conversationId) {
+                $this->conversationId = null;
+                $this->messages = [];
+                $sessionKey = 'agent_conversation_' . $this->record->id;
+                session()->forget($sessionKey);
+            }
+
+            $this->loadConversationHistory();
+            return ['ok' => true, 'conversations' => $this->conversations];
+        } catch (\Throwable $e) {
+            Log::error('Failed to delete conversation: ' . $e->getMessage());
+            return ['ok' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
      * Load the list of previous conversations for this site.
+     * Filters to only show conversations that used the SiteAgent.
      */
     private function loadConversationHistory(): void
     {
         try {
             $userId = auth()->id();
+            $agentClass = SiteAgent::class;
+
             $this->conversations = \DB::table('agent_conversations')
-                ->where('user_id', $userId)
-                ->orderByDesc('updated_at')
-                ->limit(20)
+                ->where('agent_conversations.user_id', $userId)
+                ->whereExists(function ($query) use ($agentClass) {
+                    $query->select(\DB::raw(1))
+                        ->from('agent_conversation_messages')
+                        ->whereColumn('agent_conversation_messages.conversation_id', 'agent_conversations.id')
+                        ->where('agent_conversation_messages.agent', $agentClass);
+                })
+                ->orderByDesc('agent_conversations.updated_at')
+                ->limit(30)
                 ->get()
                 ->map(fn ($c) => [
                     'id' => $c->id,
-                    'title' => $c->title ?? 'Conversation',
+                    'title' => Str::limit($c->title ?? 'Conversation', 40),
                     'updated_at' => \Carbon\Carbon::parse($c->updated_at)->diffForHumans(),
                     'active' => $c->id === $this->conversationId,
                 ])
@@ -372,6 +417,7 @@ class AgentMode extends ViewRecord
                                     steps: result.steps || 0,
                                 });
                                 if (result.conversationId) this.conversationId = result.conversationId;
+                                if (result.conversations) this.conversations = result.conversations;
                                 if (result.tokensUsed !== undefined) {
                                     this.tokensUsed = result.tokensUsed;
                                     this.limitReached = this.tokensUsed >= this.tokensLimit;
@@ -387,20 +433,41 @@ class AgentMode extends ViewRecord
                         if (r && r.ok) {
                             this.messages = [];
                             this.conversationId = null;
-                            this.showHistory = false;
+                            if (r.conversations) this.conversations = r.conversations;
                         }
                     });
                 },
 
                 resumeConversation(id) {
+                    if (this.conversationId === id) return;
+                    this.loading = true;
                     this.$wire.resumeConversation(id).then((r) => {
+                        this.loading = false;
                         if (r && r.ok) {
                             this.messages = r.messages || [];
                             this.conversationId = id;
-                            this.showHistory = false;
+                            if (r.conversations) this.conversations = r.conversations;
                             this.$nextTick(() => this.scrollToBottom());
                         }
+                    }).catch(() => { this.loading = false; });
+                },
+
+                deleteConversation(id, e) {
+                    if (e) e.stopPropagation();
+                    if (!confirm('Delete this conversation?')) return;
+                    this.$wire.deleteConversation(id).then((r) => {
+                        if (r && r.ok) {
+                            if (r.conversations) this.conversations = r.conversations;
+                            if (this.conversationId === id) {
+                                this.messages = [];
+                                this.conversationId = null;
+                            }
+                        }
                     });
+                },
+
+                toggleHistory() {
+                    this.showHistory = !this.showHistory;
                 },
 
                 refreshContext() {
@@ -465,6 +532,59 @@ class AgentMode extends ViewRecord
         .agent-bubble th, .agent-bubble td { border: 1px solid rgba(255,255,255,.1); padding: .3rem .6rem; text-align: left; }
         .agent-bubble th            { background: rgba(255,255,255,.05); font-weight: 600; }
         .agent-tool-badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(139,92,246,.15); color: #a78bfa; border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 500; margin-bottom: 6px; }
+
+        /* History sidebar */
+        .agent-history-sidebar {
+            width: 240px;
+            min-width: 240px;
+            border-right: 1px solid rgba(229,231,235,.6);
+            display: flex;
+            flex-direction: column;
+            background: #fafafa;
+            border-radius: 0.75rem 0 0 0.75rem;
+        }
+        .dark .agent-history-sidebar {
+            background: rgba(17,24,39,.6);
+            border-color: rgba(255,255,255,.06);
+        }
+        .agent-history-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #6b7280;
+            border-radius: 8px;
+            margin: 0 6px;
+            cursor: pointer;
+            transition: background .12s, color .12s;
+            text-decoration: none;
+        }
+        .agent-history-item:hover {
+            background: rgba(139,92,246,.08);
+            color: #4b5563;
+        }
+        .dark .agent-history-item { color: #9ca3af; }
+        .dark .agent-history-item:hover { background: rgba(139,92,246,.15); color: #e5e7eb; }
+        .agent-history-item.active {
+            background: rgba(139,92,246,.12);
+            color: #7c3aed;
+            font-weight: 500;
+        }
+        .dark .agent-history-item.active {
+            background: rgba(139,92,246,.2);
+            color: #a78bfa;
+        }
+        .agent-history-item .delete-btn {
+            opacity: 0;
+            margin-left: auto;
+            flex-shrink: 0;
+            padding: 2px;
+            border-radius: 4px;
+            transition: opacity .12s, background .12s;
+        }
+        .agent-history-item:hover .delete-btn { opacity: .6; }
+        .agent-history-item .delete-btn:hover { opacity: 1; background: rgba(239,68,68,.15); color: #ef4444; }
         </style>
         CSS;
     }
