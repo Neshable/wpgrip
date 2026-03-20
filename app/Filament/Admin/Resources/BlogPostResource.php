@@ -6,9 +6,10 @@ use App\Filament\Admin\Resources\BlogPostResource\Pages;
 use App\Models\BlogPost;
 use CodeIsAwesome\FilamentTinyEditor\TinyEditor;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -17,15 +18,15 @@ class BlogPostResource extends Resource
 {
     protected static ?string $model = BlogPost::class;
 
-    protected static ?string $navigationGroup = 'Blog';
+    protected static string | \UnitEnum | null $navigationGroup = 'Blog';
 
     protected static ?int $navigationSort = 1;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
-                Forms\Components\Section::make([
+                \Filament\Schemas\Components\Section::make([
                     Forms\Components\TextInput::make('title')
                         ->required()
                         ->maxLength(1000),
@@ -42,7 +43,7 @@ class BlogPostResource extends Resource
                         ->fileAttachmentsDirectory('blog-images')
                         ->columnSpanFull(),
                 ])->columnSpan(2),
-                Forms\Components\Section::make([
+                \Filament\Schemas\Components\Section::make([
                     Forms\Components\TextInput::make('slug')
                         ->helperText(__('Will be used in the URL of the post. Leave empty to generate slug automatically from title.'))
                         ->dehydrateStateUsing(function ($state, \Filament\Forms\Get $get) {
@@ -104,11 +105,11 @@ class BlogPostResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

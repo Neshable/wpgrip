@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Resources\RoadmapItemResource\RelationManagers;
 
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -11,9 +11,9 @@ class UpvotesRelationManager extends RelationManager
 {
     protected static string $relationship = 'userUpvotes';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
 
             ]);

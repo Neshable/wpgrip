@@ -46,9 +46,9 @@ class ListSites extends ListRecords
     public function getTabs(): array
     {
         return [
-            'Production Sites' => \Filament\Resources\Components\Tab::make()
+            'Production Sites' => \Filament\Schemas\Components\Tabs\Tab::make()
                     ->modifyQueryUsing(fn (Builder $query) => $query->where('is_staging', false)),
-            'Staging Sites' => \Filament\Resources\Components\Tab::make()
+            'Staging Sites' => \Filament\Schemas\Components\Tabs\Tab::make()
                         ->modifyQueryUsing(fn (Builder $query) => $query->where('is_staging', true)),
         ];
     }

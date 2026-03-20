@@ -3,9 +3,10 @@
 namespace App\Filament\Dashboard\Resources\SiteResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -20,9 +21,9 @@ class SitesRelationManager extends RelationManager
 {
     protected static string $relationship = 'sites';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Forms\Components\TextInput::make('url')
                     ->required()
@@ -48,8 +49,8 @@ class SitesRelationManager extends RelationManager
             ->headerActions([
             ])
             ->actions([
-                // Tables\Actions\EditAction::make(),
-                // Tables\Actions\DeleteAction::make(),
+                // Actions\EditAction::make(),
+                // Actions\DeleteAction::make(),
             ])
             ->heading('All available websites')
             ->description('Sites hosted on this server')

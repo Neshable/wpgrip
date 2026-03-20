@@ -3,7 +3,7 @@
 namespace App\Filament\Dashboard\Resources\SiteResource\Pages;
 
 use App\Filament\Dashboard\Resources\SiteResource;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Actions\Action;
 use Filament\Forms\Components;
@@ -18,7 +18,7 @@ class Errors extends ViewRecord
 
     protected static string $resource = SiteResource::class;
 
-    protected static string $view = 'site.single.errors';
+    protected string $view = 'site.single.errors';
 
     public function getHeader(): ?View
     {

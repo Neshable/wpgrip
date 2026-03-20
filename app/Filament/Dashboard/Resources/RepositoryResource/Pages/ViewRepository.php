@@ -12,13 +12,13 @@ use Illuminate\Contracts\View\View;
 
 use App\Jobs\Git\SshAndGitPull;
 use Filament\Notifications\Notification;
-use Filament\Tables\Actions\Action;
+use Filament\Actions\Action;
 
 class ViewRepository extends ViewRecord
 {
     protected static string $resource = RepositoryResource::class;
 
-    protected static string $view = 'repo.single.overview';
+    protected string $view = 'repo.single.overview';
 
     // public function render(): View
     // {

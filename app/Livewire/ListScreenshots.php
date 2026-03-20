@@ -5,10 +5,11 @@ namespace App\Livewire;
 use App\Models\Site;
 use App\Models\VRT;
 
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Tables;
+use Filament\Actions;
 
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Storage;
@@ -60,7 +61,7 @@ class ListScreenshots extends Component implements HasForms, HasTable
                 'xl' => 3,
             ])
             ->actions([
-                Tables\Actions\DeleteAction::make(),
+                Actions\DeleteAction::make(),
                 Action::make('Compare')
                         ->action(function ( VRT $screenshot ) {
                             $site_model = Site::FindOrFail( $this->site_id );
@@ -72,8 +73,8 @@ class ListScreenshots extends Component implements HasForms, HasTable
                         } )
                         ->label('Run manual test')
                         ->tooltip('Compare this to the control screenshot.'),
-                // Tables\Actions\ActionGroup::make([
-                //     Tables\Actions\DeleteAction::make(),
+                // Actions\ActionGroup::make([
+                //     Actions\DeleteAction::make(),
                     
                 // ]),
             ])

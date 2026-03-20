@@ -16,7 +16,7 @@ class ViewClient extends ViewRecord
 {
     protected static string $resource = ClientResource::class;
 
-    protected static string $view = 'filament.dashboard.resources.client-resource.pages.view-client';
+    protected string $view = 'filament.dashboard.resources.client-resource.pages.view-client';
 
     // Livewire state for notes
     public string $newNote = '';

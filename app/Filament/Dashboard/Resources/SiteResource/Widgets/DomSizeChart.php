@@ -14,11 +14,11 @@ use Filament\Support\RawJs;
 
 class DomSizeChart extends ChartWidget
 {
-    protected static ?string $heading = 'DOM size';
+    protected ?string $heading = 'DOM size';
 
-    protected static ?string $description = 'Showing DOM size movements for the last 7 days ( in number of elements )';
+    protected ?string $description = 'Showing DOM size movements for the last 7 days ( in number of elements )';
 
-    protected static ?string $pollingInterval = null;
+    protected ?string $pollingInterval = null;
 
     public ?string $filter = 'lighthouse';
 

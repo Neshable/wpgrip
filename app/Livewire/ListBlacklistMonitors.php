@@ -6,7 +6,7 @@ use App\Filament\Resources\MonitorResource;
 use App\Models\BlacklistMonitor;
 
 use Filament\Tables\Actions;
-use Filament\Tables\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Support\Enums\MaxWidth;
 
 use App\Jobs\RemoteDBBackup;
@@ -14,7 +14,7 @@ use App\Jobs\Backup\RemoteFilesBackup;
 use Filament\Tables\Columns\IconColumn;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -99,9 +99,9 @@ class ListBlacklistMonitors extends Component implements HasForms, HasTable
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Forms\Components\TextInput::make('url')
                     ->required()

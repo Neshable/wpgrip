@@ -15,13 +15,13 @@ use Filament\Facades\Filament;
 
 class WPVersionChart extends ChartWidget
 {
-    protected static ?string $heading = 'WordPress Core Version';
+    protected ?string $heading = 'WordPress Core Version';
 
-    protected static ?string $description = 'WP versions used across all sites';
+    protected ?string $description = 'WP versions used across all sites';
 
     protected static ?int $sort = 2;
 
-    protected static ?string $pollingInterval = null;
+    protected ?string $pollingInterval = null;
 
     protected function getData(): array
     {

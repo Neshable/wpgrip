@@ -9,9 +9,10 @@ use Filament\Facades\Filament;
 
 use App\Models\Site;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -40,17 +41,17 @@ class SiteResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-globe-alt';
 
     protected static ?string $modelLabel = 'Site';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form     
+        return $schema     
         ->schema([        
-            Forms\Components\Wizard::make([
+            \Filament\Schemas\Components\Wizard::make([
                
-                Forms\Components\Wizard\Step::make('Main Info')
+                \Filament\Schemas\Components\Wizard\Step::make('Main Info')
                     // ->icon('heroicon-o-shopping-bag')
                     ->schema([
                         Forms\Components\ViewField::make('ssh_key_instructions')
@@ -100,7 +101,7 @@ class SiteResource extends Resource
                         // ->inline(),
                     ]),
                 // Second step
-                Forms\Components\Wizard\Step::make('Client and Server')
+                \Filament\Schemas\Components\Wizard\Step::make('Client and Server')
                     ->schema([
                         Forms\Components\Select::make('client_id')
                             ->required()
@@ -161,9 +162,9 @@ class SiteResource extends Resource
     
                     ]),
                 // Third step
-                // Forms\Components\Wizard\Step::make('Backup')
+                // \Filament\Schemas\Components\Wizard\Step::make('Backup')
                 //     ->schema([
-                //         Forms\Components\Section::make('Backup Schedule')
+                //         \Filament\Schemas\Components\Section::make('Backup Schedule')
                 //             ->description('Specify the schedule you want a backup to occur')
                 //             ->schema([
                 //                 // Forms\Components\Toggle::make('backup_enabled')
@@ -184,7 +185,7 @@ class SiteResource extends Resource
                 //                 //         'monthly' => 'Monthly',
                 //                 //     ])
                 //         ]),
-                //         Forms\Components\Section::make('Backup Exclusion')
+                //         \Filament\Schemas\Components\Section::make('Backup Exclusion')
                 //             ->description('Specify which files/folders to exclude from the backup. Put each on new line.')
                 //             ->schema([
                 //                 Forms\Components\Textarea::make('Excluded paths')
@@ -249,17 +250,17 @@ class SiteResource extends Resource
         ->actions(
             [
          
-            Tables\Actions\ActionGroup::make([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
+            Actions\ActionGroup::make([
+                Actions\EditAction::make(),
+                Actions\ViewAction::make(),
                 
-                Tables\Actions\Action::make('trello')
+                Actions\Action::make('trello')
                     ->label('View trello')
                     ->icon('icon-trello')
                     ->tooltip('Open the trello board')
                     ->url(fn (Site $record): ?string => $record->board_url)
                     ->openUrlInNewTab(),
-                Tables\Actions\Action::make('screenshot')
+                Actions\Action::make('screenshot')
                     ->label('New Screenshot')
                     ->icon('heroicon-o-camera')
                     ->tooltip('Take a new screenshot of this site')
@@ -271,7 +272,7 @@ class SiteResource extends Resource
                             ->body('A new screenshot is being taken in the background.')
                             ->send();
                     }),
-                Tables\Actions\Action::make('sync')
+                Actions\Action::make('sync')
                     ->action(function ( Site $record) {
                         SyncSiteStats::dispatch($record);
                         Notification::make()
@@ -289,7 +290,7 @@ class SiteResource extends Resource
                     ->modalSubmitActionLabel('Yes, sync now')
                     ->tooltip('Sync this site'),
 
-                Tables\Actions\DeleteAction::make()
+                Actions\DeleteAction::make()
                 ->modalDescription('Are you sure you want to delete this website? The backups will be also deleted.')
             ]),
            
@@ -297,13 +298,13 @@ class SiteResource extends Resource
         // ->heading('All available websites in this team')
         // ->description('Manage all ')
         ->headerActions([
-            //Tables\Actions\Action::make('create')
+            //Actions\Action::make('create')
                 
             ])
         ->emptyStateHeading('No sites found')
         ->emptyStateDescription('You haven\'t added any website yet.')
         ->bulkActions([
-            // Tables\Actions\DeleteBulkAction::make(),
+            // Actions\DeleteBulkAction::make(),
         ]);
     }
 

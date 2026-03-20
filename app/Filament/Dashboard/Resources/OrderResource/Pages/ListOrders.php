@@ -5,7 +5,7 @@ namespace App\Filament\Dashboard\Resources\OrderResource\Pages;
 use App\Constants\OrderStatus;
 use App\Filament\Dashboard\Resources\OrderResource;
 use Filament\Actions;
-use Filament\Resources\Components\Tab;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 

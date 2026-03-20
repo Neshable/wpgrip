@@ -5,7 +5,7 @@ namespace App\Filament\Admin\Resources\SubscriptionResource\Pages;
 use App\Constants\SubscriptionStatus;
 use App\Filament\Admin\Resources\SubscriptionResource;
 use App\Filament\ListDefaults;
-use Filament\Resources\Components\Tab;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 

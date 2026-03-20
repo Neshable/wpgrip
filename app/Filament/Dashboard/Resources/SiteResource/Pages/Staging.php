@@ -17,7 +17,7 @@ class Staging extends ViewRecord
 {
     protected static string $resource = SiteResource::class;
 
-    protected static string $view = 'site.single.staging';
+    protected string $view = 'site.single.staging';
 
     public function getStagingSite(): Site|bool
     {

@@ -7,19 +7,20 @@ use App\Models\MonitorLog;
 use App\Models\UptimeMonitor;
 
 use Filament\Tables\Actions;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 
 use App\Jobs\RemoteDBBackup;
 use App\Jobs\Backup\RemoteFilesBackup;
 use Filament\Tables\Columns\IconColumn;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 
 use Illuminate\Support\HtmlString;
@@ -32,7 +33,7 @@ use Filament\Tables\Contracts\HasTable;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-use Filament\Tables\Actions\BulkAction;
+use Filament\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
 
 use Illuminate\Bus\Batch;
@@ -193,9 +194,9 @@ class ListMonitors extends Component implements HasForms, HasTable
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Forms\Components\TextInput::make('url')
                     ->required()

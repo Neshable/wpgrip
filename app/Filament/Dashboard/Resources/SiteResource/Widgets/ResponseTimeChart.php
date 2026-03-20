@@ -9,13 +9,13 @@ use Filament\Widgets\ChartWidget;
 
 class ResponseTimeChart extends ChartWidget
 {
-    protected static ?string $heading = 'Response Time - Last 24 Hours';
+    protected ?string $heading = 'Response Time - Last 24 Hours';
 
-    protected static ?string $description = 'Breakdown: DNS, Connect, TLS, TTFB, Transfer (in ms)';
+    protected ?string $description = 'Breakdown: DNS, Connect, TLS, TTFB, Transfer (in ms)';
 
-    protected static ?string $pollingInterval = null;
+    protected ?string $pollingInterval = null;
 
-    protected static ?string $maxHeight = '300px';
+    protected ?string $maxHeight = '300px';
 
     protected function getSiteId(): ?int
     {

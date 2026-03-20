@@ -8,14 +8,14 @@ use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Resources\Pages\EditRecord;
 
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Section;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 
-use Filament\Pages\Actions;
-use Filament\Pages\Actions\Action;
+use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Illuminate\Contracts\View\View;
@@ -25,16 +25,16 @@ class ShowBackupsSettings extends EditRecord
 {
     protected static string $resource = SiteResource::class;
 
-    protected static string $view = 'site.single.backups_settings';
+    protected string $view = 'site.single.backups_settings';
 
     public function getHeader(): ?View
     {
         return view('site.single.header');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
         ->schema([
             Forms\Components\Toggle::make('backup_enabled')
             ->label('Enable backup'),

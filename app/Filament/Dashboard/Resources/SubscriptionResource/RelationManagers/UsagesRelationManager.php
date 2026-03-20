@@ -5,7 +5,7 @@ namespace App\Filament\Dashboard\Resources\SubscriptionResource\RelationManagers
 use App\Constants\PlanType;
 use App\Models\Subscription;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,9 +15,9 @@ class UsagesRelationManager extends RelationManager
 {
     protected static string $relationship = 'usages';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Forms\Components\TextInput::make('unit_count')
                     ->required()

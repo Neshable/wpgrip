@@ -11,12 +11,12 @@ use App\Filament\Admin\Resources\TransactionResource\Widgets\TransactionOverview
 use App\Mapper\TransactionStatusMapper;
 use App\Models\Transaction;
 use App\Services\InvoiceManager;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -26,11 +26,11 @@ class TransactionResource extends Resource
 
     protected static ?string $model = Transaction::class;
 
-    protected static ?string $navigationGroup = 'Revenue';
+    protected static string | \UnitEnum | null $navigationGroup = 'Revenue';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
 
             ]);
@@ -69,9 +69,9 @@ class TransactionResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\Action::make('see-invoice')
+                Actions\ActionGroup::make([
+                    Actions\ViewAction::make(),
+                    Actions\Action::make('see-invoice')
                         ->label(__('See Invoice'))
                         ->icon('heroicon-o-document')
                         ->visible(fn (Transaction $record, InvoiceManager $invoiceManager): bool => $invoiceManager->canGenerateInvoices($record))
@@ -79,7 +79,7 @@ class TransactionResource extends Resource
                             fn (Transaction $record): string => route('invoice.generate', ['transactionUuid' => $record->uuid]),
                             shouldOpenInNewTab: true
                         ),
-                    Tables\Actions\Action::make('force-regenerate')
+                    Actions\Action::make('force-regenerate')
                         ->label(__('Force Regenerate Invoice'))
                         ->color('gray')
                         ->icon('heroicon-o-arrow-path')
@@ -130,9 +130,9 @@ class TransactionResource extends Resource
         return false;
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
                 \Filament\Infolists\Components\Tabs::make('Transaction')
                     ->columnSpan('full')

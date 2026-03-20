@@ -9,7 +9,7 @@ class MailgunSettings extends Page
 {
     protected static string $resource = EmailProviderResource::class;
 
-    protected static string $view = 'filament.admin.resources.email-provider-resource.pages.mailgun-settings';
+    protected string $view = 'filament.admin.resources.email-provider-resource.pages.mailgun-settings';
 
     public function mount(): void
     {

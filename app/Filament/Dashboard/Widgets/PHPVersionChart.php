@@ -15,15 +15,15 @@ use Filament\Facades\Filament;
 
 class PHPVersionChart extends ChartWidget
 {
-    protected static ?string $heading = 'PHP Versions';
+    protected ?string $heading = 'PHP Versions';
 
     // protected int | string | array $columnSpan = 2;
 
     protected static ?int $sort = 3;
 
-    protected static ?string $description = 'All PHP versions used across the sites';
+    protected ?string $description = 'All PHP versions used across the sites';
 
-    protected static ?string $pollingInterval = null;
+    protected ?string $pollingInterval = null;
 
     protected function getData(): array
     {

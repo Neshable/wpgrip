@@ -3,9 +3,9 @@
 namespace App\Filament\Dashboard\Resources\SiteResource\Pages;
 
 use App\Filament\Dashboard\Resources\SiteResource;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 
 use App\Jobs\SyncSite;
@@ -21,8 +21,8 @@ use App\Jobs;
 use Filament\Notifications\Notification; 
 
 use Illuminate\Contracts\View\View;
-use Filament\Forms\Components\Section;
-use Filament\Infolists\Components\Fieldset;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Fieldset;
 
 
 // use Filament\Actions\Action;
@@ -39,7 +39,7 @@ class ViewSite extends ViewRecord
     
     // protected static ?string $title = 'WWW';
 
-    protected static string $view = 'site.single.overview';
+    protected string $view = 'site.single.overview';
 
     // public function render(): View
     // {

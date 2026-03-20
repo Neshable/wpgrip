@@ -7,10 +7,11 @@ use App\Models\Theme;
 
 use Filament\Tables\Grouping\Group;
 
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Actions\Concerns\InteractsWithActions;
 
 use Filament\Tables\Columns\ViewColumn;
@@ -41,7 +42,7 @@ use App\Jobs\Site\UpdateSinglePlugin;
 
 
 
-use Filament\Tables\Actions\BulkAction;
+use Filament\Actions\BulkAction;
 
  
 class ListThemes extends Component implements HasForms, HasTable

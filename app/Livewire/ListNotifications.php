@@ -13,24 +13,25 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Utilities\Get;
 
 use App\Models\NotificationChannel;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions;
 
-use Filament\Tables\Actions\CreateAction;
+use Filament\Actions\CreateAction;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 use Filament\Notifications\Notification;
 
-use Filament\Infolists\Components\Actions;
-use Filament\Tables\Actions\Action;
+use Filament\Infolists\Components\Actions as InfolistActions;
+use Filament\Actions\Action;
 
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -114,7 +115,7 @@ class ListNotifications extends Component implements HasForms, HasTable
                     // })
             ])
             ->actions([
-                // Tables\Actions\Action::make('deploy')
+                // Actions\Action::make('deploy')
                 //     ->action(function (  Site $site ) {
                 //         SshAndGitPull::dispatchSync( $this->repo_model, $site );
                 //     } )
@@ -125,8 +126,8 @@ class ListNotifications extends Component implements HasForms, HasTable
                 //     ->modalDescription('Are you sure you\'d like to sync this repo?')
                 //     ->modalSubmitActionLabel('Yes, deploy now')
                 //     ->tooltip('Deploy this repo'),
-                Tables\Actions\ActionGroup::make([  
-                    Tables\Actions\DeleteAction::make(),
+                Actions\ActionGroup::make([  
+                    Actions\DeleteAction::make(),
                     // Action::make('detach')
                     //     ->label('Detach')
                     //     ->action(function ( Site $site ) {
@@ -141,14 +142,14 @@ class ListNotifications extends Component implements HasForms, HasTable
                 ]),
             ])
             ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
+                // Actions\BulkActionGroup::make([
+                //     Actions\DeleteBulkAction::make(),
                 // ]),
             ])
             ->emptyStateHeading('No notification channels found')
             ->emptyStateDescription('You haven\'t added any channels yet.')
             ->emptyStateActions([
-               // Tables\Actions\CreateAction::make(),
+               // Actions\CreateAction::make(),
             ]);
 
     }

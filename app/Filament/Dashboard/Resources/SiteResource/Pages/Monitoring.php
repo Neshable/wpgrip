@@ -14,7 +14,7 @@ class Monitoring extends ViewRecord
 {
     protected static string $resource = SiteResource::class;
 
-    protected static string $view = 'site.single.monitoring';
+    protected string $view = 'site.single.monitoring';
 
     public function getHeader(): ?View
     {

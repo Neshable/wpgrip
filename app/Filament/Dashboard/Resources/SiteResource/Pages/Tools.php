@@ -21,7 +21,7 @@ class Tools extends ViewRecord
 
     protected static string $resource = SiteResource::class;
 
-    protected static string $view = 'site.single.tools';
+    protected string $view = 'site.single.tools';
 
     /**
      * Stores the output of the last executed CLI command.

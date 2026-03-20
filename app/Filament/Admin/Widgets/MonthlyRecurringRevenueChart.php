@@ -16,7 +16,7 @@ class MonthlyRecurringRevenueChart extends ChartWidget
 
     protected static ?int $sort = 1;
 
-    protected static ?string $pollingInterval = null;
+    protected ?string $pollingInterval = null;
 
     protected function getData(): array
     {

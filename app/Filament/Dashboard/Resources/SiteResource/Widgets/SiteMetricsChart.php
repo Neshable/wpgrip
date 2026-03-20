@@ -13,11 +13,11 @@ use App\Models\PerformanceScore;
 
 class SiteMetricsChart extends ChartWidget
 {
-    protected static ?string $heading = 'Speed metrics';
+    protected ?string $heading = 'Speed metrics';
 
-    protected static ?string $description = 'Showing stats for the last 7 days';
+    protected ?string $description = 'Showing stats for the last 7 days';
 
-    protected static ?string $pollingInterval = null;
+    protected ?string $pollingInterval = null;
 
     public ?string $filter = 'lighthouse';
 

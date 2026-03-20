@@ -15,13 +15,13 @@ use App\Models\Subscription;
 use App\Services\ConfigManager;
 use App\Services\SubscriptionManager;
 use Filament\Facades\Filament;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -33,11 +33,11 @@ class SubscriptionResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
-    protected static ?string $navigationIcon = 'heroicon-o-fire';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-fire';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
             ]);
     }
@@ -76,34 +76,34 @@ class SubscriptionResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\Action::make('verify-phone')
+                Actions\Action::make('verify-phone')
                     ->button()
                     ->color('warning')
                     ->icon('heroicon-s-phone')
                     ->visible(fn (Subscription $record, SubscriptionManager $subscriptionManager): bool => $subscriptionManager->subscriptionRequiresUserVerification($record))
                     ->url(fn (Subscription $record): string => route('user.phone-verify'))
                     ->label(__('Verify Phone Number')),
-                Tables\Actions\Action::make('complete-subscription')
+                Actions\Action::make('complete-subscription')
                     ->button()
                     ->color('primary')
                     ->icon('heroicon-s-wallet')
                     ->visible(fn (Subscription $record, SubscriptionManager $subscriptionManager): bool => $subscriptionManager->isLocalSubscription($record))
                     ->url(fn (Subscription $record): string => route('checkout.convert-local-subscription', ['subscriptionUuid' => $record->uuid]))
                     ->label(__('Complete Subscription')),
-                Tables\Actions\ViewAction::make()
+                Actions\ViewAction::make()
                     ->label(__('View Details')),
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\Action::make('change-plan')
+                Actions\ActionGroup::make([
+                    Actions\Action::make('change-plan')
                         ->label(__('Change Plan'))
                         ->icon('heroicon-o-rocket-launch')
                         ->url(fn (Subscription $record): string => SubscriptionResource::getUrl('change-plan', ['record' => $record->uuid]))
                         ->visible(fn (Subscription $record, SubscriptionManager $subscriptionManager): bool => $subscriptionManager->canChangeSubscriptionPlan($record)),
-                    Tables\Actions\Action::make('cancel')
+                    Actions\Action::make('cancel')
                         ->label(__('Cancel Subscription'))
                         ->icon('heroicon-m-x-circle')
                         ->visible(fn (Subscription $record, SubscriptionManager $subscriptionManager): bool => $subscriptionManager->canCancelSubscription($record))
                         ->url(fn (Subscription $record): string => SubscriptionResource::getUrl('cancel', ['record' => $record->uuid])),
-                    Tables\Actions\Action::make('discard-cancellation')
+                    Actions\Action::make('discard-cancellation')
                         ->label(__('Discard Cancellation'))
                         ->icon('heroicon-m-x-circle')
                         ->action(function ($record, DiscardSubscriptionCancellationActionHandler $handler) {
@@ -171,9 +171,9 @@ class SubscriptionResource extends Resource
         return false;
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
                 Section::make(__('Subscription Details'))
                     ->description(__('View details about your subscription.'))

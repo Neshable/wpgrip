@@ -48,6 +48,8 @@ class DashboardPanelProvider extends PanelProvider
         return $panel
             ->id('dashboard')
             ->path('dashboard')
+            ->login()
+            ->passwordReset()
             ->spa()
             ->spaUrlExceptions([
                 '*/admin/*',

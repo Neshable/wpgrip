@@ -4,9 +4,10 @@ namespace App\Filament\Admin\Resources;
 
 use App\Constants\TenancyPermissionConstants;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Models\Permission;
@@ -16,15 +17,15 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static ?string $navigationGroup = 'User Management';
+    protected static string | \UnitEnum | null $navigationGroup = 'User Management';
 
     protected static ?int $navigationSort = 2;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
-                Forms\Components\Section::make()->schema([
+                \Filament\Schemas\Components\Section::make()->schema([
                     Forms\Components\TextInput::make('name')
                         ->required()
                         ->helperText(__('The name of the role. Tenancy roles should start with ":prefix", and only tenancy permissions can be assigned to tenancy roles.', [
@@ -93,10 +94,10 @@ class RoleResource extends Resource
 
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Actions\DeleteBulkAction::make(),
             ]);
     }
 

@@ -6,9 +6,10 @@ use App\Filament\Dashboard\Resources\RepositoryResource\Pages;
 use App\Filament\Dashboard\Resources\RepositoryResource\RelationManagers;
 use App\Models\Repository;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -19,16 +20,16 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Facades\Filament;
 use Filament\Tables\Columns\ImageColumn;
 
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 
 use Filament\Notifications\Notification;
 
 use App\Jobs\Git\SshAndGitPull;
 use App\Services\Plans\SubscriptionLimitChecker;
-use Filament\Infolists\Components\Actions;
-use Filament\Tables\Actions\Action;
+use Filament\Infolists\Components\Actions as InfolistActions;
+use Filament\Actions\Action;
 
-use Filament\Forms\Components\Wizard;
+use Filament\Schemas\Components\Wizard;
 use Illuminate\Support\HtmlString;
 
 class RepositoryResource extends Resource
@@ -45,13 +46,13 @@ class RepositoryResource extends Resource
         return SubscriptionLimitChecker::canUseGit();
     }
 
-    protected static ?string $navigationIcon = 'icon-git';
+    protected static string | \BackedEnum | null $navigationIcon = 'icon-git';
 
     protected static ?int $navigationSort = 4;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Section::make('Repository info')
                 // ->description('Prevent abuse by limiting the number of requests per period')
@@ -162,8 +163,8 @@ class RepositoryResource extends Resource
                     ->toggle(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('view_repository')
+                Actions\EditAction::make(),
+                Actions\Action::make('view_repository')
                     ->label('Repo Source')
                     ->icon('heroicon-o-link')
                     ->url(fn ($record) => match($record->provider) {
@@ -175,8 +176,8 @@ class RepositoryResource extends Resource
             ])
             ->defaultPaginationPageOption(25)
             ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
+                // Actions\BulkActionGroup::make([
+                //     Actions\DeleteBulkAction::make(),
                 // ]),
             ]);
     }

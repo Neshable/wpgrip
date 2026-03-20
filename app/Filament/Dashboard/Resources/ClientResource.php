@@ -10,14 +10,15 @@ use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
+use Filament\Schemas\Components\Tabs;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -28,7 +29,7 @@ class ClientResource extends Resource
 {
     protected static ?string $model = Client::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
 
     protected static ?int $navigationSort = 5;
 
@@ -40,16 +41,16 @@ class ClientResource extends Resource
     // Form
     // -------------------------------------------------------------------------
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Tabs::make('Client')
                     ->tabs([
                         Tabs\Tab::make('General')
                             ->icon('heroicon-o-user')
                             ->schema([
-                                Forms\Components\Grid::make(2)->schema([
+                                \Filament\Schemas\Components\Grid::make(2)->schema([
                                     TextInput::make('name')
                                         ->required()
                                         ->maxLength(255),
@@ -84,7 +85,7 @@ class ClientResource extends Resource
                         Tabs\Tab::make('Billing & Contract')
                             ->icon('heroicon-o-currency-dollar')
                             ->schema([
-                                Forms\Components\Grid::make(2)->schema([
+                                \Filament\Schemas\Components\Grid::make(2)->schema([
                                     TextInput::make('billing_email')
                                         ->email()
                                         ->maxLength(255),
@@ -123,7 +124,7 @@ class ClientResource extends Resource
                         Tabs\Tab::make('Address')
                             ->icon('heroicon-o-map-pin')
                             ->schema([
-                                Forms\Components\Grid::make(2)->schema([
+                                \Filament\Schemas\Components\Grid::make(2)->schema([
                                     TextInput::make('country')
                                         ->required()
                                         ->maxLength(100),
@@ -297,20 +298,20 @@ class ClientResource extends Resource
                     ),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Actions\ViewAction::make(),
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ])
             ->emptyStateHeading('No clients yet')
             ->emptyStateDescription('Create your first client to get started.')
             ->emptyStateIcon('heroicon-o-user-group')
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make()
+                Actions\CreateAction::make()
                     ->label('Add client')
                     ->icon('heroicon-m-plus'),
             ]);

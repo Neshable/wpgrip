@@ -21,11 +21,12 @@ use App\Filament\App\Resources\RepositoryResource\Pages;
 use App\Filament\App\Resources\RepositoryResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions;
 
-use Filament\Tables\Actions\CreateAction;
+use Filament\Actions\CreateAction;
 
 
 use Filament\Notifications\Notification;
@@ -33,8 +34,8 @@ use Filament\Notifications\Notification;
 use App\Jobs\Git\SshAndGitPull;
 use App\Jobs\Git\SshAndGitStatus;
 
-use Filament\Infolists\Components\Actions;
-use Filament\Tables\Actions\Action;
+use Filament\Infolists\Components\Actions as InfolistActions;
+use Filament\Actions\Action;
 
 use Filament\Facades\Filament;
 
@@ -105,7 +106,7 @@ class ListRepos extends Component implements HasForms, HasTable
                 //
             ])
             ->headerActions([
-                // Tables\Actions\Action::make('view_repositories')
+                // Actions\Action::make('view_repositories')
                 //     ->label('View All Repositories')
                 //     ->icon('heroicon-m-code-bracket')
                 //     ->url(fn (): string => route('filament.dashboard.resources.repositories.index', [
@@ -114,7 +115,7 @@ class ListRepos extends Component implements HasForms, HasTable
                 //     ->openUrlInNewTab(),
             ])
             ->actions([
-                Tables\Actions\Action::make('deploy')
+                Actions\Action::make('deploy')
                 ->action(function (Repository $repository) {
                     // Update the pivot status to WORKING
                     $this->site_model->repositories()
@@ -133,14 +134,14 @@ class ListRepos extends Component implements HasForms, HasTable
                 ->tooltip('Deploy this repo'),
             ])
             ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
+                // Actions\BulkActionGroup::make([
+                //     Actions\DeleteBulkAction::make(),
                 // ]),
             ])
             ->emptyStateHeading('No repositories found')
             ->emptyStateDescription('You haven\'t added any repositories yet.')
             ->emptyStateActions([
-               // Tables\Actions\CreateAction::make(),
+               // Actions\CreateAction::make(),
             ]);
 
     }

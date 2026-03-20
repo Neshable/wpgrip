@@ -7,11 +7,12 @@ use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 use App\Models\User;
 use App\Services\TenantManager;
 use App\Services\TenantPermissionManager;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Services\RelationshipJoiner;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -20,9 +21,9 @@ class UsersRelationManager extends RelationManager
 {
     protected static string $relationship = 'users';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
             ]);
     }
@@ -63,7 +64,7 @@ class UsersRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\AttachAction::make()
+                Actions\AttachAction::make()
                     ->action(function (array $arguments, array $data, Form $form, Table $table, TenantManager $tenantManager): void {
                         // overwritten from the parent action definition from AttachAction
 
@@ -96,7 +97,7 @@ class UsersRelationManager extends RelationManager
                     ->modalHeading(__('Add User')),
             ])
             ->actions([
-                Tables\Actions\DetachAction::make()
+                Actions\DetachAction::make()
                     ->action(function (User $record, TenantManager $tenantManager): void {
                         $result = $tenantManager->removeUser($this->ownerRecord, $record);
 
@@ -116,14 +117,14 @@ class UsersRelationManager extends RelationManager
                         return $this->ownerRecord->users->count() <= 1;
                     })
                     ->label(__('Remove')),
-                Tables\Actions\Action::make('edit')
+                Actions\Action::make('edit')
                     ->url(fn ($record) => EditUser::getUrl(['record' => $record]))
                     ->label(__('Edit'))
                     ->icon('heroicon-o-eye'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

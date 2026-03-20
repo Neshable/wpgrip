@@ -9,9 +9,10 @@ use App\Filament\Admin\Resources\RoadmapItemResource\RelationManagers;
 use App\Mapper\RoadmapMapper;
 use App\Models\RoadmapItem;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 
@@ -19,15 +20,15 @@ class RoadmapItemResource extends Resource
 {
     protected static ?string $model = RoadmapItem::class;
 
-    protected static ?string $navigationGroup = 'Roadmap';
+    protected static string | \UnitEnum | null $navigationGroup = 'Roadmap';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
-                Forms\Components\Section::make([
+                \Filament\Schemas\Components\Section::make([
                     Forms\Components\TextInput::make('title')
                         ->required()
                         ->maxLength(255),
@@ -121,11 +122,11 @@ class RoadmapItemResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('upvotes', 'desc');
