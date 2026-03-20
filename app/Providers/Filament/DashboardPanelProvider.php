@@ -238,7 +238,7 @@ class DashboardPanelProvider extends PanelProvider
             ])->plugins([
                 BreezyCore::make()
                     ->passwordUpdateRules(
-                        Password::min(8)->mixedCase()->numbers()->uncompromised()
+                        [Password::min(8)->mixedCase()->numbers()->uncompromised()]
                     )
                     ->myProfile(
                         shouldRegisterUserMenu: true, // Sets the 'account' link in the panel User Menu (default = true)
