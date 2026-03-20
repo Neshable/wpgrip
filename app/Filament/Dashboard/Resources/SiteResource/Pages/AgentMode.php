@@ -505,37 +505,120 @@ class AgentMode extends ViewRecord
 
                 renderMarkdown(text) {
                     if (!text) return '';
-                    // Simple markdown to HTML (tables, bold, code, lists)
-                    // For production, use a proper markdown lib; this handles basics
-                    let html = this.escapeHtml(text);
-                    // Code blocks
-                    html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-                    // Inline code
-                    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-                    // Bold
-                    html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-                    // Headers
-                    html = html.replace(/^### (.+)$/gm, '<h4 class="font-semibold mt-2">$1</h4>');
-                    html = html.replace(/^## (.+)$/gm, '<h3 class="font-semibold text-base mt-3">$1</h3>');
-                    // Table
-                    html = html.replace(/^\|(.+)\|$/gm, (match) => {
-                        const cells = match.split('|').filter(c => c.trim()).map(c => c.trim());
-                        if (cells.every(c => /^[-:]+$/.test(c))) return ''; // separator row
-                        const tag = 'td';
-                        return '<tr>' + cells.map(c => '<' + tag + '>' + c + '</' + tag + '>').join('') + '</tr>';
+
+                    // Extract fenced code blocks to protect them from processing
+                    const codeBlocks = [];
+                    let src = text.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
+                        codeBlocks.push('<pre class="language-' + (lang||'text') + '"><code>' + this.escapeHtml(code.replace(/\n$/, '')) + '</code></pre>');
+                        return '\x00CB' + (codeBlocks.length - 1) + '\x00';
                     });
-                    // Wrap table rows
-                    if (html.includes('<tr>')) {
-                        html = html.replace(/((?:<tr>.*?<\/tr>\s*)+)/gs, '<table class="w-full border-collapse text-xs my-2">$1</table>');
-                    }
-                    // Bullet lists
-                    html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
-                    html = html.replace(/((?:<li>.*?<\/li>\s*)+)/gs, '<ul class="list-disc ml-4 space-y-0.5">$1</ul>');
-                    // Line breaks
-                    html = html.replace(/\n/g, '<br>');
-                    // Clean up double breaks
-                    html = html.replace(/(<br>)+/g, '<br>');
-                    return html;
+
+                    // Pre-split: ensure headers always get their own block.
+                    // Insert a double-newline before any line starting with # headers
+                    // so that headers don't merge with the paragraph above them.
+                    src = src.replace(/\n(#{1,6} )/g, '\n\n$1');
+                    // Also ensure a double-newline AFTER a header line
+                    src = src.replace(/^(#{1,6} .+)$/gm, (match) => match + '\n');
+
+                    // Ensure table blocks start after a blank line when preceded by non-table text.
+                    src = src.replace(/^(.+)\n(\|)/gm, (m, prev, pipe) => {
+                        if (prev.trim().startsWith('|')) return m; // already in table
+                        return prev + '\n\n' + pipe;
+                    });
+
+                    // Ensure list blocks start after a blank line when preceded by non-list text.
+                    // Only insert break when the preceding line is NOT a list item itself.
+                    src = src.replace(/^(.+)\n(- )/gm, (m, prev, dash) => {
+                        if (/^\s*- /.test(prev) || /^\s*\d+\. /.test(prev) || /^#{1,4} /.test(prev)) return m;
+                        return prev + '\n\n' + dash;
+                    });
+                    src = src.replace(/^(.+)\n(\d+\. )/gm, (m, prev, num) => {
+                        if (/^\s*- /.test(prev) || /^\s*\d+\. /.test(prev) || /^#{1,4} /.test(prev)) return m;
+                        return prev + '\n\n' + num;
+                    });
+
+                    // Split into blocks on double-newline
+                    const blocks = src.split(/\n{2,}/);
+
+                    const rendered = blocks.map(block => {
+                        block = block.trim();
+                        if (!block) return '';
+
+                        // Restore code blocks that are alone in a block
+                        if (/^\x00CB\d+\x00$/.test(block)) {
+                            return block.replace(/\x00CB(\d+)\x00/, (_, i) => codeBlocks[+i]);
+                        }
+
+                        // Apply inline formatting
+                        let h = this.escapeHtml(block);
+
+                        // Restore inline code blocks within text
+                        h = h.replace(/\x00CB(\d+)\x00/g, (_, i) => codeBlocks[+i]);
+
+                        // Inline code
+                        h = h.replace(/`([^`]+)`/g, '<code>$1</code>');
+                        // Bold
+                        h = h.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+                        // Italic
+                        h = h.replace(/(?<![*])\*([^*]+)\*(?![*])/g, '<em>$1</em>');
+
+                        // --- Block-type detection ---
+
+                        // Headers (any level # through ######)
+                        if (/^#{1,6} /.test(block)) {
+                            h = h.replace(/^###### (.+)$/gm, '<h6 class="font-medium text-xs mt-2 mb-1">$1</h6>');
+                            h = h.replace(/^##### (.+)$/gm, '<h5 class="font-medium text-sm mt-2 mb-1">$1</h5>');
+                            h = h.replace(/^#### (.+)$/gm, '<h4 class="font-semibold mt-3 mb-1">$1</h4>');
+                            h = h.replace(/^### (.+)$/gm, '<h4 class="font-semibold mt-3 mb-1">$1</h4>');
+                            h = h.replace(/^## (.+)$/gm, '<h3 class="font-semibold text-base mt-4 mb-1">$1</h3>');
+                            h = h.replace(/^# (.+)$/gm, '<h2 class="font-bold text-lg mt-4 mb-2">$1</h2>');
+                            return h;
+                        }
+
+                        // Table block: first non-empty line starts with |
+                        const firstLine = block.split('\n').find(l => l.trim());
+                        if (firstLine && firstLine.trim().startsWith('|')) {
+                            const rows = h.split('\n').filter(r => r.trim());
+                            let isFirst = true;
+                            const tableRows = rows.map(row => {
+                                const cells = row.split('|').filter(c => c.trim() !== '').map(c => c.trim());
+                                if (cells.every(c => /^[-:]+$/.test(c))) { isFirst = false; return ''; }
+                                const tag = isFirst ? 'th' : 'td';
+                                isFirst = false;
+                                return '<tr>' + cells.map(c => '<'+tag+' class="border border-gray-200 dark:border-white/10 px-2 py-1">'+c+'</'+tag+'>').join('') + '</tr>';
+                            }).filter(Boolean).join('');
+                            return '<table class="w-full border-collapse text-xs my-2">' + tableRows + '</table>';
+                        }
+
+                        // Bullet list: lines start with - (allow indented sub-items)
+                        if (/^- /m.test(block) && block.split('\n').every(l => !l.trim() || /^\s*- /.test(l))) {
+                            const items = h.split('\n').filter(l => l.trim()).map(l => {
+                                const indent = /^\s+- /.test(l);
+                                const text = l.replace(/^\s*- /, '');
+                                return indent
+                                    ? '<li class="ml-4 list-[circle]">' + text + '</li>'
+                                    : '<li>' + text + '</li>';
+                            }).join('');
+                            return '<ul class="list-disc ml-4 space-y-0.5 my-1">' + items + '</ul>';
+                        }
+
+                        // Numbered list: lines start with digit. (allow indented sub-items with -)
+                        if (/^\d+\. /m.test(block) && block.split('\n').every(l => !l.trim() || /^\s*\d+\. /.test(l) || /^\s+- /.test(l))) {
+                            const items = h.split('\n').filter(l => l.trim()).map(l => {
+                                if (/^\s+- /.test(l)) {
+                                    return '<li class="ml-4 list-disc">' + l.replace(/^\s*- /, '') + '</li>';
+                                }
+                                return '<li>' + l.replace(/^\s*\d+\.\s*/, '') + '</li>';
+                            }).join('');
+                            return '<ol class="list-decimal ml-4 space-y-0.5 my-1">' + items + '</ol>';
+                        }
+
+                        // Regular paragraph: single newlines become <br>
+                        h = h.replace(/\n/g, '<br>');
+                        return '<p class="mb-2 last:mb-0">' + h + '</p>';
+                    }).filter(Boolean);
+
+                    return rendered.join('\n');
                 },
 
                 newConversation() {
@@ -632,15 +715,22 @@ class AgentMode extends ViewRecord
         .agent-dot:nth-child(2) { animation-delay: .2s; }
         .agent-dot:nth-child(3) { animation-delay: .4s; }
         .agent-msg { animation: agent-fadein .22s ease-out both; }
-        .agent-bubble p             { margin: 0 0 .5rem; }
+        .agent-bubble                { display: block !important; }
+        .agent-bubble p             { display: block; margin: 0 0 .5rem; }
         .agent-bubble p:last-child  { margin-bottom: 0; }
+        .agent-bubble h2, .agent-bubble h3, .agent-bubble h4, .agent-bubble h5, .agent-bubble h6 { display: block; }
         .agent-bubble pre           { background: #1e1e2e; color: #cdd6f4; border-radius: .5rem; padding: .75rem 1rem; overflow-x: auto; font-size: .78rem; margin: .4rem 0; }
         .agent-bubble code          { font-size: .78rem; }
-        .agent-bubble ul, .agent-bubble ol { margin: .25rem 0 .5rem 1.2rem; }
-        .agent-bubble li            { margin-bottom: .15rem; }
-        .agent-bubble table         { width: 100%; border-collapse: collapse; font-size: .78rem; margin: .4rem 0; }
-        .agent-bubble th, .agent-bubble td { border: 1px solid rgba(255,255,255,.1); padding: .3rem .6rem; text-align: left; }
-        .agent-bubble th            { background: rgba(255,255,255,.05); font-weight: 600; }
+        .agent-bubble ul, .agent-bubble ol { display: block !important; margin: .25rem 0 .5rem 1.2rem; padding-left: 1rem; }
+        .agent-bubble ul             { list-style-type: disc !important; }
+        .agent-bubble ol             { list-style-type: decimal !important; }
+        .agent-bubble li             { display: list-item !important; margin-bottom: .15rem; }
+        .agent-bubble table         { display: table !important; width: 100%; border-collapse: collapse; font-size: .78rem; margin: .4rem 0; }
+        .agent-bubble tr            { display: table-row !important; }
+        .agent-bubble th, .agent-bubble td { display: table-cell !important; border: 1px solid #e5e7eb; padding: .3rem .6rem; text-align: left; }
+        .dark .agent-bubble th, .dark .agent-bubble td { border-color: rgba(255,255,255,.1); }
+        .agent-bubble th            { background: rgba(0,0,0,.03); font-weight: 600; }
+        .dark .agent-bubble th      { background: rgba(255,255,255,.05); }
         .agent-tool-badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(139,92,246,.15); color: #a78bfa; border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 500; margin-bottom: 6px; }
 
         /* History sidebar */
