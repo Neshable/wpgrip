@@ -7,18 +7,19 @@ use App\Models\PHPLog;
 use App\Models\Site;
 
 use Filament\Tables\Actions;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 
 use App\Jobs\Server\TailErrorLog;
 use Filament\Notifications\Notification;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 
 use Illuminate\Support\HtmlString;
@@ -150,9 +151,9 @@ class ListErrors extends Component implements HasForms, HasTable
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Forms\Components\TextInput::make('url')
                     ->required()

@@ -7,20 +7,20 @@ use App\Filament\Dashboard\Resources\BackupResource\RelationManagers;
 use App\Models\Backup;
 use App\Models\Site;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Filament\Infolists;
-use Filament\Infolists\Infolist;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Illuminate\Database\Eloquent\Builder;
 
 class BackupResource extends Resource
 {
     protected static ?string $model = Backup::class;
 
-    protected static ?string $navigationIcon = 'icon-backups';
+    protected static string | \BackedEnum | null $navigationIcon = 'icon-backups';
 
     protected static ?string $navigationLabel = 'Backups';
 
@@ -37,9 +37,9 @@ class BackupResource extends Resource
             ->where('tenant_id', filament()->getTenant()?->id);
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Section::make('Database Backup')
                     ->schema([
@@ -126,13 +126,13 @@ class BackupResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Actions\ViewAction::make(),
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc');
@@ -145,11 +145,11 @@ class BackupResource extends Resource
         ];
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
-                Infolists\Components\Section::make('Backup configuration')
+                \Filament\Schemas\Components\Section::make('Backup configuration')
                     ->schema([
                         Infolists\Components\TextEntry::make('site.name')->label('Website'),
                         Infolists\Components\TextEntry::make('provider')->label('Storage'),

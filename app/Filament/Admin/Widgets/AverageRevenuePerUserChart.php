@@ -16,7 +16,7 @@ class AverageRevenuePerUserChart extends ChartWidget
 
     protected static ?int $sort = 3;
 
-    protected static ?string $pollingInterval = null;
+    protected ?string $pollingInterval = null;
 
     protected function getData(): array
     {

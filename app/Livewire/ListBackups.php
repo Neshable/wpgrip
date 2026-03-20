@@ -6,10 +6,10 @@ use App\Models\Site;
 use App\Models\Backup;
 use App\Models\Snapshot;
 
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
 
 use App\Filament\Dashboard\Resources\BackupResource\Pages;
 
@@ -19,6 +19,7 @@ use Filament\Forms\Components\Select;
 
 use Filament\Facades\Filament;
 use Filament\Tables;
+use Filament\Actions;
 
 use Filament\Tables\Columns\ViewColumn;
 
@@ -34,7 +35,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-use Filament\Tables\Actions\BulkAction;
+use Filament\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
 
 use App\Jobs\Backup\CopyFromRemote;

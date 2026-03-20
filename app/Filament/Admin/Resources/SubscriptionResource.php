@@ -17,14 +17,14 @@ use App\Services\PlanManager;
 use App\Services\SubscriptionManager;
 use Carbon\Carbon;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
-use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -34,20 +34,20 @@ class SubscriptionResource extends Resource
 {
     protected static ?string $model = Subscription::class;
 
-    protected static ?string $navigationGroup = 'Revenue';
+    protected static string | \UnitEnum | null $navigationGroup = 'Revenue';
 
     protected static array $cachedSubscriptionHistoryComponents = [];
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
-                Forms\Components\Tabs::make('Subscription')
+                \Filament\Schemas\Components\Tabs::make('Subscription')
                     ->columnSpan('full')
                     ->tabs([
-                        Forms\Components\Tabs\Tab::make(__('Details'))
+                        \Filament\Schemas\Components\Tabs\Tab::make(__('Details'))
                             ->schema([
-                                Forms\Components\Section::make()->schema([
+                                \Filament\Schemas\Components\Section::make()->schema([
                                     Forms\Components\Select::make('user_id')
                                         ->relationship('user', 'name')
                                         ->preload()
@@ -126,11 +126,11 @@ class SubscriptionResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Actions\ViewAction::make(),
+                Actions\EditAction::make(),
             ])
             ->headerActions([
-                Tables\Actions\Action::make('create')
+                Actions\Action::make('create')
                     ->label(__('Create Subscription'))
                     ->form([
                         Forms\Components\Select::make('user_id')
@@ -278,9 +278,9 @@ class SubscriptionResource extends Resource
         return static::$cachedSubscriptionHistoryComponents;
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
                 \Filament\Infolists\Components\Tabs::make('Subscription')
                     ->columnSpan('full')

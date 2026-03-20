@@ -24,12 +24,12 @@ class ActivityLog extends Page implements HasTable, HasForms
     use InteractsWithTable;
     use InteractsWithForms;
 
-    protected static ?string $navigationIcon  = 'heroicon-o-clipboard-document-list';
+    protected static string | \BackedEnum | null $navigationIcon  = 'heroicon-o-clipboard-document-list';
     protected static ?string $navigationLabel = 'Activity Log';
     protected static ?string $title           = 'Activity Log';
     protected static ?string $slug            = 'activity-log';
     protected static ?int    $navigationSort  = 90;
-    protected static string  $view            = 'filament.dashboard.pages.activity-log';
+    protected string $view            = 'filament.dashboard.pages.activity-log';
 
     public static function canAccess(): bool
     {

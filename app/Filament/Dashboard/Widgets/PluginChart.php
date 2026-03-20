@@ -15,13 +15,13 @@ use Filament\Facades\Filament;
 
 class PluginChart extends ChartWidget
 {
-    protected static ?string $heading = 'All Plugins';
+    protected ?string $heading = 'All Plugins';
 
-    protected static ?string $description = 'Plugin data across all sites';
+    protected ?string $description = 'Plugin data across all sites';
 
     protected static ?int $sort = 3;
 
-    protected static ?string $pollingInterval = null;
+    protected ?string $pollingInterval = null;
 
     protected function getData(): array
     {

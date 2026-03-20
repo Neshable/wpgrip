@@ -4,7 +4,7 @@ namespace App\Filament\Admin\Resources\DiscountResource\Pages;
 
 use App\Filament\Admin\Resources\DiscountResource;
 use App\Filament\ListDefaults;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class ListDiscounts extends ListRecords

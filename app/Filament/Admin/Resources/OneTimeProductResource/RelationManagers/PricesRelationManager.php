@@ -4,9 +4,10 @@ namespace App\Filament\Admin\Resources\OneTimeProductResource\RelationManagers;
 
 use App\Models\Currency;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Validation\Rules\Unique;
 
@@ -14,13 +15,13 @@ class PricesRelationManager extends RelationManager
 {
     protected static string $relationship = 'prices';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         $defaultCurrency = Currency::where('code', config('app.default_currency'))->first()->id;
 
-        return $form
+        return $schema
             ->schema([
-                Forms\Components\Section::make([
+                \Filament\Schemas\Components\Section::make([
                     Forms\Components\TextInput::make('price')
                         ->required()
                         ->type('number')
@@ -62,14 +63,14 @@ class PricesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Actions\DeleteBulkAction::make(),
             ])->modelLabel(__('Price'));
     }
 }

@@ -5,9 +5,9 @@ namespace App\Livewire;
  
 use App\Models\Deployment;
 
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
 
 use App\Jobs\RemoteDBBackup;
 use App\Jobs\Backup\RemoteFilesBackup;
@@ -27,7 +27,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-use Filament\Tables\Actions\BulkAction;
+use Filament\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
 
 use Illuminate\Bus\Batch;

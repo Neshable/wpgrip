@@ -9,11 +9,11 @@ use Filament\Support\RawJs;
 
 class UptimeChart extends ChartWidget
 {
-	protected static ?string $heading = 'Uptime Monitor Logs - Last 28 Days';
+	protected ?string $heading = 'Uptime Monitor Logs - Last 28 Days';
 
-	protected static ?string $description = 'Green shows uptime, red shows downtime (any downtime is made visible)';
+	protected ?string $description = 'Green shows uptime, red shows downtime (any downtime is made visible)';
 
-	protected static ?string $pollingInterval = null;
+	protected ?string $pollingInterval = null;
 
 	/**
 	 * Get the site ID from the current route record

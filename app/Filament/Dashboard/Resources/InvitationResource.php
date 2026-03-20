@@ -11,9 +11,10 @@ use App\Services\TenantManager;
 use App\Services\TenantPermissionManager;
 use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -27,11 +28,11 @@ class InvitationResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
-    protected static ?string $navigationGroup = 'Team';
+    protected static string | \UnitEnum | null $navigationGroup = 'Team';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Forms\Components\TextInput::make('email')
                     ->email()
@@ -108,18 +109,18 @@ class InvitationResource extends Resource
             ])
             ->headerActions([
                 // CreateAction::make(),
-                Tables\Actions\Action::make('view')
+                Actions\Action::make('view')
                     ->label('View All Members')
                     ->link()
                     ->url(fn (): string => Team::getUrl()),
                 
             ])
             ->actions([
-                Tables\Actions\DeleteAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

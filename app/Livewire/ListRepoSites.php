@@ -17,11 +17,12 @@ use Livewire\Component;
 use App\Models\Site;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions;
 
-use Filament\Tables\Actions\CreateAction;
+use Filament\Actions\CreateAction;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -36,8 +37,8 @@ use App\Jobs\Git\SshAndGitRevert;
 use App\Models\Deployment;
 use Illuminate\Support\Str;
 
-use Filament\Infolists\Components\Actions;
-use Filament\Tables\Actions\Action;
+use Filament\Infolists\Components\Actions as InfolistActions;
+use Filament\Actions\Action;
 
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -169,7 +170,7 @@ class ListRepoSites extends Component implements HasForms, HasTable
                     })
             ])
             ->actions([
-                Tables\Actions\Action::make('deploy')
+                Actions\Action::make('deploy')
                     ->action(function ( Site $site ) {
                         // Update the pivot status to WORKING
                         $this->repo_model->sites()
@@ -187,8 +188,8 @@ class ListRepoSites extends Component implements HasForms, HasTable
                     ->modalDescription('Are you sure you\'d like to sync this repo?')
                     ->modalSubmitActionLabel('Yes, deploy now')
                     ->tooltip('Deploy this repo'),
-                Tables\Actions\ActionGroup::make([  
-                    // Tables\Actions\DeleteAction::make(),
+                Actions\ActionGroup::make([  
+                    // Actions\DeleteAction::make(),
                     Action::make('change_branch')
                         ->label('Change Branch')
                         ->color('info')
@@ -284,8 +285,8 @@ class ListRepoSites extends Component implements HasForms, HasTable
             ])
             
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make('bulk_detach')
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make('bulk_detach')
                         ->label('Remove')
                         ->requiresConfirmation()
                         ->action(function (Collection $records) {
@@ -298,7 +299,7 @@ class ListRepoSites extends Component implements HasForms, HasTable
                                 ->success()
                                 ->send();
                         }),
-                    Tables\Actions\BulkAction::make('bulk_deploy')
+                    Actions\BulkAction::make('bulk_deploy')
                         ->label('Deploy')
                         ->color('success')
                         ->icon('heroicon-o-arrow-up-on-square-stack')
@@ -324,7 +325,7 @@ class ListRepoSites extends Component implements HasForms, HasTable
             ->emptyStateHeading('No sites found')
             ->emptyStateDescription('You haven\'t added any sites yet.')
             ->emptyStateActions([
-               // Tables\Actions\CreateAction::make(),
+               // Actions\CreateAction::make(),
             ]);
 
     }

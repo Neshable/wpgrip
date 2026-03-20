@@ -13,7 +13,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Notifications\Notification;
 use Livewire\Component;
 
@@ -51,7 +51,7 @@ class CancelSubscriptionForm extends Component implements HasForms
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         $reasons = [
             'too_expensive' => __('Too expensive'),
@@ -60,7 +60,7 @@ class CancelSubscriptionForm extends Component implements HasForms
             'other' => __('Other'),
         ];
 
-        return $form
+        return $schema
             ->schema([
                 Select::make('reason')
                     ->options($reasons)

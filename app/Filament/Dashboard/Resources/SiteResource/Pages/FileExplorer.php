@@ -14,7 +14,7 @@ use Illuminate\Support\HtmlString;
 class FileExplorer extends ViewRecord
 {
     protected static string $resource = SiteResource::class;
-    protected static string $view     = 'site.single.file-explorer';
+    protected string $view     = 'site.single.file-explorer';
 
     // -------------------------------------------------------------------------
     // Livewire state

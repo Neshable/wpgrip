@@ -5,18 +5,19 @@ namespace App\Filament\Admin\Resources\UserResource\RelationManagers;
 use App\Constants\SubscriptionStatus;
 use App\Filament\Admin\Resources\SubscriptionResource\Pages\ViewSubscription;
 use App\Mapper\SubscriptionStatusMapper;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 
 class SubscriptionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'subscriptions';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
 
             ]);
@@ -61,7 +62,7 @@ class SubscriptionsRelationManager extends RelationManager
 
             ])
             ->actions([
-                Tables\Actions\Action::make('view')
+                Actions\Action::make('view')
                     ->url(fn ($record) => ViewSubscription::getUrl(['record' => $record]))
                     ->label(__('View'))
                     ->icon('heroicon-o-eye'),

@@ -6,10 +6,11 @@ use App\Constants\PaymentProviderConstants;
 use App\Models\PaymentProvider;
 use App\Services\PaymentProviders\LemonSqueezy\LemonSqueezyProductValidator;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 
@@ -24,9 +25,9 @@ class PaymentProviderDataRelationManager extends RelationManager
         return __('Payment Provider Data');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Forms\Components\Select::make('payment_provider_id')->label('Payment Provider')
                     ->options(
@@ -106,15 +107,15 @@ class PaymentProviderDataRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

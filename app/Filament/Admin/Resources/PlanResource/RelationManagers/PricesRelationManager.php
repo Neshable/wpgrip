@@ -8,9 +8,10 @@ use App\Constants\PlanType;
 use App\Mapper\PlanPriceMapper;
 use App\Models\Currency;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Unique;
@@ -21,13 +22,13 @@ class PricesRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'id';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         $defaultCurrency = Currency::where('code', config('app.default_currency'))->first()->id;
 
-        return $form
+        return $schema
             ->schema([
-                Forms\Components\Section::make([
+                \Filament\Schemas\Components\Section::make([
                     Forms\Components\Radio::make('type')
                         ->helperText(__('Pick the price type for this plan.'))
                         ->options(function () {
@@ -157,7 +158,7 @@ class PricesRelationManager extends RelationManager
                                 $get('type') === PlanPriceType::USAGE_BASED_TIERED_GRADUATED->value;
                         })
                         ->columns(3),
-                    Forms\Components\Section::make([
+                    \Filament\Schemas\Components\Section::make([
                         Forms\Components\TextInput::make('example_unit_quantity')
                             ->integer()
                             ->label(__('Unit Quantity'))
@@ -197,14 +198,14 @@ class PricesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Actions\DeleteBulkAction::make(),
             ]);
     }
 

@@ -10,14 +10,14 @@ use App\Jobs\Site\CheckCoreVulnerabilities;
 
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Notifications\Notification;
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 use Illuminate\Contracts\View\View;
 
 class Security extends ViewRecord
 {
     protected static string $resource = SiteResource::class;
 
-    protected static string $view = 'site.single.security';
+    protected string $view = 'site.single.security';
 
     public function getHeader(): ?View
     {

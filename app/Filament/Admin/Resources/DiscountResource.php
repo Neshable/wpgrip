@@ -5,9 +5,10 @@ namespace App\Filament\Admin\Resources;
 use App\Constants\DiscountConstants;
 use App\Models\Discount;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -15,16 +16,16 @@ class DiscountResource extends Resource
 {
     protected static ?string $model = Discount::class;
 
-    protected static ?string $navigationGroup = 'Product Management';
+    protected static string | \UnitEnum | null $navigationGroup = 'Product Management';
 
     protected static ?int $navigationSort = 3;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 // card
-                Forms\Components\Section::make([
+                \Filament\Schemas\Components\Section::make([
                     Forms\Components\TextInput::make('name')
                         ->required()
                         ->maxLength(255),
@@ -39,7 +40,7 @@ class DiscountResource extends Resource
                         ])
                         ->default('fixed'),
 
-                    Forms\Components\Grid::make()->schema([
+                    \Filament\Schemas\Components\Grid::make()->schema([
                         Forms\Components\TextInput::make('amount')
                             ->helperText(__('If you choose percentage, enter a number between 0 and 100. For example: 90 for 90%. For fixed amount, enter the amount in cents. For example: 1000 for $10.00'))
                             ->integer()
@@ -117,10 +118,10 @@ class DiscountResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Actions\DeleteBulkAction::make(),
             ]);
     }
 

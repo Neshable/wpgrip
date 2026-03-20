@@ -8,9 +8,10 @@ use App\Models\Interval;
 use App\Models\Plan;
 use App\Models\Product;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
@@ -20,15 +21,15 @@ class PlanResource extends Resource
 {
     protected static ?string $model = Plan::class;
 
-    protected static ?string $navigationGroup = 'Product Management';
+    protected static string | \UnitEnum | null $navigationGroup = 'Product Management';
 
     protected static ?int $navigationSort = 2;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
-                Forms\Components\Section::make([
+                \Filament\Schemas\Components\Section::make([
                     Forms\Components\TextInput::make('name')
                         ->required()
                         ->maxLength(255),
@@ -101,7 +102,7 @@ class PlanResource extends Resource
                         ->relationship('product', 'name', modifyQueryUsing: fn (Builder $query) => $query->where('is_default', false))
                         ->required()
                         ->preload(),
-                    Forms\Components\Grid::make(2)->schema([
+                    \Filament\Schemas\Components\Grid::make(2)->schema([
                         Forms\Components\TextInput::make('interval_count')
                             ->required()
                             ->integer()
@@ -128,7 +129,7 @@ class PlanResource extends Resource
                         ->hidden(
                             fn (\Filament\Forms\Get $get): bool => $get('is_default') === true
                         ),
-                    Forms\Components\Grid::make(2)->schema([
+                    \Filament\Schemas\Components\Grid::make(2)->schema([
                         Forms\Components\TextInput::make('trial_interval_count')
                             ->required()
                             ->integer()
@@ -199,7 +200,7 @@ class PlanResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query->with([
                 'interval',

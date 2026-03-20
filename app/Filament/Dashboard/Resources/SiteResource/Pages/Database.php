@@ -3,10 +3,10 @@
 namespace App\Filament\Dashboard\Resources\SiteResource\Pages;
 
 use App\Filament\Dashboard\Resources\SiteResource;
-use Filament\Pages\Actions;
+use Filament\Actions;
 
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 use App\Services\GripNotifications;
 
@@ -21,7 +21,7 @@ class Database extends ViewRecord
 {
     protected static string $resource = SiteResource::class;
 
-    protected static string $view = 'site.single.database';
+    protected string $view = 'site.single.database';
 
 
     public function checkStatusCode()

@@ -2,9 +2,10 @@
 
 namespace App\Filament\Dashboard\Resources\BackupResource\RelationManagers;
 
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Storage;
 
@@ -15,9 +16,9 @@ class SnapshotsRelationManager extends RelationManager
 {
     protected static string $relationship = 'snapshots';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([]);
+        return $schema->schema([]);
     }
 
     public function table(Table $table): Table
@@ -59,7 +60,7 @@ class SnapshotsRelationManager extends RelationManager
                     ->date(),
             ])
             ->headerActions([
-                Tables\Actions\Action::make('backupNow')
+                Actions\Action::make('backupNow')
                     ->label('Back up now')
                     ->icon('heroicon-o-arrow-down-on-square')
                     ->color('primary')
@@ -77,8 +78,8 @@ class SnapshotsRelationManager extends RelationManager
                     }),
             ])
             ->actions([
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\Action::make('download')
+                Actions\ActionGroup::make([
+                    Actions\Action::make('download')
                         ->label('Download')
                         ->icon('heroicon-o-arrow-down-tray')
                         ->visible(fn (Snapshot $record) => $record->status === 'completed')
@@ -89,7 +90,7 @@ class SnapshotsRelationManager extends RelationManager
                             }
                         }),
 
-                    Tables\Actions\DeleteAction::make()
+                    Actions\DeleteAction::make()
                         ->before(function (Snapshot $record) {
                             // Also delete from S3 when deleting the record
                             $s3Path = $record->getS3path();
@@ -100,8 +101,8 @@ class SnapshotsRelationManager extends RelationManager
                 ])->icon('heroicon-m-ellipsis-horizontal'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

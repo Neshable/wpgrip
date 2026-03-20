@@ -7,9 +7,9 @@ use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 
 class EditRepository extends EditRecord
 {
@@ -22,9 +22,9 @@ class EditRepository extends EditRecord
         ];
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Section::make('General Information')
                     ->schema([

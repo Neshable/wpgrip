@@ -3,9 +3,10 @@
 namespace App\Filament\Admin\Resources\DiscountResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 
@@ -15,11 +16,11 @@ class CodesRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'code';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
-                Forms\Components\Section::make([
+                \Filament\Schemas\Components\Section::make([
                     Forms\Components\TextInput::make('code')
                         ->helperText(__('The code that will be used to redeem the discount.'))
                         ->required()
@@ -41,8 +42,8 @@ class CodesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
-                Tables\Actions\Action::make(__('add_bulk_codes'))
+                Actions\CreateAction::make(),
+                Actions\Action::make(__('add_bulk_codes'))
                     ->label(__('New Bulk Codes'))
                     ->color('gray')
                     ->button()
@@ -72,11 +73,11 @@ class CodesRelationManager extends RelationManager
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Actions\DeleteBulkAction::make(),
             ]);
     }
 }

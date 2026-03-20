@@ -5,18 +5,19 @@ namespace App\Filament\Admin\Resources\UserResource\RelationManagers;
 use App\Constants\OrderStatus;
 use App\Filament\Admin\Resources\OrderResource;
 use App\Mapper\OrderStatusMapper;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 
 class OrdersRelationManager extends RelationManager
 {
     protected static string $relationship = 'orders';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
 
             ]);
@@ -64,7 +65,7 @@ class OrdersRelationManager extends RelationManager
 
             ])
             ->actions([
-                Tables\Actions\Action::make('view')
+                Actions\Action::make('view')
                     ->url(fn ($record) => OrderResource\Pages\ViewOrder::getUrl(['record' => $record]))
                     ->label(__('View'))
                     ->icon('heroicon-o-eye'),

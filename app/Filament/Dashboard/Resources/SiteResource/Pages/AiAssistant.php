@@ -19,7 +19,7 @@ use App\Models\AiTokenUsage;
 class AiAssistant extends ViewRecord
 {
     protected static string $resource = SiteResource::class;
-    protected static string $view     = 'site.single.ai-assistant';
+    protected string $view     = 'site.single.ai-assistant';
 
     // -------------------------------------------------------------------------
     // Livewire state

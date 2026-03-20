@@ -3,9 +3,9 @@
 namespace App\Filament\Dashboard\Resources\SiteResource\Pages;
 
 use App\Filament\Dashboard\Resources\SiteResource;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 use Illuminate\Contracts\View\View;
 
@@ -15,7 +15,7 @@ class Blacklists extends ViewRecord
 {
     protected static string $resource = SiteResource::class;
 
-    protected static string $view = 'site.single.blacklists';
+    protected string $view = 'site.single.blacklists';
 
 
     public function getHeader(): ?View

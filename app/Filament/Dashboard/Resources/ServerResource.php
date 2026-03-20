@@ -6,9 +6,10 @@ use App\Filament\Dashboard\Resources\ServerResource\Pages;
 use App\Filament\Dashboard\Resources\ServerResource\RelationManagers;
 use App\Models\Server;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -23,12 +24,11 @@ use App\Enums\ServerType;
 use App\Filament\Dashboard\Resources\SiteResource\RelationManagers\SitesRelationManager;
 use App\Jobs\GetServerStats;
 
-use Filament\Infolists\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Infolists;
-use Filament\Infolists\Infolist;
 use Illuminate\Support\HtmlString;
 
-use Filament\Tables\Actions\Action;
+use Filament\Actions\Action;
 
 class ServerResource extends Resource
 {
@@ -36,11 +36,11 @@ class ServerResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    protected static ?string $navigationIcon = 'heroicon-o-server-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-server-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
@@ -151,9 +151,9 @@ class ServerResource extends Resource
             ])
             ->actions(
                 [
-                    Tables\Actions\ActionGroup::make([
-                        Tables\Actions\EditAction::make(),
-                        Tables\Actions\ViewAction::make(),
+                    Actions\ActionGroup::make([
+                        Actions\EditAction::make(),
+                        Actions\ViewAction::make(),
                         Action::make('sync')
                             ->action(function ( Server $record) {
                                 // $meta = $record->sitemeta;
@@ -168,7 +168,7 @@ class ServerResource extends Resource
                             ->modalSubheading('Are you sure you\'d like to sync this server?')
                             ->modalButton('Yes, sync now')
                             ->tooltip('Sync this server'),
-                        Tables\Actions\DeleteAction::make()
+                        Actions\DeleteAction::make()
                     ])->icon('heroicon-m-ellipsis-vertical')->link()
                     ->label(''),        
                 ]
@@ -178,14 +178,14 @@ class ServerResource extends Resource
             //     'xl' => 3,
             // ])
             ->bulkActions([
-                // Tables\Actions\DeleteBulkAction::make(),
+                // Actions\DeleteBulkAction::make(),
             ]);
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
         
-        return $infolist
+        return $schema
             ->schema([
                 Section::make('Server Overview')
                     ->icon('heroicon-o-server')

@@ -80,14 +80,14 @@ class Team extends Component implements HasForms, HasTable
             ])
             ->headerActions([
                 // CreateAction::make(),
-                Tables\Actions\Action::make('invite')
+                Actions\Action::make('invite')
                     ->label('Invite New Members')
                     ->link()
                     ->url(fn (): string => InvitationResource::getUrl() ),
                 
             ])
             ->actions([
-                Tables\Actions\Action::make('remove')
+                Actions\Action::make('remove')
                     ->label(__('Remove User'))
                     ->color('danger')
                     ->requiresConfirmation(true)
@@ -115,7 +115,7 @@ class Team extends Component implements HasForms, HasTable
                     }),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
                     //
                 ]),
             ]);

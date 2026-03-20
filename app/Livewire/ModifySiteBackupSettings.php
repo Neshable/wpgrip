@@ -10,7 +10,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Illuminate\Contracts\View\View;
 
 
@@ -28,9 +28,9 @@ class ModifySiteBackupSettings extends Component implements HasForms
         $this->form->fill( $site->toArray() );
     }
     
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
      
                 Toggle::make('backup_enabled')

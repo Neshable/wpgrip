@@ -4,7 +4,7 @@ namespace App\Filament\Admin\Resources\RoleResource\Pages;
 
 use App\Filament\Admin\Resources\RoleResource;
 use App\Filament\ListDefaults;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class ListRoles extends ListRecords
