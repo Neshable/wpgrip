@@ -6,11 +6,11 @@ use App\Filament\Resources\MonitorResource;
 use App\Models\MonitorLog;
 use App\Models\UptimeMonitor;
 
-use Filament\Tables\Actions;
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
 
 use App\Jobs\RemoteDBBackup;
 use App\Jobs\Backup\RemoteFilesBackup;
@@ -20,7 +20,6 @@ use Filament\Forms;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Actions;
 use Filament\Tables\Table;
 
 use Illuminate\Support\HtmlString;
@@ -142,7 +141,7 @@ class ListMonitors extends Component implements HasForms, HasTable
                 ])->icon('heroicon-m-ellipsis-horizontal'),
             ])
             ->headerActions([
-                Actions\CreateAction::make()
+                CreateAction::make()
                     ->link()
                     ->model( UptimeMonitor::class )
                     ->hidden( UptimeMonitor::query()->where('site_id', $this->site_id )->count() > 3 )
