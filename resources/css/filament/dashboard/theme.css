@@ -1,10 +1,17 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
+@source '../../../../app/Filament/**/*.php';
+@source '../../../../resources/views/filament/**/*.blade.php';
+@source '../../../../app/Livewire/**/*.php';
+@source '../../../../resources/views/site/**/*.blade.php';
+@source '../../../../resources/views/errors/**/*.blade.php';
+@source '../../../../resources/views/livewire/**/*.blade.php';
+@source '../../../../resources/views/components/**/*.blade.php';
+@source '../../../../vendor/filament/**/*.blade.php';
+
 body.fi-panel-dashboard {
-    /* background: #f5f7fa; */
     background: #f5f7fa;
-    
-    
+
     .fi-sidebar {
         background: #f5f7fa;
         max-width: 220px;
@@ -14,7 +21,7 @@ body.fi-panel-dashboard {
             height: 1.2rem;
         }
     }
-    
+
     .fi-sidebar-header {
         background: #222937;
     }
@@ -29,7 +36,6 @@ body.fi-panel-dashboard {
 .dark body.fi-panel-dashboard {
     background: #0a0a0a;
 
-    /* ── Sidebar ──────────────────────────────────────────────────────── */
     .fi-sidebar {
         background: #111111;
         border-right: 1px solid rgba(255, 255, 255, 0.06);
@@ -40,32 +46,27 @@ body.fi-panel-dashboard {
             height: 1.2rem;
         }
 
-        /* Nav item hover */
         .fi-sidebar-item-button:hover {
             background: rgba(255, 255, 255, 0.05);
         }
 
-        /* Active nav item */
         .fi-sidebar-item-button.fi-active,
         .fi-sidebar-item-button[aria-current] {
             background: rgba(63, 99, 230, 0.15);
         }
     }
 
-    /* Sidebar logo area */
     .fi-sidebar-header {
         background: #0a0a0a;
         border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
 
-    /* ── Topbar ───────────────────────────────────────────────────────── */
     .fi-topbar nav {
         background: #0a0a0a;
         border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         backdrop-filter: blur(12px);
     }
 
-    /* ── Content panels / sections / tables ──────────────────────────── */
     .fi-section,
     .fi-ta-ctn,
     .fi-wi-stats-overview-stat {
@@ -77,7 +78,6 @@ body.fi-panel-dashboard {
         border-bottom-color: rgba(255, 255, 255, 0.07);
     }
 
-    /* Table header / rows */
     .fi-ta-header-cell {
         background: #0f0f0f;
     }
@@ -86,45 +86,34 @@ body.fi-panel-dashboard {
         background: rgba(255, 255, 255, 0.03);
     }
 
-    /* Table container */
     .fi-ta-ctn {
         border-color: rgba(255, 255, 255, 0.07);
     }
 
-    /* ── Modal / dropdown surfaces ────────────────────────────────────── */
     .fi-modal-window,
     .fi-dropdown-panel {
         background: #141414;
         border-color: rgba(255, 255, 255, 0.08);
     }
 
-    /* ── Tabs ──────────────────────────────────────────────────────────── */
     .fi-tabs {
         --tw-border-opacity: 1;
         border-color: rgba(255, 255, 255, 0.07);
     }
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   SITE SUB-SIDEBAR — second-level navigation for single site pages
-   ═══════════════════════════════════════════════════════════════════ */
-
-/* When the body has the site-sidebar marker, keep main sidebar collapsed
-   and hide overflow (plan widget, labels etc). No hover expand. */
+/* Site sub-sidebar styles */
 body.has-site-sidebar {
     .fi-sidebar {
-        /* Keep collapsed width, hide overflowing footer/labels */
         &:not(.fi-sidebar-open) {
             width: var(--collapsed-sidebar-width) !important;
             overflow: hidden !important;
         }
 
-        /* Hide sidebar footer (plan widget) when collapsed on site pages */
         &:not(.fi-sidebar-open) > nav.fi-sidebar-nav ~ * {
             display: none !important;
         }
 
-        /* Hide nav item labels when collapsed — show icons only */
         &:not(.fi-sidebar-open) .fi-sidebar-item-label,
         &:not(.fi-sidebar-open) .fi-sidebar-group-label,
         &:not(.fi-sidebar-open) .fi-sidebar-item-badge,
@@ -132,42 +121,35 @@ body.has-site-sidebar {
             display: none !important;
         }
 
-        /* Make icons larger when collapsed on site pages */
         &:not(.fi-sidebar-open) .fi-sidebar-item-icon {
             width: 1.5rem !important;
             height: 1.5rem !important;
         }
 
-        /* Center the icons in their buttons */
         &:not(.fi-sidebar-open) .fi-sidebar-item-button {
             justify-content: center !important;
             padding-inline: 0 !important;
         }
 
-        /* Hide group wrappers but keep items visible */
         &:not(.fi-sidebar-open) .fi-sidebar-group-button {
             display: none !important;
         }
     }
 
-    /* Hide the site header (screenshot card) — info is in sub-sidebar now.
-       The header is a @persist div before the page content inside fi-page > section */
     .fi-page > section > div:first-child:has(+ div .site-page-with-sidebar) {
         display: none !important;
     }
 
-    /* Also catch fi-page-header if Filament renders a default one */
     .fi-page-header {
         display: none !important;
     }
 }
 
-/* The site page layout: sub-sidebar + content side by side */
 .site-page-with-sidebar {
     display: flex;
     gap: 0;
     min-height: calc(100vh - 4rem);
-    margin: 0 -1rem -1.5rem -1rem; /* counteract fi-main horizontal padding */
+    margin: 0 -1rem -1.5rem -1rem;
 }
 
 @media (min-width: 768px) {
@@ -182,12 +164,10 @@ body.has-site-sidebar {
     }
 }
 
-/* Tighten top padding on the page section when sub-sidebar is present */
 body.has-site-sidebar .fi-page > section {
     padding-top: 0.5rem !important;
 }
 
-/* Sub-sidebar styling — transparent, no background */
 .site-sub-sidebar {
     width: 220px;
     min-width: 220px;
@@ -218,7 +198,6 @@ body.has-site-sidebar .fi-page > section {
     border-bottom-color: rgba(255, 255, 255, 0.06);
 }
 
-/* Navigation */
 .site-sub-sidebar-nav {
     padding: 0.5rem 0;
     flex: 1;
@@ -287,7 +266,6 @@ body.has-site-sidebar .fi-page > section {
     background: rgba(63, 99, 230, 0.12);
 }
 
-/* Content area next to sub-sidebar */
 .site-page-content {
     flex: 1;
     min-width: 0;
@@ -309,7 +287,6 @@ body.has-site-sidebar .fi-page > section {
     }
 }
 
-/* Mobile: stack sub-sidebar above content */
 @media (max-width: 767px) {
     .site-page-with-sidebar {
         flex-direction: column;
@@ -359,5 +336,7 @@ body.has-site-sidebar .fi-page > section {
     }
 }
 
-@config './tailwind.config.js';
-
+/* Fix Tailwind v4 head visibility issue */
+head {
+  display: none !important;
+}
